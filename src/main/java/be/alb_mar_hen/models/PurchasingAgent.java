@@ -30,5 +30,4 @@ public class PurchasingAgent extends Person{
 	) {
 		super(matricule, password, firstName, lastName, objectValidator, stringValidator, numericValidator);
 	}
-	
 }
