@@ -20,7 +20,16 @@ public abstract class Person {
 	private String firstName;
 	private String lastName;
 	
-	public Person(int id, String matricule, String password, String firstName, String lastName, ObjectValidator ObjectValidator, StringValidator stringValidator, NumericValidator numericValidator) {
+	public Person(
+		int id, 
+		String matricule, 
+		String password, 
+		String firstName, 
+		String lastName, 
+		ObjectValidator ObjectValidator, 
+		StringValidator stringValidator, 
+		NumericValidator numericValidator
+	) {
 		setId(id);
 		setMatricule(matricule);
 		setPassword(password);
@@ -31,7 +40,15 @@ public abstract class Person {
 		this.numericValidator = numericValidator;
 	}
 	
-	public Person(String matricule, String password, String firstName, String lastName, ObjectValidator objectValidator, StringValidator stringValidator, NumericValidator numericValidator) {
+	public Person(
+			String matricule, 
+			String password, 
+			String firstName, 
+			String lastName, 
+			ObjectValidator objectValidator, 
+			StringValidator stringValidator, 
+			NumericValidator numericValidator
+	) {
 		this(0, matricule, password, firstName, lastName, objectValidator, stringValidator, numericValidator);
 	}
 	

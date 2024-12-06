@@ -32,6 +32,9 @@ public class Order {
 		setId(id);
 		setOrder(orderDate);
 		setPrice(price);
+		setMachine(machine);
+		setPurchasingAgent(purchasingAgent);
+		setSupplier(supplier);
 		this.numericValidator = numericValidator;
 		this.dateValidator = dateValidator;
 		this.objectValidator = objectValidator;
