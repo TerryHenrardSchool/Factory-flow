@@ -1,8 +1,8 @@
 package be.alb_mar_hen.models;
 
-import java.security.KeyStore.PrivateKeyEntry;
 import java.time.LocalDate;
 import java.util.Objects;
+import java.util.Set;
 
 import be.alb_mar_hen.enumerations.MaintenanceStatus;
 import be.alb_mar_hen.validators.DateValidator;
@@ -23,6 +23,9 @@ public class Maintenance {
 	private int duration;
 	private String report;
 	private MaintenanceStatus status;
+	private Machine machine;
+	private Set<MaintenanceWorker> maintenanceWorkers;
+	private MaintenanceResponsable maintenanceResponsable;
 		
 	public Maintenance(
 		int id, 
@@ -30,6 +33,9 @@ public class Maintenance {
 		int duration, 
 		String report, 
 		MaintenanceStatus status,
+		Machine machine, 
+		MaintenanceWorker maintenanceWorker,
+		MaintenanceResponsable maintenanceResponsable,
 		NumericValidator numericValidator,
 		StringValidator stringValidator,
 		ObjectValidator objectValidator,
@@ -39,6 +45,9 @@ public class Maintenance {
 		setDuration(duration);
 		setReport(report);
 		setStatus(status);
+		setMachine(machine);
+		setMaintenanceResponsable(maintenanceResponsable);
+		addMaintenanceWorker(maintenanceWorker);
 		this.numericValidator = numericValidator;
 		this.stringValidator = stringValidator;
 		this.objectValidator = objectValidator;
@@ -50,12 +59,15 @@ public class Maintenance {
 		int duration, 
 		String report, 
 		MaintenanceStatus status,
+		Machine machine, 
+		MaintenanceWorker maintenanceWorker,
+		MaintenanceResponsable maintenanceResponsable,
 		NumericValidator numericValidator,
 		StringValidator stringValidator,
 		ObjectValidator objectValidator,
 		DateValidator dateValidator
 	) {
-		this(0, date, duration, report, status, numericValidator, stringValidator, objectValidator, dateValidator);
+		this(0, date, duration, report, status,machine, maintenanceWorker, maintenanceResponsable ,numericValidator, stringValidator, objectValidator, dateValidator);
 	}
 
 	public int getId() {
@@ -76,6 +88,18 @@ public class Maintenance {
 	
 	public MaintenanceStatus getStatus() {
 		return status;
+	}
+	
+	public Machine getMachine() {
+		return machine;
+	}
+	
+	public MaintenanceResponsable getMaintenanceResponsable() {
+		return maintenanceResponsable;
+	}
+	
+	public Set<MaintenanceWorker> getMaintenanceWorkers() {
+		return maintenanceWorkers;
 	}
 	
 	public void setId(int id) {
@@ -126,9 +150,34 @@ public class Maintenance {
 		this.status = status;
 	}
 
+	public void setMachine(Machine machine) {
+		if(!objectValidator.hasValue(machine)) {
+			throw new NullPointerException("Machine must have a value.");
+		}
+		
+		this.machine = machine;
+	}
+	
+	public void setMaintenanceResponsable(MaintenanceResponsable responsable) {
+		if(!objectValidator.hasValue(responsable)) {
+			throw new NullPointerException("Responsable must have a value.");
+		}
+		
+		this.maintenanceResponsable = responsable;
+	}
+	
+	public boolean addMaintenanceWorker(MaintenanceWorker worker) {
+		if(!objectValidator.hasValue(worker)) {
+			throw new NullPointerException("Worker must have a value");
+		}
+		
+		return maintenanceWorkers.add(worker);
+	}
+	
+	//Override methods
 	@Override
 	public String toString() {
-		return "Maintenance [id=" + id + ", date=" + date + ", duration=" + duration + ", reportString=" + reportString
+		return "Maintenance [id=" + id + ", date=" + date + ", duration=" + duration + ", reportString=" + report
 				+ ", status=" + status + "]";
 	}
 
