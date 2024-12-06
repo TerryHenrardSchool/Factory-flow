@@ -1,6 +1,8 @@
 package be.alb_mar_hen.enumerations;
 
 public enum MachineStatus {
-	IN_PROGRESS,
-	DONE
+	OK,
+	IN_MAINTENANCE,
+	NEED_MAINTENANCE,
+	TO_BE_REPLACED
 }
