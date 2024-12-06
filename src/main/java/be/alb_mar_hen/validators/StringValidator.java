@@ -6,4 +6,8 @@ public class StringValidator {
 	public boolean matchRegEx(String regEx, String string) {
 		return Pattern.matches(regEx, string);
 	}
+	
+	public boolean isLongerOrEqualsThan(String string, int min) {
+		return string.length() >= min; 
+	}
 }
