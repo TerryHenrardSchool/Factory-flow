@@ -4,5 +4,5 @@ public enum MachineStatus {
 	OK,
 	IN_MAINTENANCE,
 	NEED_MAINTENANCE,
-	BE_REPLACED
+	TO_BE_REPLACED
 }
