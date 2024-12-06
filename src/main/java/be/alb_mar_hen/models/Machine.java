@@ -1,5 +1,6 @@
 package be.alb_mar_hen.models;
 
+import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
@@ -27,6 +28,8 @@ public class Machine {
 		NumericValidator numericValidator, 
 		ObjectValidator objectValidator
 	) {
+		maintenances = new HashSet<>();
+		zones = new HashSet<>();
 		addZone(zone);
 		this.numericValidator = numericValidator;
 		this.objectValidator = objectValidator;

@@ -1,6 +1,7 @@
 package be.alb_mar_hen.models;
 
 import java.time.LocalDate;
+import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
@@ -41,6 +42,7 @@ public class Maintenance {
 		ObjectValidator objectValidator,
 		DateValidator dateValidator
 	) {
+		maintenanceWorkers = new HashSet<>();
 		setDate(date);
 		setDuration(duration);
 		setReport(report);

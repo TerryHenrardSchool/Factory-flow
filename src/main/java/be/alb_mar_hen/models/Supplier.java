@@ -20,8 +20,8 @@ public class Supplier {
 	) {
 		this.numericValidator = numericValidator;
 		this.objectValidator = objectValidator;
-		this.id = id;
-		this.name = name;
+		setId(id);
+		setName(name);
 	}
 
 	public int getId() {
