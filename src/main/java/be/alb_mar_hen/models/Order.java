@@ -126,6 +126,11 @@ public class Order {
 			throw new NullPointerException("Purchasing agent must have a value.");
 		}
 		
+		if (this.purchasingAgent != purchasingAgent) {
+			this.purchasingAgent = purchasingAgent;
+			purchasingAgent.addOrder(this);
+		}
+		
 		this.purchasingAgent = purchasingAgent;
 	}
 	

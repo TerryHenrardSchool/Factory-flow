@@ -28,6 +28,8 @@ public class Maintenance {
 	private String report;
 	private MaintenanceStatus status;
 	private Machine machine;
+	
+	// Relations
 	private Set<MaintenanceWorker> maintenanceWorkers;
 	private MaintenanceResponsable maintenanceResponsable;
 		
@@ -46,6 +48,10 @@ public class Maintenance {
 		ObjectValidator objectValidator,
 		DateValidator dateValidator
 	) {
+		this.numericValidator = numericValidator;
+		this.stringValidator = stringValidator;
+		this.objectValidator = objectValidator;
+		this.dateValidator = dateValidator;
 		maintenanceWorkers = new HashSet<>();
 		setDate(date);
 		setDuration(duration);
@@ -54,10 +60,6 @@ public class Maintenance {
 		setMachine(machine);
 		setMaintenanceResponsable(maintenanceResponsable);
 		addMaintenanceWorker(maintenanceWorker);
-		this.numericValidator = numericValidator;
-		this.stringValidator = stringValidator;
-		this.objectValidator = objectValidator;
-		this.dateValidator = dateValidator;
 	}
 	
 	public Maintenance(
@@ -167,27 +169,34 @@ public class Maintenance {
 	}
 	
 	public void setMaintenanceResponsable(MaintenanceResponsable responsable) {
-		if(!objectValidator.hasValue(responsable)) {
-			throw new NullPointerException("Responsable must have a value.");
-		}
-		
-		this.maintenanceResponsable = responsable;
+	    if (!objectValidator.hasValue(responsable)) {
+	        throw new NullPointerException("Responsable must have a value.");
+	    }
+
+	    if (this.maintenanceResponsable != responsable) {
+	        this.maintenanceResponsable = responsable;
+	        responsable.addMaintenance(this);
+	    }
 	}
 	
 	// Methods
 	public boolean addMaintenanceWorker(MaintenanceWorker worker) {
-		if(!objectValidator.hasValue(worker)) {
-			throw new NullPointerException("Worker must have a value");
-		}
-		
-		return maintenanceWorkers.add(worker);
+	    if (!objectValidator.hasValue(worker)) {
+	        throw new NullPointerException("Worker must have a value.");
+	    }
+
+	    boolean added = maintenanceWorkers.add(worker);
+	    if (added) {
+	        worker.addMaintenance(this);
+	    }
+
+	    return added;
 	}
 	
 	//Override methods
 	@Override
 	public String toString() {
-		return "Maintenance [id=" + id + ", date=" + date + ", duration=" + duration + ", reportString=" + report
-				+ ", status=" + status + "]";
+		return "Maintenance [id=" + id + ", date=" + date + ", duration=" + duration + ", reportString=" + report + ", status=" + status + "]";
 	}
 
 	@Override

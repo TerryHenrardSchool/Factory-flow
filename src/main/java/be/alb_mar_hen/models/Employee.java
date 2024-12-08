@@ -7,6 +7,7 @@ import be.alb_mar_hen.validators.NumericValidator;
 import be.alb_mar_hen.validators.StringValidator;
 
 public abstract class Employee {
+	
 	// Constants
 	private final static String PASSWORD_REGEX = "^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d]{8,}$";
 	private final static String NAME_REGEX = "/^[\\p{L}'][ \\p{L}'-]*[\\p{L}]$/u";
@@ -132,9 +133,18 @@ public abstract class Employee {
 		this.lastName = lastName;
 	}
 	
-	// Methods
+	// Private methods
+	private String getFirstNameFormatted() {
+		return stringFormatter.firstToUpper(firstName);
+	}
+	
+	private String getLastNameFormatted() {
+		return lastName.toUpperCase();
+	}
+	
+	// Public methods
 	public String getFullNameFormatted() {
-		return lastName.toUpperCase() + " " + stringFormatter.firstToUpper(firstName);
+		return getLastNameFormatted() + " " + getFirstNameFormatted();
 	}
 
 	// Override methods
