@@ -1,23 +1,29 @@
 package be.alb_mar_hen.models;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 import be.alb_mar_hen.validators.DateValidator;
 import be.alb_mar_hen.validators.NumericValidator;
 import be.alb_mar_hen.validators.ObjectValidator;
 
 public class Order {
+	// Validators
 	private NumericValidator numericValidator;
 	private DateValidator dateValidator;
 	private ObjectValidator objectValidator;
 	
+	// Attributes
 	private int id;
-	private LocalDateTime orderDate;
+	private LocalDateTime orderDateTime;
 	private double price;
+	
+	// Relations
 	private Supplier supplier;
 	private PurchasingAgent purchasingAgent;
 	private Machine machine;
 	
+	// Constructors
 	public Order(
 		int id, 
 		LocalDateTime orderDate, 
@@ -29,15 +35,15 @@ public class Order {
 		DateValidator dateValidator,
 		ObjectValidator objectValidator
 	) {
+		this.numericValidator = numericValidator;
+		this.dateValidator = dateValidator;
+		this.objectValidator = objectValidator;
 		setId(id);
 		setOrder(orderDate);
 		setPrice(price);
 		setMachine(machine);
 		setPurchasingAgent(purchasingAgent);
 		setSupplier(supplier);
-		this.numericValidator = numericValidator;
-		this.dateValidator = dateValidator;
-		this.objectValidator = objectValidator;
 	}
 	
 	public Order(
@@ -53,12 +59,13 @@ public class Order {
 		this(0, orderDate, price, supplier, purchasingAgent, machine ,numericValidator, dateValidator, objectValidator);
 	}
 	
+	// Getters
 	public int getId() {
 		return id;
 	}
 	
 	public LocalDateTime getOrder() {
-		return orderDate;
+		return orderDateTime;
 	}
 	
 	public double getPrice() {
@@ -77,6 +84,7 @@ public class Order {
 		return machine;
 	}
 	
+	// Setters
 	public void setId(int id) {
 		if(!numericValidator.isPositiveOrEqualToZero(id)) {
 			throw new IllegalArgumentException("Id must be greater or equals than zero.");
@@ -94,7 +102,7 @@ public class Order {
 			throw new IllegalArgumentException("The orderDate cannot be in the future.");
 		}
 		
-		this.orderDate = orderDate;
+		this.orderDateTime = orderDate;
 	}
 	
 	public void setPrice(double price) {
@@ -128,4 +136,41 @@ public class Order {
 		
 		this.supplier = supplier;
 	}
+
+	// Override methods
+	@Override
+	public String toString() {
+		return "Order [id=" + id + ", orderDateTime=" + orderDateTime + ", price=" + price + ", supplier=" + supplier
+				+ ", purchasingAgent=" + purchasingAgent + ", machine=" + machine + "]";
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(id, machine, orderDateTime, price, purchasingAgent, supplier);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		
+		if (obj == null) {
+			return false;
+		}
+		
+		if (getClass() != obj.getClass()) {
+			return false;
+		}
+		
+		Order other = (Order) obj;
+		return id == other.id 
+			&& Objects.equals(machine, other.machine)
+			&& Objects.equals(orderDateTime, other.orderDateTime)
+			&& Double.doubleToLongBits(price) == Double.doubleToLongBits(other.price)
+			&& Objects.equals(purchasingAgent, other.purchasingAgent) 
+			&& Objects.equals(supplier, other.supplier);
+	}
+	
+	
 }

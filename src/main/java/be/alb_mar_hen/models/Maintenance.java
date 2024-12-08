@@ -12,13 +12,16 @@ import be.alb_mar_hen.validators.ObjectValidator;
 import be.alb_mar_hen.validators.StringValidator;
 
 public class Maintenance {
+	// Constants
 	private final static int MIN_LENGTH_REPORT = 150;
 	
+	// Validators
 	private NumericValidator numericValidator;
 	private StringValidator stringValidator;
 	private ObjectValidator objectValidator;
 	private DateValidator dateValidator;
 	
+	// Attributes
 	private int id;
 	private LocalDate date;
 	private int duration;
@@ -28,6 +31,7 @@ public class Maintenance {
 	private Set<MaintenanceWorker> maintenanceWorkers;
 	private MaintenanceResponsable maintenanceResponsable;
 		
+	// Constructors
 	public Maintenance(
 		int id, 
 		LocalDate date, 
@@ -72,6 +76,7 @@ public class Maintenance {
 		this(0, date, duration, report, status,machine, maintenanceWorker, maintenanceResponsable ,numericValidator, stringValidator, objectValidator, dateValidator);
 	}
 
+	// Getters
 	public int getId() {
 		return id;
 	}
@@ -104,6 +109,7 @@ public class Maintenance {
 		return maintenanceWorkers;
 	}
 	
+	// Setters
 	public void setId(int id) {
 		if(!numericValidator.isPositiveOrEqualToZero(id)) {
 			throw new IllegalArgumentException("Id must be greater than 0");
@@ -168,6 +174,7 @@ public class Maintenance {
 		this.maintenanceResponsable = responsable;
 	}
 	
+	// Methods
 	public boolean addMaintenanceWorker(MaintenanceWorker worker) {
 		if(!objectValidator.hasValue(worker)) {
 			throw new NullPointerException("Worker must have a value");
@@ -190,14 +197,23 @@ public class Maintenance {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
+		if (this == obj) {
+			return true;			
+		}
+		
+		if (obj == null) {
+			return false;			
+		}
+		
+		if (getClass() != obj.getClass()) {
+			return false;			
+		}
+		
 		Maintenance other = (Maintenance) obj;
-		return Objects.equals(date, other.date) && duration == other.duration && id == other.id
-				&& Objects.equals(report, other.report) && Objects.equals(status, other.status);
+		return Objects.equals(date, other.date) 
+			&& duration == other.duration 
+			&& id == other.id
+			&& Objects.equals(report, other.report) 
+			&& Objects.equals(status, other.status);
 	}
 }

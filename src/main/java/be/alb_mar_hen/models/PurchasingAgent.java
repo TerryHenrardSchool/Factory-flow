@@ -4,7 +4,7 @@ import be.alb_mar_hen.validators.NumericValidator;
 import be.alb_mar_hen.validators.ObjectValidator;
 import be.alb_mar_hen.validators.StringValidator;
 
-public class PurchasingAgent extends Person{
+public class PurchasingAgent extends Employee{
 
 	public PurchasingAgent(
 		int id, 

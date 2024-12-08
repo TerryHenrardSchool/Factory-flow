@@ -4,7 +4,7 @@ import be.alb_mar_hen.validators.NumericValidator;
 import be.alb_mar_hen.validators.ObjectValidator;
 import be.alb_mar_hen.validators.StringValidator;
 
-public class MaintenanceWorker extends Person{
+public class MaintenanceWorker extends Employee{
 
 	public MaintenanceWorker(
 			int id, 

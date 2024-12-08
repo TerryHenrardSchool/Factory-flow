@@ -4,20 +4,22 @@ import java.util.Objects;
 
 import be.alb_mar_hen.validators.NumericValidator;
 import be.alb_mar_hen.validators.ObjectValidator;
+import be.alb_mar_hen.validators.StringValidator;
 
 public class Site {
-	ObjectValidator objectValidator;
+	StringValidator stringValidator;
 	NumericValidator numericValidator;
 	
 	private int id;
 	private String city;
 	
 	public Site(
-			ObjectValidator objectValidator, 
-			NumericValidator numericValidator, 
-			int id, 
-			String city) {
-		this.objectValidator = objectValidator;
+		int id, 
+		String city,
+		StringValidator stringValidator, 
+		NumericValidator numericValidator
+	) {
+		this.stringValidator = stringValidator;
 		this.numericValidator = numericValidator;
 		setId(id);
 		setCity(city);
@@ -40,7 +42,7 @@ public class Site {
 	}
 	
 	public void setCity(String city) {
-		if(!objectValidator.hasValue(city)) {
+		if(!stringValidator.isNullOrEmpty(city)) {
 			throw new NullPointerException("City must have a value.");
 		}
 		
@@ -59,12 +61,18 @@ public class Site {
 	
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
+		if (this == obj) {
+			return true;			
+		}
+		
+		if (obj == null) {
+			return false;			
+		}
+		
+		if (getClass() != obj.getClass()) {
+			return false;			
+		}
+		
 		Site other = (Site) obj;
 		return Objects.equals(city, other.city) && id == other.id;
 	}
