@@ -148,32 +148,36 @@ public abstract class Employee {
 	// Override methods
 	@Override
 	public String toString() {
-		return "Person [id=" + id + ", matricule=" + matricule + ", password=" + password + ", firstName=" + firstName + ", lastName=" + lastName + "]";
+	    return "Person [id=" + id.orElse(null)
+	        + ", matricule=" + matricule 
+	        + ", password=" + password 
+	        + ", firstName=" + firstName 
+	        + ", lastName=" + lastName + "]";
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(firstName, id, lastName, matricule, password);
+	    return Objects.hash(firstName, id.orElse(0), lastName, matricule, password);
 	}
 
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj) {
-			return true;			
-		}
-		if (obj == null) {
-			return false;			
-		}
-		
-		if (getClass() != obj.getClass()) {
-			return false;			
-		}
-		
-		Employee other = (Employee) obj;
-		return Objects.equals(firstName, other.firstName) 
-			&& id == other.id 
-			&& Objects.equals(lastName, other.lastName)
-			&& Objects.equals(matricule, other.matricule) 
-			&& Objects.equals(password, other.password);
+	    if (this == obj) {
+	        return true;
+	    }
+	    
+	    if (
+    		obj == null || 
+    		getClass() != obj.getClass()
+		) {
+	        return false;
+	    }
+	    
+	    Employee other = (Employee) obj;
+	    return Objects.equals(firstName, other.firstName) 
+	        && Objects.equals(id.orElse(null), other.id.orElse(null))
+	        && Objects.equals(lastName, other.lastName)
+	        && Objects.equals(matricule, other.matricule)
+	        && Objects.equals(password, other.password);
 	}
 }

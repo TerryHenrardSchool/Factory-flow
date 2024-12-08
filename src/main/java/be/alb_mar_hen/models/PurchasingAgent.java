@@ -1,35 +1,37 @@
 package be.alb_mar_hen.models;
 
+import java.util.Optional;
+
 import be.alb_mar_hen.formatters.StringFormatter;
 import be.alb_mar_hen.validators.NumericValidator;
+import be.alb_mar_hen.validators.ObjectValidator;
 import be.alb_mar_hen.validators.StringValidator;
 
-public class PurchasingAgent extends Employee{
+public class PurchasingAgent extends Employee {
 	
 	// Constructors
 	public PurchasingAgent(
-		int id, 
+		Optional<Integer> id, 
 		String matricule, 
 		String password, 
 		String firstName, 
 		String lastName,
 		StringValidator stringValidator, 
 		NumericValidator numericValidator,
+		ObjectValidator objectValidator,
 		StringFormatter stringFormatter
 	) {                  
-		super(id, matricule, password, firstName, lastName, stringValidator, numericValidator, stringFormatter);
-	}
-
-	public PurchasingAgent(
-		String matricule, 
-		String password, 
-		String firstName, 
-		String lastName, 
-		StringValidator stringValidator, 
-		NumericValidator numericValidator,
-		StringFormatter stringFormatter
-	) {
-		super(0, matricule, password, firstName, lastName, stringValidator, numericValidator, stringFormatter);
+		super(
+			id,
+			matricule, 
+			password,
+			firstName,
+			lastName, 
+			stringValidator,
+			numericValidator,
+			objectValidator, 
+			stringFormatter
+		);
 	}
 	
 	// Override methods

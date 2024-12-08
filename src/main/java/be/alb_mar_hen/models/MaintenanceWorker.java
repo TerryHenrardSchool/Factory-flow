@@ -1,6 +1,7 @@
 package be.alb_mar_hen.models;
 
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 
 import be.alb_mar_hen.formatters.StringFormatter;
@@ -18,7 +19,7 @@ public class MaintenanceWorker extends Employee{
 	
 	// Constructors
 	public MaintenanceWorker(
-		int id, 
+		Optional<Integer> id, 
 		String matricule, 
 		String password,
 		String firstName,
@@ -28,21 +29,9 @@ public class MaintenanceWorker extends Employee{
 		StringFormatter stringFormatter,
 		ObjectValidator objectValidator
 	) {
-		super(id, matricule, password, firstName, lastName, stringValidator, numericValidator, stringFormatter);
+		super(id, matricule, password, firstName, lastName, stringValidator, numericValidator, objectValidator, stringFormatter);
 		this.objectValidator = objectValidator;
 		maintenances = new HashSet<>();
-	}
-
-	public MaintenanceWorker(
-		String matricule, 
-		String password, 
-		String firstName,
-		String lastName,
-		StringValidator stringValidator, 
-		NumericValidator numericValidator,
-		StringFormatter stringFormatter
-	) {
-		super(matricule, password, firstName, lastName, stringValidator, numericValidator, stringFormatter);
 	}
 	
 	// Getters
