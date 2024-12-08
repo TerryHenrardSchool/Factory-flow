@@ -2,6 +2,7 @@ package be.alb_mar_hen.models;
 
 import java.util.HashSet;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 
 import be.alb_mar_hen.enumerations.MachineStatus;
@@ -10,13 +11,14 @@ import be.alb_mar_hen.validators.ObjectValidator;
 import be.alb_mar_hen.validators.StringValidator;
 
 public class Machine {
+	
 	// Validators
 	NumericValidator numericValidator;
 	ObjectValidator objectValidator;
 	StringValidator stringValidator;
 	
 	// Attributes
-	private int id;
+	private Optional<Integer> id;
 	private MachineStatus status;
 	private String name;
 	
@@ -27,12 +29,12 @@ public class Machine {
 	
 	// Constructors
 	public Machine(
-		int id, 
+		Optional<Integer> id, 
 		String type,
 		MachineStatus status, 
 		String name, 
 		Zone zone,
-		int machineTypeId,
+		Optional<Integer> machineTypeId,
 		String machineTypeName,
 		double machineTypePrice,
 		int machineTypeDaysBeforeMaintenance,
@@ -40,12 +42,12 @@ public class Machine {
 		ObjectValidator objectValidator,
 		StringValidator stringValidator
 	) {
-		maintenances = new HashSet<>();
-		zones = new HashSet<>();
-		addZone(zone);
 		this.numericValidator = numericValidator;
 		this.objectValidator = objectValidator;
 		this.stringValidator = stringValidator;
+		maintenances = new HashSet<>();
+		zones = new HashSet<>();
+		addZone(zone);
 		setId(id);
 		setStatus(status);
 		setName(name);
@@ -55,41 +57,13 @@ public class Machine {
 			machineTypePrice,
 			machineTypeDaysBeforeMaintenance, 
 			numericValidator, 
-			stringValidator
-		);
-	}
-	
-	public Machine( 
-		String type,
-		MachineStatus status, 
-		String name, 
-		Zone zone,
-		int machineTypeId,
-		String machineTypeName,
-		double machineTypePrice,
-		int machineTypeDaysBeforeMaintenance,
-		NumericValidator numericValidator, 
-		ObjectValidator objectValidator,
-		StringValidator stringValidator
-	) {
-		this(
-			0, 
-			type, 
-			status, 
-			name, 
-			zone, 
-			machineTypeId, 
-			machineTypeName, 
-			machineTypePrice, 
-			machineTypeDaysBeforeMaintenance, 
-			numericValidator, 
-			objectValidator, 
-			stringValidator
+			stringValidator, 
+			objectValidator
 		);
 	}
 
 	// Getters
-	public int getId() {
+	public Optional<Integer> getId() {
 		return id;
 	}
 
@@ -114,12 +88,16 @@ public class Machine {
 	}
 
 	// Setters
-	public void setId(int id) {
-		if(!numericValidator.isPositiveOrEqualToZero(id)) {
-			throw new IllegalArgumentException("Id must be greater or equal than zero.");
+	public void setId(Optional<Integer> id) {
+		if (!objectValidator.hasValue(id)) {
+			throw new NullPointerException("Id must have a value.");
 		}
 		
-		this.id = id;
+	    if (!numericValidator.isPositiveOrEqualToZero(id)) {
+	        throw new IllegalArgumentException("Id must be greater than or equal to 0");
+	    }
+	    
+	    this.id = id;
 	}
 
 	public void setStatus(MachineStatus status) {
@@ -165,16 +143,27 @@ public class Machine {
 		return added;
 	}
 
+	// Override methods
 	@Override
 	public String toString() {
-		return "Machine [numericValidator=" + numericValidator + ", objectValidator=" + objectValidator
-				+ ", stringValidator=" + stringValidator + ", id=" + id + ", status=" + status + ", name=" + name
-				+ ", maintenances=" + maintenances + ", zones=" + zones + ", machineType=" + machineType + "]";
+		return "Machine [id=" + id.orElse(null)+ 
+			", status=" + status + 
+			", name=" + name + 
+			", maintenances=" + maintenances + 
+			", zones=" + zones + 
+			", machineType=" + machineType + "]";
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(id, machineType, maintenances, name, numericValidator, objectValidator, status, stringValidator, zones);
+		return Objects.hash(
+			id.orElse(0),
+			machineType,
+			maintenances, 
+			name,
+			status,
+			zones
+		);
 	}
 
 	@Override
@@ -182,21 +171,20 @@ public class Machine {
 		if (this == obj) {
 			return true;
 		}
-		if (obj == null) {
-			return false;
-		}
-		if (getClass() != obj.getClass()) {
+		
+		if (
+			!objectValidator.hasValue(obj) || 
+			getClass() != obj.getClass()
+		) {
 			return false;
 		}
 		
 		Machine other = (Machine) obj;
-		return id == other.id && Objects.equals(machineType, other.machineType)
+		return Objects.equals(id.orElse(0), other.id.orElse(0))
+			&& Objects.equals(machineType, other.machineType)
 			&& Objects.equals(maintenances, other.maintenances) 
 			&& Objects.equals(name, other.name)
-			&& Objects.equals(numericValidator, other.numericValidator)
-			&& Objects.equals(objectValidator, other.objectValidator) 
 			&& status == other.status
-			&& Objects.equals(stringValidator, other.stringValidator) 
 			&& Objects.equals(zones, other.zones);
 	}
 		

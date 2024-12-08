@@ -117,8 +117,11 @@ public class Order {
 	// Override methods
 	@Override
 	public String toString() {
-		return "Order [id=" + id.orElse(null) + ", orderDateTime=" + orderDateTime + ", supplier=" + supplier
-				+ ", purchasingAgent=" + purchasingAgent + ", machine=" + machine + "]";
+		return "Order [id=" + id.orElse(null) + 
+			", orderDateTime=" + orderDateTime + 
+			", supplier=" + supplier + 
+			", purchasingAgent=" + purchasingAgent + 
+			", machine=" + machine + "]";
 	}
 
 	@Override

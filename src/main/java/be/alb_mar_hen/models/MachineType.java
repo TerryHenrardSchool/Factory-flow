@@ -1,46 +1,46 @@
 package be.alb_mar_hen.models;
 
 import java.util.Objects;
+import java.util.Optional;
 
 import be.alb_mar_hen.validators.NumericValidator;
+import be.alb_mar_hen.validators.ObjectValidator;
 import be.alb_mar_hen.validators.StringValidator;
 
 public class MachineType {
+	
+	// Validators
 	private NumericValidator numericValidator;
 	private StringValidator stringValidator;
+	private ObjectValidator objectValidator;
 	
-	private int id;
+	// Attributes
+	private Optional<Integer> id;
 	private String typeName;
 	private double price;
 	private int daysBeforeMaintenance;
 
+	// Constructors
 	public MachineType(
-		int id, 
+		Optional<Integer> id, 
 		String type, 
 		double price, 
 		int daysBeforeMaintenance, 
 		NumericValidator numericValidator, 
-		StringValidator stringValidator
+		StringValidator stringValidator,
+		ObjectValidator objectValidator
 	) {
 		this.numericValidator = numericValidator;
 		this.stringValidator = stringValidator;
+		this.objectValidator = objectValidator;
 		setId(id);
 		setTypeName(type);
 		setPrice(price);
 		setDaysBeforeMaintenance(daysBeforeMaintenance);
 	}
 
-	public MachineType(
-		String type, 
-		double price, 
-		int daysBeforeMaintenance, 
-		NumericValidator numericValidator, 
-		StringValidator stringValidator
-	) {
-		this(0, type, price, daysBeforeMaintenance, numericValidator, stringValidator);
-	}
-
-	public int getId() {
+	// Getters
+	public Optional<Integer> getId() {
 		return id;
 	}
 
@@ -56,12 +56,17 @@ public class MachineType {
 		return daysBeforeMaintenance;
 	}
 	
-	void setId(int id) {
-		if (!numericValidator.isPositiveOrEqualToZero(id)) {
-			throw new IllegalArgumentException("The id must be positive or equal to zero");
+	// Setters
+	public void setId(Optional<Integer> id) {
+		if (!objectValidator.hasValue(id)) {
+			throw new NullPointerException("Id must have a value.");
 		}
 		
-		this.id = id;
+	    if (!numericValidator.isPositiveOrEqualToZero(id)) {
+	        throw new IllegalArgumentException("Id must be greater than or equal to 0");
+	    }
+	    
+	    this.id = id;
 	}
 	
 	void setTypeName(String typeName) {
@@ -88,30 +93,37 @@ public class MachineType {
 		this.daysBeforeMaintenance = daysBeforeMaintenance;
 	}
 
+	// Override methods
 	@Override
 	public String toString() {
-		return "MachineType [numericValidator=" + numericValidator + ", stringValidator=" + stringValidator + ", id="
-				+ id + ", typeName=" + typeName + ", price=" + price + ", daysBeforeMaintenance="
-				+ daysBeforeMaintenance + "]";
+		return "MachineType [id=" + id.orElse(null) + 
+			", typeName=" + typeName + 
+			", price=" + price + 
+			", daysBeforeMaintenance=" + daysBeforeMaintenance + "]";
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(daysBeforeMaintenance, id, numericValidator, price, stringValidator, typeName);
+		return Objects.hash(daysBeforeMaintenance, id.orElse(0), numericValidator, price, stringValidator, typeName);
 	}
 
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
+		if (this == obj) {
+			return true;			
+		}
+		
+		if (
+			!objectValidator.hasValue(obj) || 
+			getClass() != obj.getClass()
+		) {
+			return false;			
+		}
+		
 		MachineType other = (MachineType) obj;
-		return daysBeforeMaintenance == other.daysBeforeMaintenance && id == other.id
-				&& Objects.equals(numericValidator, other.numericValidator)
-				&& Double.doubleToLongBits(price) == Double.doubleToLongBits(other.price)
-				&& Objects.equals(stringValidator, other.stringValidator) && Objects.equals(typeName, other.typeName);
+		return daysBeforeMaintenance == other.daysBeforeMaintenance 
+			&& Objects.equals(id.orElse(0), other.id.orElse(0))
+			&& Double.doubleToLongBits(price) == Double.doubleToLongBits(other.price)
+			&& Objects.equals(typeName, other.typeName);
 	}
 }
