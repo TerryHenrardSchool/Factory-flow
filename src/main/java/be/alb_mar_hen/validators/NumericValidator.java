@@ -15,6 +15,10 @@ public class NumericValidator {
 		return value > 0;
 	}
 	
+	public boolean isPositive(Optional<Integer> value) {
+		return value.isEmpty() || (value.isPresent() && isPositive(value.get()));
+	}
+	
 	public boolean isPositive(double value) {
 		return value > 0;
 	}

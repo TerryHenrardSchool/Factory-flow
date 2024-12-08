@@ -167,7 +167,7 @@ public abstract class Employee {
 	    }
 	    
 	    if (
-    		obj == null || 
+    		!objectValidator.hasValue(obj) || 
     		getClass() != obj.getClass()
 		) {
 	        return false;

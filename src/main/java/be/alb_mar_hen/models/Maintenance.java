@@ -1,8 +1,9 @@
 package be.alb_mar_hen.models;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 
 import be.alb_mar_hen.enumerations.MaintenanceStatus;
@@ -23,10 +24,11 @@ public class Maintenance {
 	private DateValidator dateValidator;
 	
 	// Attributes
-	private int id;
-	private LocalDate date;
-	private int duration;
-	private String report;
+	private Optional<Integer> id;
+	private LocalDateTime startDateTime;
+	private Optional<LocalDateTime> endDateTime;
+	private Optional<Integer> duration;
+	private Optional<String> report;
 	private MaintenanceStatus status;
 	
 	// Relations
@@ -36,10 +38,11 @@ public class Maintenance {
 		
 	// Constructors
 	public Maintenance(
-		int id, 
-		LocalDate date, 
-		int duration, 
-		String report, 
+		Optional<Integer> id, 
+		LocalDateTime startDateTime, 
+		Optional<LocalDateTime> endDateTime,
+		Optional<Integer> duration, 
+		Optional<String> report, 
 		MaintenanceStatus status,
 		Machine machine, 
 		MaintenanceWorker maintenanceWorker,
@@ -54,7 +57,9 @@ public class Maintenance {
 		this.objectValidator = objectValidator;
 		this.dateValidator = dateValidator;
 		maintenanceWorkers = new HashSet<>();
-		setDate(date);
+		setId(id);
+		setStartDateTime(startDateTime);
+		setEndDateTime(endDateTime);
 		setDuration(duration);
 		setReport(report);
 		setStatus(status);
@@ -62,50 +67,25 @@ public class Maintenance {
 		setMaintenanceResponsable(maintenanceResponsable);
 		addMaintenanceWorker(maintenanceWorker);
 	}
-	
-	public Maintenance(
-		LocalDate date, 
-		int duration, 
-		String report, 
-		MaintenanceStatus status,
-		Machine machine, 
-		MaintenanceWorker maintenanceWorker,
-		MaintenanceResponsable maintenanceResponsable,
-		NumericValidator numericValidator,
-		StringValidator stringValidator,
-		ObjectValidator objectValidator,
-		DateValidator dateValidator
-	) {
-		this(
-			0, 
-			date, 
-			duration, 
-			report, 
-			status,
-			machine,
-			maintenanceWorker,
-			maintenanceResponsable,
-			numericValidator, 
-			stringValidator,
-			objectValidator,
-			dateValidator
-		);
-	}
 
 	// Getters
-	public int getId() {
+	public Optional<Integer> getId() {
 		return id;
 	}
 	
-	public LocalDate getDate() {
-		return date;
+	public LocalDateTime getStartDateTime() {
+		return startDateTime;
 	}
 	
-	public int getDuration() {
+	public Optional<LocalDateTime> getEndDateTime() {
+		return endDateTime;
+	}
+	
+	public Optional<Integer> getDuration() {
 		return duration;
 	}
 	
-	public String getReport() {
+	public Optional<String> getReport() {
 		return report;
 	}
 	
@@ -126,27 +106,47 @@ public class Maintenance {
 	}
 	
 	// Setters
-	public void setId(int id) {
-		if(!numericValidator.isPositiveOrEqualToZero(id)) {
+	public void setId(Optional<Integer> id) {
+		if (!objectValidator.hasValue(id)) {
+			throw new NullPointerException("Id must have a value.");
+		}
+		
+		if (!numericValidator.isPositiveOrEqualToZero(id)) {
 			throw new IllegalArgumentException("Id must be greater than 0");
 		}
 		
 		this.id = id;
 	}
 	
-	public void setDate(LocalDate date) {
-		if(!objectValidator.hasValue(date)) {
+	public void setStartDateTime(LocalDateTime startDateTime) {
+		if(!objectValidator.hasValue(startDateTime)) {
 			throw new NullPointerException("Date must have a value.");
 		}
 		
-		if(!dateValidator.isInPast(date)) {
+		if(!dateValidator.isInPast(startDateTime)) {
 			throw new IllegalArgumentException("Date must be in the past.");
 		}
 		
-		this.date = date;
+		this.startDateTime = startDateTime;
 	}
 	
-	public void setDuration(int duration) {
+	public void setEndDateTime(Optional<LocalDateTime> endDateTime) {
+		if(!objectValidator.hasValue(endDateTime)) {
+			throw new NullPointerException("Date must have a value.");
+		}
+		
+		if(!dateValidator.isInPast(endDateTime)) {
+			throw new IllegalArgumentException("Date must be in the past.");
+		}
+		
+		this.endDateTime = endDateTime;
+	}
+	
+	public void setDuration(Optional<Integer> duration) {
+		if (!objectValidator.hasValue(duration)) {
+			throw new NullPointerException("Duration must have a value.");
+		}
+		
 		if(!numericValidator.isPositive(duration)) {
 			throw new IllegalArgumentException("Duration must be positive.");
 		}
@@ -154,7 +154,7 @@ public class Maintenance {
 		this.duration = duration;
 	}
 	
-	public void setReport(String report) {
+	public void setReport(Optional<String> report) {
 		if(!objectValidator.hasValue(report)) {
 			throw new NullPointerException("Report must have a value.");
 		}
@@ -215,12 +215,25 @@ public class Maintenance {
 	//Override methods
 	@Override
 	public String toString() {
-		return "Maintenance [id=" + id + ", date=" + date + ", duration=" + duration + ", reportString=" + report + ", status=" + status + "]";
+		return "Maintenance [id=" + id.orElse(null) 
+			+ ", startDateTime=" 
+			+ startDateTime + ", endDateTime=" 
+			+ endDateTime.orElse(null) + ", duration="
+			+ duration.orElse(0) + ", reportString=" 
+			+ report.orElse(null) + ", status=" 
+			+ status + "]";
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(date, duration, id, report, status);
+		return Objects.hash(
+			startDateTime,
+			endDateTime.orElse(null),
+			duration.orElse(0),
+			id.orElse(0),
+			report.orElse(null), 
+			status
+		);
 	}
 
 	@Override
@@ -229,19 +242,19 @@ public class Maintenance {
 			return true;			
 		}
 		
-		if (obj == null) {
-			return false;			
-		}
-		
-		if (getClass() != obj.getClass()) {
+		if (
+			!objectValidator.hasValue(obj) || 
+			getClass() != obj.getClass()
+		) {
 			return false;			
 		}
 		
 		Maintenance other = (Maintenance) obj;
-		return Objects.equals(date, other.date) 
-			&& duration == other.duration 
-			&& id == other.id
-			&& Objects.equals(report, other.report) 
+		return Objects.equals(startDateTime, other.startDateTime) 
+			&& Objects.equals(endDateTime.orElse(null), other.endDateTime.orElse(null))
+			&& Objects.equals(duration.orElse(0), other.duration.orElse(0))
+			&& Objects.equals(id.orElse(0), other.id.orElse(0))
+			&& Objects.equals(report.orElse(null), other.report.orElse(null))
 			&& Objects.equals(status, other.status);
 	}
 }
