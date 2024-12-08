@@ -144,7 +144,12 @@ public class Machine {
 			throw new NullPointerException("Maintenance must have value.");
 		}
 		
-		return maintenances.add(maintenance);
+		boolean added = maintenances.add(maintenance);
+		if (added) {
+			maintenance.setMachine(this);
+		}
+		
+		return added;
 	}
 	
 	public boolean addZone(Zone zone) {
@@ -152,7 +157,12 @@ public class Machine {
 			throw new NullPointerException("Zone must have a value.");
 		}
 		
-		return zones.add(zone);
+		boolean added = zones.add(zone);
+		if (added) {
+			zone.addMachine(this);
+		}
+		
+		return added;
 	}
 
 	@Override

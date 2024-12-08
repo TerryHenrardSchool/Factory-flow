@@ -27,10 +27,10 @@ public class Maintenance {
 	private int duration;
 	private String report;
 	private MaintenanceStatus status;
-	private Machine machine;
 	
 	// Relations
 	private Set<MaintenanceWorker> maintenanceWorkers;
+	private Machine machine;
 	private MaintenanceResponsable maintenanceResponsable;
 		
 	// Constructors
@@ -75,7 +75,20 @@ public class Maintenance {
 		ObjectValidator objectValidator,
 		DateValidator dateValidator
 	) {
-		this(0, date, duration, report, status,machine, maintenanceWorker, maintenanceResponsable ,numericValidator, stringValidator, objectValidator, dateValidator);
+		this(
+			0, 
+			date, 
+			duration, 
+			report, 
+			status,
+			machine,
+			maintenanceWorker,
+			maintenanceResponsable,
+			numericValidator, 
+			stringValidator,
+			objectValidator,
+			dateValidator
+		);
 	}
 
 	// Getters
@@ -163,6 +176,11 @@ public class Maintenance {
 	public void setMachine(Machine machine) {
 		if(!objectValidator.hasValue(machine)) {
 			throw new NullPointerException("Machine must have a value.");
+		}
+		
+		if (this.machine != machine) {
+			this.machine = machine;
+			machine.addMaintenance(this);
 		}
 		
 		this.machine = machine;

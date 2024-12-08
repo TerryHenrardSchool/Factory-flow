@@ -112,7 +112,12 @@ public class Zone {
 			throw new NullPointerException("Machine must have a value.");
 		}
 		
-		return machines.add(machine);
+		boolean added = machines.add(machine);
+		if (added) {
+			machine.addZone(this);
+		}
+		
+		return added;
 	}
 
 	// Override methods
