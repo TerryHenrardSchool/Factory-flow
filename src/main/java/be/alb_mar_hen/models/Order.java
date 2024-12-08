@@ -2,6 +2,7 @@ package be.alb_mar_hen.models;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
+import java.util.Optional;
 
 import be.alb_mar_hen.validators.DateValidator;
 import be.alb_mar_hen.validators.NumericValidator;
@@ -14,9 +15,8 @@ public class Order {
 	private ObjectValidator objectValidator;
 	
 	// Attributes
-	private int id;
+	private Optional<Integer> id;
 	private LocalDateTime orderDateTime;
-	private double price;
 	
 	// Relations
 	private Supplier supplier;
@@ -25,9 +25,8 @@ public class Order {
 	
 	// Constructors
 	public Order(
-		int id, 
+		Optional<Integer> id, 
 		LocalDateTime orderDate, 
-		double price,
 		Supplier supplier,
 		PurchasingAgent purchasingAgent,
 		Machine machine,
@@ -40,36 +39,18 @@ public class Order {
 		this.objectValidator = objectValidator;
 		setId(id);
 		setOrder(orderDate);
-		setPrice(price);
 		setMachine(machine);
 		setPurchasingAgent(purchasingAgent);
 		setSupplier(supplier);
 	}
 	
-	public Order(
-		LocalDateTime orderDate, 
-		double price,
-		Supplier supplier,
-		PurchasingAgent purchasingAgent,
-		Machine machine,
-		NumericValidator numericValidator,
-		DateValidator dateValidator,
-		ObjectValidator objectValidator
-	) {
-		this(0, orderDate, price, supplier, purchasingAgent, machine ,numericValidator, dateValidator, objectValidator);
-	}
-	
 	// Getters
-	public int getId() {
+	public Optional<Integer> getId() {
 		return id;
 	}
 	
 	public LocalDateTime getOrder() {
 		return orderDateTime;
-	}
-	
-	public double getPrice() {
-		return price;
 	}
 	
 	public Supplier getSupplier() {
@@ -85,12 +66,16 @@ public class Order {
 	}
 	
 	// Setters
-	public void setId(int id) {
-		if(!numericValidator.isPositiveOrEqualToZero(id)) {
-			throw new IllegalArgumentException("Id must be greater or equals than zero.");
+	public void setId(Optional<Integer> id) {
+		if (!objectValidator.hasValue(id)) {
+			throw new NullPointerException("Id must have a value.");
 		}
 		
-		this.id = id;
+	    if (!numericValidator.isPositiveOrEqualToZero(id)) {
+	        throw new IllegalArgumentException("Id must be greater than or equal to 0");
+	    }
+	    
+	    this.id = id;
 	}
 	
 	public void setOrder(LocalDateTime orderDate) {
@@ -103,14 +88,6 @@ public class Order {
 		}
 		
 		this.orderDateTime = orderDate;
-	}
-	
-	public void setPrice(double price) {
-		if(numericValidator.isPositive(price)) {
-			throw new IllegalArgumentException("Price must be positive.");
-		}
-		
-		this.price = price;
 	}
 	
 	public void setMachine(Machine machine) {
@@ -140,13 +117,13 @@ public class Order {
 	// Override methods
 	@Override
 	public String toString() {
-		return "Order [id=" + id + ", orderDateTime=" + orderDateTime + ", price=" + price + ", supplier=" + supplier
+		return "Order [id=" + id.orElse(null) + ", orderDateTime=" + orderDateTime + ", supplier=" + supplier
 				+ ", purchasingAgent=" + purchasingAgent + ", machine=" + machine + "]";
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(id, machine, orderDateTime, price, purchasingAgent, supplier);
+		return Objects.hash(id.orElse(0), machine, orderDateTime, purchasingAgent, supplier);
 	}
 
 	@Override
@@ -155,19 +132,17 @@ public class Order {
 			return true;
 		}
 		
-		if (obj == null) {
-			return false;
-		}
-		
-		if (getClass() != obj.getClass()) {
+		if (
+			!objectValidator.hasValue(obj) || 
+			getClass() != obj.getClass()
+		) {
 			return false;
 		}
 		
 		Order other = (Order) obj;
-		return id == other.id 
+		return Objects.equals(id.orElse(0), other.id.orElse(0))
 			&& Objects.equals(machine, other.machine)
 			&& Objects.equals(orderDateTime, other.orderDateTime)
-			&& Double.doubleToLongBits(price) == Double.doubleToLongBits(other.price)
 			&& Objects.equals(purchasingAgent, other.purchasingAgent) 
 			&& Objects.equals(supplier, other.supplier);
 	}
