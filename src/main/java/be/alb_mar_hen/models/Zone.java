@@ -4,69 +4,84 @@ import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
+import be.alb_mar_hen.enumerations.ZoneColor;
 import be.alb_mar_hen.validators.NumericValidator;
 import be.alb_mar_hen.validators.ObjectValidator;
+import be.alb_mar_hen.validators.StringValidator;
 
 public class Zone {
+	// Validators
 	private NumericValidator numericValidator;
 	private ObjectValidator objectValidator;
+	private StringValidator stringValidator;
 	
+	// Attributes
 	private int id;
-	private String color;
+	private ZoneColor color;
 	private String name;
+	
+	// Relations
 	private Set<Machine> machines;
 	private Site site;
 	
+	// Constructors
 	public Zone(
-			NumericValidator numericValidator, 
-			ObjectValidator objectValidator, 
-			int id, 
-			String color, 
-			String name,
-			Machine machine,
-			Site site
+		int id, 
+		ZoneColor color, 
+		String name,
+		Machine machine,
+		int siteId,
+		String siteName,
+		NumericValidator numericValidator, 
+		ObjectValidator objectValidator,
+		StringValidator stringValidator
 	) {
 		this.numericValidator = numericValidator;
+		this.stringValidator = stringValidator;
 		this.objectValidator = objectValidator;
 		machines = new HashSet<>();
 		addMachine(machine);
 		setId(id);
 		setColor(color);
 		setName(name);
-		setSite(site);
+		this.site = new Site(siteId, siteName, stringValidator, numericValidator);
 	}
 	
 	public Zone(
-			NumericValidator numericValidator, 
-			ObjectValidator objectValidator, 
-			String color, 
-			String name,
-			Machine machine,
-			Site site
+		ZoneColor color, 
+		String name,
+		Machine machine,
+		int siteId,
+		String siteName,
+		NumericValidator numericValidator, 
+		ObjectValidator objectValidator,
+		StringValidator stringValidator
 	) {
-		this(numericValidator, objectValidator, 0, color, name, machine, site);
+		this(0, color, name, machine, siteId, siteName, numericValidator, objectValidator, stringValidator);
 	}
 
+	// Getters
 	public int getId() {
 		return id;
 	}
-
-	public String getColor() {
+	
+	public ZoneColor getColor() {
 		return color;
 	}
-
+	
 	public String getName() {
 		return name;
 	}
-
+	
 	public Set<Machine> getMachines() {
 		return machines;
 	}
-
+	
 	public Site getSite() {
-		return site;
+        return site;
 	}
-
+	
+	// Setters
 	public void setId(int id) {
 		if(!numericValidator.isPositiveOrEqualToZero(id)) {
 			throw new IllegalArgumentException("The id must be greater or equal than 0.");
@@ -75,7 +90,7 @@ public class Zone {
 		this.id = id;
 	}
 
-	public void setColor(String color) {
+	public void setColor(ZoneColor color) {
 		if(!objectValidator.hasValue(color)) {
 			throw new NullPointerException("Color must have a value.");
 		}
@@ -84,32 +99,31 @@ public class Zone {
 	}
 
 	public void setName(String name) {
-		if(!objectValidator.hasValue(name)) {
+		if(!stringValidator.hasValue(name)) {
 			throw new NullPointerException("Name must have a value.");
 		}
 		
 		this.name = name;
 	}
-
-	public void setSite(Site site) {
-		if(!objectValidator.hasValue(site)) {
-			throw new NullPointerException("Site must have a value.");
-		}
-		
-		this.site = site;
-	}
 	
+	// Methods
 	public boolean addMachine(Machine machine) {
 		if(!objectValidator.hasValue(machine)) {
 			throw new NullPointerException("Machine must have a value.");
 		}
 		
-		return machines.add(machine);
+		boolean added = machines.add(machine);
+		if (added) {
+			machine.addZone(this);
+		}
+		
+		return added;
 	}
 
+	// Override methods
 	@Override
 	public String toString() {
-		return "Zone [id=" + id + ", color=" + color + ", name=" + name + "]";
+		return "Zone [id=" + id + ", color=" + color + ", name=" + name + ", machines=" + machines + ", site=" + site + "]";
 	}
 
 	@Override
@@ -119,14 +133,23 @@ public class Zone {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj)
+		if (this == obj) {
 			return true;
-		if (obj == null)
+		}
+		
+		if (obj == null) {
 			return false;
-		if (getClass() != obj.getClass())
+		}
+		
+		if (getClass() != obj.getClass()) {
 			return false;
+		}
+		
 		Zone other = (Zone) obj;
-		return Objects.equals(color, other.color) && id == other.id && Objects.equals(machines, other.machines)
-				&& Objects.equals(name, other.name) && Objects.equals(site, other.site);
+		return color == other.color 
+			&& id == other.id 
+			&& Objects.equals(machines, other.machines)
+			&& Objects.equals(name, other.name) 
+			&& Objects.equals(site, other.site);
 	}
 }

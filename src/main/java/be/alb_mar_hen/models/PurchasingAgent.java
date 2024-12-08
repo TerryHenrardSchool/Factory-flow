@@ -1,22 +1,23 @@
 package be.alb_mar_hen.models;
 
+import be.alb_mar_hen.formatters.StringFormatter;
 import be.alb_mar_hen.validators.NumericValidator;
-import be.alb_mar_hen.validators.ObjectValidator;
 import be.alb_mar_hen.validators.StringValidator;
 
-public class PurchasingAgent extends Person{
-
+public class PurchasingAgent extends Employee{
+	
+	// Constructors
 	public PurchasingAgent(
 		int id, 
 		String matricule, 
 		String password, 
 		String firstName, 
 		String lastName,
-		ObjectValidator ObjectValidator, 
 		StringValidator stringValidator, 
-		NumericValidator numericValidator
+		NumericValidator numericValidator,
+		StringFormatter stringFormatter
 	) {                  
-		super(id, matricule, password, firstName, lastName, ObjectValidator, stringValidator, numericValidator);
+		super(id, matricule, password, firstName, lastName, stringValidator, numericValidator, stringFormatter);
 	}
 
 	public PurchasingAgent(
@@ -24,10 +25,30 @@ public class PurchasingAgent extends Person{
 		String password, 
 		String firstName, 
 		String lastName, 
-		ObjectValidator objectValidator, 
 		StringValidator stringValidator, 
-		NumericValidator numericValidator
+		NumericValidator numericValidator,
+		StringFormatter stringFormatter
 	) {
-		super(matricule, password, firstName, lastName, objectValidator, stringValidator, numericValidator);
+		super(0, matricule, password, firstName, lastName, stringValidator, numericValidator, stringFormatter);
+	}
+	
+	// Override methods
+	@Override
+	public String toString() {
+		return super.toString();
+	}
+	
+	@Override
+    public boolean equals(Object object) {
+    	if(!(object instanceof Employee)) {
+    		return false;
+    	}
+
+    	return super.equals((Employee) object);
+    }
+	
+	@Override
+	public int hashCode() {
+		return super.hashCode();
 	}
 }

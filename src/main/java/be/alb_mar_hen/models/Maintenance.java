@@ -12,22 +12,29 @@ import be.alb_mar_hen.validators.ObjectValidator;
 import be.alb_mar_hen.validators.StringValidator;
 
 public class Maintenance {
+	
+	// Constants
 	private final static int MIN_LENGTH_REPORT = 150;
 	
+	// Validators
 	private NumericValidator numericValidator;
 	private StringValidator stringValidator;
 	private ObjectValidator objectValidator;
 	private DateValidator dateValidator;
 	
+	// Attributes
 	private int id;
 	private LocalDate date;
 	private int duration;
 	private String report;
 	private MaintenanceStatus status;
-	private Machine machine;
+	
+	// Relations
 	private Set<MaintenanceWorker> maintenanceWorkers;
+	private Machine machine;
 	private MaintenanceResponsable maintenanceResponsable;
 		
+	// Constructors
 	public Maintenance(
 		int id, 
 		LocalDate date, 
@@ -42,6 +49,10 @@ public class Maintenance {
 		ObjectValidator objectValidator,
 		DateValidator dateValidator
 	) {
+		this.numericValidator = numericValidator;
+		this.stringValidator = stringValidator;
+		this.objectValidator = objectValidator;
+		this.dateValidator = dateValidator;
 		maintenanceWorkers = new HashSet<>();
 		setDate(date);
 		setDuration(duration);
@@ -50,10 +61,6 @@ public class Maintenance {
 		setMachine(machine);
 		setMaintenanceResponsable(maintenanceResponsable);
 		addMaintenanceWorker(maintenanceWorker);
-		this.numericValidator = numericValidator;
-		this.stringValidator = stringValidator;
-		this.objectValidator = objectValidator;
-		this.dateValidator = dateValidator;
 	}
 	
 	public Maintenance(
@@ -69,9 +76,23 @@ public class Maintenance {
 		ObjectValidator objectValidator,
 		DateValidator dateValidator
 	) {
-		this(0, date, duration, report, status,machine, maintenanceWorker, maintenanceResponsable ,numericValidator, stringValidator, objectValidator, dateValidator);
+		this(
+			0, 
+			date, 
+			duration, 
+			report, 
+			status,
+			machine,
+			maintenanceWorker,
+			maintenanceResponsable,
+			numericValidator, 
+			stringValidator,
+			objectValidator,
+			dateValidator
+		);
 	}
 
+	// Getters
 	public int getId() {
 		return id;
 	}
@@ -104,6 +125,7 @@ public class Maintenance {
 		return maintenanceWorkers;
 	}
 	
+	// Setters
 	public void setId(int id) {
 		if(!numericValidator.isPositiveOrEqualToZero(id)) {
 			throw new IllegalArgumentException("Id must be greater than 0");
@@ -157,30 +179,43 @@ public class Maintenance {
 			throw new NullPointerException("Machine must have a value.");
 		}
 		
+		if (this.machine != machine) {
+			this.machine = machine;
+			machine.addMaintenance(this);
+		}
+		
 		this.machine = machine;
 	}
 	
 	public void setMaintenanceResponsable(MaintenanceResponsable responsable) {
-		if(!objectValidator.hasValue(responsable)) {
-			throw new NullPointerException("Responsable must have a value.");
-		}
-		
-		this.maintenanceResponsable = responsable;
+	    if (!objectValidator.hasValue(responsable)) {
+	        throw new NullPointerException("Responsable must have a value.");
+	    }
+
+	    if (this.maintenanceResponsable != responsable) {
+	        this.maintenanceResponsable = responsable;
+	        responsable.addMaintenance(this);
+	    }
 	}
 	
+	// Methods
 	public boolean addMaintenanceWorker(MaintenanceWorker worker) {
-		if(!objectValidator.hasValue(worker)) {
-			throw new NullPointerException("Worker must have a value");
-		}
-		
-		return maintenanceWorkers.add(worker);
+	    if (!objectValidator.hasValue(worker)) {
+	        throw new NullPointerException("Worker must have a value.");
+	    }
+
+	    boolean added = maintenanceWorkers.add(worker);
+	    if (added) {
+	        worker.addMaintenance(this);
+	    }
+
+	    return added;
 	}
 	
 	//Override methods
 	@Override
 	public String toString() {
-		return "Maintenance [id=" + id + ", date=" + date + ", duration=" + duration + ", reportString=" + report
-				+ ", status=" + status + "]";
+		return "Maintenance [id=" + id + ", date=" + date + ", duration=" + duration + ", reportString=" + report + ", status=" + status + "]";
 	}
 
 	@Override
@@ -190,14 +225,23 @@ public class Maintenance {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
+		if (this == obj) {
+			return true;			
+		}
+		
+		if (obj == null) {
+			return false;			
+		}
+		
+		if (getClass() != obj.getClass()) {
+			return false;			
+		}
+		
 		Maintenance other = (Maintenance) obj;
-		return Objects.equals(date, other.date) && duration == other.duration && id == other.id
-				&& Objects.equals(report, other.report) && Objects.equals(status, other.status);
+		return Objects.equals(date, other.date) 
+			&& duration == other.duration 
+			&& id == other.id
+			&& Objects.equals(report, other.report) 
+			&& Objects.equals(status, other.status);
 	}
 }
