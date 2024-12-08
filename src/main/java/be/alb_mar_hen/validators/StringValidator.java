@@ -10,4 +10,8 @@ public class StringValidator {
 	public boolean isLongerOrEqualsThan(String string, int min) {
 		return string.length() >= min; 
 	}
+	
+	public boolean isNullOrEmpty(String string) {
+		return string == null || string.isEmpty();
+	}
 }
