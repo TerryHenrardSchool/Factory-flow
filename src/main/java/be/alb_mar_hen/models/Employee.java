@@ -1,9 +1,11 @@
 package be.alb_mar_hen.models;
 
 import java.util.Objects;
+import java.util.Optional;
 
 import be.alb_mar_hen.formatters.StringFormatter;
 import be.alb_mar_hen.validators.NumericValidator;
+import be.alb_mar_hen.validators.ObjectValidator;
 import be.alb_mar_hen.validators.StringValidator;
 
 public abstract class Employee {
@@ -15,12 +17,13 @@ public abstract class Employee {
 	// Validators
 	private StringValidator stringValidator; 
 	private NumericValidator numericValidator;
+	private ObjectValidator objectValidator;
 	
 	// Formatters
 	private StringFormatter stringFormatter;
 	
 	// Attributes
-	private int id;
+	private Optional<Integer> id;
 	private String matricule;
 	private String password;
 	private String firstName;
@@ -28,17 +31,19 @@ public abstract class Employee {
 	
 	// Constructors
 	public Employee(
-		int id, 
+		Optional<Integer> id, 
 		String matricule, 
 		String password, 
 		String firstName, 
 		String lastName, 
 		StringValidator stringValidator, 
 		NumericValidator numericValidator,
+		ObjectValidator objectValidator,
 		StringFormatter stringFormatter
 	) {
 		this.stringValidator = stringValidator;
 		this.numericValidator = numericValidator;
+		this.objectValidator = objectValidator;
 		this.stringFormatter = stringFormatter;
 		setId(id);
 		setMatricule(matricule);
@@ -47,29 +52,8 @@ public abstract class Employee {
 		setLastName(lastName);
 	}
 	
-	public Employee(
-		String matricule, 
-		String password, 
-		String firstName, 
-		String lastName, 
-		StringValidator stringValidator, 
-		NumericValidator numericValidator,
-		StringFormatter stringFormatter
-	) {
-		this(
-			0, 
-			matricule,
-			password,
-			firstName,
-			lastName,
-			stringValidator,
-			numericValidator,
-			stringFormatter
-		);
-	}
-	
 	// Getters
-	public int getId() {
+	public Optional<Integer> getId() {
 		return id;
 	}
 	
@@ -90,13 +74,18 @@ public abstract class Employee {
 	}
 	
 	// Setters
-	public void setId(int id){
-		if(!numericValidator.isPositiveOrEqualToZero(id)) {
-			throw new IllegalArgumentException("Id must be greater than 0");
+	public void setId(Optional<Integer> id) {
+		if (!objectValidator.hasValue(id)) {
+			throw new NullPointerException("Id must have a value.");
 		}
 		
-		this.id = id;
+	    if (!numericValidator.isPositiveOrEqualToZero(id)) {
+	        throw new IllegalArgumentException("Id must be greater than or equal to 0");
+	    }
+	    
+	    this.id = id;
 	}
+
 	
 	public void setMatricule(String matricule) {
 		if(!stringValidator.hasValue(matricule)) {			
