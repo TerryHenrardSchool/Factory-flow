@@ -1,31 +1,40 @@
 package be.alb_mar_hen.models;
 
 import java.util.Objects;
+import java.util.Optional;
 
 import be.alb_mar_hen.validators.NumericValidator;
 import be.alb_mar_hen.validators.ObjectValidator;
 import be.alb_mar_hen.validators.StringValidator;
 
 public class Site {
+	
+	// Validators
 	StringValidator stringValidator;
 	NumericValidator numericValidator;
+	ObjectValidator objectValidator;
 	
-	private int id;
+	// Attributes
+	private Optional<Integer> id;
 	private String city;
 	
+	// Constructors
 	public Site(
-		int id, 
+		Optional<Integer> id, 
 		String city,
 		StringValidator stringValidator, 
-		NumericValidator numericValidator
+		NumericValidator numericValidator,
+		ObjectValidator objectValidator
 	) {
 		this.stringValidator = stringValidator;
 		this.numericValidator = numericValidator;
+		this.objectValidator = objectValidator;
 		setId(id);
 		setCity(city);
 	}
 	
-	public int getId() {
+	// Getters
+	public Optional<Integer> getId() {
 		return id;
 	}
 	
@@ -33,12 +42,17 @@ public class Site {
 		return city;
 	}
 	
-	public void setId(int id) {
-		if(!numericValidator.isPositiveOrEqualToZero(id)) {
-			throw new IllegalArgumentException("Id must be greater or equal than 0.");
+	// Setters
+	public void setId(Optional<Integer> id) {
+		if (!objectValidator.hasValue(id)) {
+			throw new NullPointerException("Id must have a value.");
 		}
 		
-		this.id = id;
+	    if (!numericValidator.isPositiveOrEqualToZero(id)) {
+	        throw new IllegalArgumentException("Id must be greater than or equal to 0");
+	    }
+	    
+	    this.id = id;
 	}
 	
 	public void setCity(String city) {
@@ -49,14 +63,15 @@ public class Site {
 		this.city = city;
 	}
 	
+	// Methods
 	@Override
 	public String toString() {
-		return "Site [id=" + id + ", city=" + city + "]";
+		return "Site [id=" + id.orElse(null) + ", city=" + city + "]";
 	}
 	
 	@Override
 	public int hashCode() {
-		return Objects.hash(city, id);
+		return Objects.hash(city, id.orElse(0));
 	}
 	
 	@Override
@@ -65,16 +80,16 @@ public class Site {
 			return true;			
 		}
 		
-		if (obj == null) {
-			return false;			
-		}
-		
-		if (getClass() != obj.getClass()) {
+		if (
+			!objectValidator.hasValue(obj) || 
+			getClass() != obj.getClass()
+		) {
 			return false;			
 		}
 		
 		Site other = (Site) obj;
-		return Objects.equals(city, other.city) && id == other.id;
+		return Objects.equals(city, other.city) &&
+			Objects.equals(id.orElse(0), other.id.orElse(0));
 	}
 	
 	

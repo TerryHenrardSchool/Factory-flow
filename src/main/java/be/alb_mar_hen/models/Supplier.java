@@ -1,6 +1,7 @@
 package be.alb_mar_hen.models;
 
 import java.util.Objects;
+import java.util.Optional;
 
 import be.alb_mar_hen.validators.NumericValidator;
 import be.alb_mar_hen.validators.ObjectValidator;
@@ -13,7 +14,7 @@ public class Supplier {
 	private ObjectValidator objectValidator;
 	
 	// Attributes
-	private int id;
+	private Optional<Integer> id;
 	private String name;
 	
 	// Relations
@@ -21,7 +22,7 @@ public class Supplier {
 	
 	// Constructors
 	public Supplier(
-		int id, 
+		Optional<Integer> id, 
 		String name,
 		MachineType machineType,
 		NumericValidator numericValidator, 
@@ -35,19 +36,9 @@ public class Supplier {
 		setName(name);
 		setMachineType(machineType);
 	}
-	
-	public Supplier(
-        String name,
-        MachineType machineType,
-        NumericValidator numericValidator, 
-        StringValidator stringValidator, 
-        ObjectValidator objectValidator
-    ) {
-        this(0, name, machineType, numericValidator, stringValidator, objectValidator);
-	}
 
 	// Getters
-	public int getId() {
+	public Optional<Integer> getId() {
 		return id;
 	}
 
@@ -60,12 +51,16 @@ public class Supplier {
 	}
 
 	// Setters
-	public void setId(int id) {
-		if(!numericValidator.isPositiveOrEqualToZero(id)) {
-			throw new IllegalArgumentException("Id must be greater or equal than 0.");
+	public void setId(Optional<Integer> id) {
+		if (!objectValidator.hasValue(id)) {
+			throw new NullPointerException("Id must have a value.");
 		}
 		
-		this.id = id;
+	    if (!numericValidator.isPositiveOrEqualToZero(id)) {
+	        throw new IllegalArgumentException("Id must be greater than or equal to 0");
+	    }
+	    
+	    this.id = id;
 	}
 
 	public void setName(String name) {
@@ -87,12 +82,14 @@ public class Supplier {
 	// Override methods
 	@Override
 	public String toString() {
-		return "Supplier [id=" + id + ", name=" + name + ", machineType=" + machineType + "]";
+		return "Supplier [id=" + id.orElse(null) + 
+			", name=" + name + 
+			", machineType=" + machineType + "]";
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(id, machineType, name);
+		return Objects.hash(id.orElse(0), machineType, name);
 	}
 
 	@Override
@@ -101,15 +98,16 @@ public class Supplier {
 			return true;
 		}
 		
-		if (obj == null) {
-			return false;
-		}
-		
-		if (getClass() != obj.getClass()) {
+		if (
+			!objectValidator.hasValue(obj) || 
+			getClass() != obj.getClass()
+		) {
 			return false;
 		}
 		
 		Supplier other = (Supplier) obj;
-		return id == other.id && Objects.equals(machineType, other.machineType) && Objects.equals(name, other.name);
+		return Objects.equals(id.orElse(0), other.id.orElse(0)) &&
+			Objects.equals(machineType, other.machineType) && 
+			Objects.equals(name, other.name);
 	}
 }

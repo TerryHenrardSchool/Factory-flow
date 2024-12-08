@@ -2,6 +2,7 @@ package be.alb_mar_hen.models;
 
 import java.util.HashSet;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 
 import be.alb_mar_hen.enumerations.ZoneColor;
@@ -10,13 +11,14 @@ import be.alb_mar_hen.validators.ObjectValidator;
 import be.alb_mar_hen.validators.StringValidator;
 
 public class Zone {
+	
 	// Validators
 	private NumericValidator numericValidator;
 	private ObjectValidator objectValidator;
 	private StringValidator stringValidator;
 	
 	// Attributes
-	private int id;
+	private Optional<Integer> id;
 	private ZoneColor color;
 	private String name;
 	
@@ -26,11 +28,11 @@ public class Zone {
 	
 	// Constructors
 	public Zone(
-		int id, 
+		Optional<Integer> id, 
 		ZoneColor color, 
 		String name,
 		Machine machine,
-		int siteId,
+		Optional<Integer> siteId,
 		String siteName,
 		NumericValidator numericValidator, 
 		ObjectValidator objectValidator,
@@ -44,24 +46,11 @@ public class Zone {
 		setId(id);
 		setColor(color);
 		setName(name);
-		this.site = new Site(siteId, siteName, stringValidator, numericValidator);
-	}
-	
-	public Zone(
-		ZoneColor color, 
-		String name,
-		Machine machine,
-		int siteId,
-		String siteName,
-		NumericValidator numericValidator, 
-		ObjectValidator objectValidator,
-		StringValidator stringValidator
-	) {
-		this(0, color, name, machine, siteId, siteName, numericValidator, objectValidator, stringValidator);
+		this.site = new Site(siteId, siteName, stringValidator, numericValidator, objectValidator);
 	}
 
 	// Getters
-	public int getId() {
+	public Optional<Integer> getId() {
 		return id;
 	}
 	
@@ -82,12 +71,16 @@ public class Zone {
 	}
 	
 	// Setters
-	public void setId(int id) {
-		if(!numericValidator.isPositiveOrEqualToZero(id)) {
-			throw new IllegalArgumentException("The id must be greater or equal than 0.");
+	public void setId(Optional<Integer> id) {
+		if (!objectValidator.hasValue(id)) {
+			throw new NullPointerException("Id must have a value.");
 		}
 		
-		this.id = id;
+	    if (!numericValidator.isPositiveOrEqualToZero(id)) {
+	        throw new IllegalArgumentException("Id must be greater than or equal to 0");
+	    }
+	    
+	    this.id = id;
 	}
 
 	public void setColor(ZoneColor color) {
@@ -123,12 +116,22 @@ public class Zone {
 	// Override methods
 	@Override
 	public String toString() {
-		return "Zone [id=" + id + ", color=" + color + ", name=" + name + ", machines=" + machines + ", site=" + site + "]";
+		return "Zone [id=" + id.orElse(null) + 
+			", color=" + color + 
+			", name=" + name + 
+			", machines=" + machines + 
+			", site=" + site + "]";
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(color, id, machines, name, site);
+		return Objects.hash(
+			color, 
+			id.orElse(null),
+			machines,
+			name,
+			site
+		);
 	}
 
 	@Override
@@ -137,17 +140,16 @@ public class Zone {
 			return true;
 		}
 		
-		if (obj == null) {
-			return false;
-		}
-		
-		if (getClass() != obj.getClass()) {
+		if (
+			!objectValidator.hasValue(obj) || 
+			getClass() != obj.getClass()
+		) {
 			return false;
 		}
 		
 		Zone other = (Zone) obj;
 		return color == other.color 
-			&& id == other.id 
+			&& Objects.equals(id.orElse(null), other.id.orElse(null))
 			&& Objects.equals(machines, other.machines)
 			&& Objects.equals(name, other.name) 
 			&& Objects.equals(site, other.site);
