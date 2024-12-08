@@ -69,7 +69,7 @@ public class Supplier {
 	}
 
 	public void setName(String name) {
-		if (!stringValidator.isNullOrEmpty(name)) {
+		if (!stringValidator.hasValue(name)) {
 			throw new NullPointerException("Name must have a value.");
 		}
 		

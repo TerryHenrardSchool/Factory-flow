@@ -11,7 +11,7 @@ public class StringValidator {
 		return string.length() >= min; 
 	}
 	
-	public boolean isNullOrEmpty(String string) {
+	public boolean hasValue(String string) {
 		return string == null || string.isEmpty();
 	}
 }

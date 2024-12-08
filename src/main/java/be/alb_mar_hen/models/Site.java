@@ -42,7 +42,7 @@ public class Site {
 	}
 	
 	public void setCity(String city) {
-		if(!stringValidator.isNullOrEmpty(city)) {
+		if(!stringValidator.hasValue(city)) {
 			throw new NullPointerException("City must have a value.");
 		}
 		

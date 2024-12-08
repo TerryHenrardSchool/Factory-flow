@@ -56,7 +56,16 @@ public abstract class Employee {
 		NumericValidator numericValidator,
 		StringFormatter stringFormatter
 	) {
-		this(0, matricule, password, firstName, lastName, stringValidator, numericValidator, stringFormatter);
+		this(
+			0, 
+			matricule,
+			password,
+			firstName,
+			lastName,
+			stringValidator,
+			numericValidator,
+			stringFormatter
+		);
 	}
 	
 	// Getters
@@ -90,7 +99,7 @@ public abstract class Employee {
 	}
 	
 	public void setMatricule(String matricule) {
-		if(!stringValidator.isNullOrEmpty(matricule)) {			
+		if(!stringValidator.hasValue(matricule)) {			
 			throw new NullPointerException("Matricule must have a value.");
 		}
 		
@@ -98,7 +107,7 @@ public abstract class Employee {
 	}
 	
 	public void setPassword(String password) {
-		if(!stringValidator.isNullOrEmpty(password)) {
+		if(!stringValidator.hasValue(password)) {
 			throw new NullPointerException("The password must have a value.");
 		}
 		
@@ -110,7 +119,7 @@ public abstract class Employee {
 	}
 	
 	public void setFirstName(String firstName) {
-		if(!stringValidator.isNullOrEmpty(firstName)) {
+		if(!stringValidator.hasValue(firstName)) {
 			throw new NullPointerException("The first name must have a value.");
 		}
 		
@@ -122,7 +131,7 @@ public abstract class Employee {
 	}
 	
 	public void setLastName(String lastName) {
-		if(!stringValidator.isNullOrEmpty(lastName)) {
+		if(!stringValidator.hasValue(lastName)) {
 			throw new NullPointerException("The last name must have a value.");
 		}
 		

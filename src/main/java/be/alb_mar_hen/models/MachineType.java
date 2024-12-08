@@ -65,7 +65,7 @@ public class MachineType {
 	}
 	
 	void setTypeName(String typeName) {
-		if (!stringValidator.isNullOrEmpty(typeName)) {
+		if (!stringValidator.hasValue(typeName)) {
 			throw new IllegalArgumentException("The type name must have a value.");
 		}
 		
