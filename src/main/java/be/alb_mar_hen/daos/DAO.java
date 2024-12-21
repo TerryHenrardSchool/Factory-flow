@@ -1,21 +1,35 @@
 package be.alb_mar_hen.daos;
 
+import java.net.URI;
 import java.sql.Connection;
 import java.util.List;
 import java.util.Map;
+import javax.ws.rs.core.UriBuilder;
+import com.sun.jersey.api.client.*;
+import com.sun.jersey.api.client.config.*;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 public abstract class DAO<T> {
-	
-	protected Connection connection = null;
-	
-	public DAO(Connection conn){
-		this.connection = conn;
-	}
-	
-	public abstract boolean create(T obj);
-	public abstract boolean delete(int id);
-	public abstract boolean update(T obj);
-	public abstract T find(int id);
-	public abstract List<T> findAll();
-	public abstract List<T> findAll(Map<String, Object> criteria);
+    protected WebResource resource;
+    protected Connection connection = null;
+
+    public DAO(Connection conn) {
+        this.connection = conn;
+        ClientConfig config = new DefaultClientConfig();
+        Client client = Client.create(config);
+        resource = client.resource(getBaseURI());
+    }
+
+    private static URI getBaseURI() {
+        return UriBuilder.fromUri("http://localhost:8080/Factory-flow-api/api").build();
+    }
+
+    public abstract boolean create(T obj);
+
+    public abstract boolean delete(int id);
+    public abstract boolean update(T obj);
+    public abstract T find(int id);
+    public abstract List<T> findAll();
+    public abstract List<T> findAll(Map<String, Object> criteria);
 }
