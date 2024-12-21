@@ -1,6 +1,8 @@
 package be.alb_mar_hen.servlet;
 
 import java.io.IOException;
+import java.util.Optional;
+
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -11,25 +13,29 @@ import org.json.JSONObject;
 import org.json.JSONException;
 
 import be.alb_mar_hen.models.Employee;
+import be.alb_mar_hen.validators.StringValidator;
+import be.alb_mar_hen.validators.NumericValidator;
+import be.alb_mar_hen.validators.ObjectValidator;
+import be.alb_mar_hen.formatters.StringFormatter;
 
-/**
- * Servlet implementation class AuthenticationServlet
- */
 @WebServlet("/AuthenticationServlet")
 public class AuthenticationServlet extends HttpServlet {
-	private static final long serialVersionUID = 1L;
-       
-    /**
-     * @see HttpServlet#HttpServlet()
-     */
+    private static final long serialVersionUID = 1L;
+
+    private StringValidator stringValidator;
+    private NumericValidator numericValidator;
+    private ObjectValidator objectValidator;
+    private StringFormatter stringFormatter;
+
     public AuthenticationServlet() {
         super();
-        // TODO Auto-generated constructor stub
+        // Initialize validators and formatter
+        this.stringValidator = new StringValidator();
+        this.numericValidator = new NumericValidator();
+        this.objectValidator = new ObjectValidator();
+        this.stringFormatter = new StringFormatter();
     }
 
-	/**
-	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
-	 */
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String matricule = request.getParameter("matricule");
         String password = request.getParameter("password");
@@ -60,21 +66,33 @@ public class AuthenticationServlet extends HttpServlet {
             return;
         }
 
-        // Analyser le JSON pour obtenir les informations de l'employé
+        // Parse the JSON response
         try {
             JSONObject jsonObject = new JSONObject(jsonResponse); 
             String role = jsonObject.getString("role");
             String firstName = jsonObject.getString("firstName");
             String lastName = jsonObject.getString("lastName");
             String matriculeFromApi = jsonObject.getString("matricule");
+            Optional<Integer> id = jsonObject.has("id") ? Optional.of(jsonObject.optInt("id")) : Optional.empty();
 
-            // Créer l'objet Employee concret en fonction du rôle
-            Employee concreteEmployee = employeeService.createEmployeeFromJson(role, firstName, lastName, matriculeFromApi);
+            // Create a concrete Employee object
+            Employee concreteEmployee = Employee.createEmployeeFromJson(
+                role,
+                id,
+                matriculeFromApi,
+                password,
+                firstName,
+                lastName,
+                stringValidator,
+                numericValidator,
+                objectValidator,
+                stringFormatter
+            );
 
-            // Enregistrer l'objet dans la session
+            // Save the object in the session
             request.getSession().setAttribute("employee", concreteEmployee);
             
-            // Rediriger vers la page appropriée en fonction du rôle
+            // Redirect to the appropriate page based on role
             if ("Maintenance Responsable".equals(role)) {
                 response.sendRedirect("maintenanceResponsableHome.jsp");
             } else if ("Maintenance Worker".equals(role)) {
@@ -94,5 +112,4 @@ public class AuthenticationServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         request.getRequestDispatcher("login.jsp").forward(request, response);
     }
-
 }
