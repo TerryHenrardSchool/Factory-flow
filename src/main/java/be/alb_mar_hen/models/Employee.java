@@ -190,4 +190,58 @@ public abstract class Employee {
 
         return dao.sendPostRequest("login", input);
     }
+	
+	public static Employee createEmployeeFromJson(
+	        String role,
+	        Optional<Integer> id,
+	        String matricule,
+	        String password,
+	        String firstName,
+	        String lastName,
+	        StringValidator stringValidator,
+	        NumericValidator numericValidator,
+	        ObjectValidator objectValidator,
+	        StringFormatter stringFormatter
+	    ) {
+	        switch (role) {
+	            case "Maintenance Responsable":
+	                return new MaintenanceResponsable(
+	                    id,
+	                    matricule,
+	                    password,
+	                    firstName,
+	                    lastName,
+	                    objectValidator,
+	                    stringValidator,
+	                    numericValidator,
+	                    stringFormatter
+	                );
+	            case "Maintenance Worker":
+	                return new MaintenanceWorker(
+	                    id,
+	                    matricule,
+	                    password,
+	                    firstName,
+	                    lastName,
+	                    stringValidator,
+	                    numericValidator,
+	                    stringFormatter,
+	                    objectValidator
+	                );
+	            case "Purchasing Agent":
+	                return new PurchasingAgent(
+	                    id,
+	                    matricule,
+	                    password,
+	                    firstName,
+	                    lastName,
+	                    stringValidator,
+	                    numericValidator,
+	                    objectValidator,
+	                    stringFormatter
+	                );
+	            default:
+	                throw new IllegalArgumentException("Unknown role: " + role);
+	        }
+	    }
 }
