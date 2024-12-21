@@ -24,6 +24,18 @@ public abstract class DAO<T> {
     private static URI getBaseURI() {
         return UriBuilder.fromUri("http://localhost:8080/Factory-flow-api/api").build();
     }
+    
+    public String sendPostRequest(String path, String input) {
+        ClientResponse response = resource.path(path)
+                                         .type(MediaType.APPLICATION_JSON)
+                                         .post(ClientResponse.class, input);
+
+        if (response.getStatus() == Response.Status.OK.getStatusCode()) {
+            return response.getEntity(String.class); 
+        } else {
+            return "Error: " + response.getStatus();
+        }
+    }
 
     public abstract boolean create(T obj);
 
