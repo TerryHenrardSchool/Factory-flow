@@ -26,5 +26,16 @@
 	    <artifactId>ojdbc11</artifactId>
 	    <version>23.6.0.24.10</version>
 	</dependency>
+	<dependency> 
+		<groupId>javax.servlet</groupId> 
+		<artifactId>javax.servlet-api</artifactId>
+		<version>4.0.1</version> 
+		<scope>provided</scope> 
+	 </dependency>
+	 <dependency>
+		<groupId>com.sun.jersey</groupId>
+		<artifactId>jersey-client</artifactId>
+		<version>1.19.4</version>
+	</dependency>
   </dependencies>
 </project>
