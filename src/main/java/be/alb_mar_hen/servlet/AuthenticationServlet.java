@@ -18,7 +18,7 @@ import be.alb_mar_hen.validators.NumericValidator;
 import be.alb_mar_hen.validators.ObjectValidator;
 import be.alb_mar_hen.formatters.StringFormatter;
 
-@WebServlet("/AuthenticationServlet")
+@WebServlet("/login")
 public class AuthenticationServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
 
