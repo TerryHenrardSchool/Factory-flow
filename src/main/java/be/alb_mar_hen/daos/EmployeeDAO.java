@@ -9,8 +9,8 @@ import be.alb_mar_hen.models.Employee;
 public class EmployeeDAO extends DAO<Employee> {
 	
 	
-	public EmployeeDAO(Connection conn) {
-		super(conn);
+	public EmployeeDAO() {
+		super();
 	}
 
 	@Override

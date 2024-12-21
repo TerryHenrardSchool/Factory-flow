@@ -20,6 +20,12 @@ public abstract class DAO<T> {
         Client client = Client.create(config);
         resource = client.resource(getBaseURI());
     }
+    
+    public DAO() {
+        ClientConfig config = new DefaultClientConfig();
+        Client client = Client.create(config);
+        resource = client.resource(getBaseURI());
+    }
 
     private static URI getBaseURI() {
         return UriBuilder.fromUri("http://localhost:8080/Factory-flow-api/api").build();

@@ -3,6 +3,8 @@ package be.alb_mar_hen.models;
 import java.util.Objects;
 import java.util.Optional;
 
+import be.alb_mar_hen.daos.DAO;
+import be.alb_mar_hen.daos.EmployeeDAO;
 import be.alb_mar_hen.formatters.StringFormatter;
 import be.alb_mar_hen.validators.NumericValidator;
 import be.alb_mar_hen.validators.ObjectValidator;
@@ -180,4 +182,12 @@ public abstract class Employee {
 	        && Objects.equals(matricule, other.matricule)
 	        && Objects.equals(password, other.password);
 	}
+	
+	public static String authenticateEmployee(String matricule, String password) {
+        EmployeeDAO dao = new EmployeeDAO();
+        
+        String input = "{\"matricule\": \"" + matricule + "\", \"password\": \"" + password + "\"}";
+
+        return dao.sendPostRequest("login", input);
+    }
 }
