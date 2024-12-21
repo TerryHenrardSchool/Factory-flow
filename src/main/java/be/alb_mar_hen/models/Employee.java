@@ -11,8 +11,8 @@ import be.alb_mar_hen.validators.StringValidator;
 public abstract class Employee {
 	
 	// Constants
-	private final static String PASSWORD_REGEX = "^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d]{8,}$";
-	private final static String NAME_REGEX = "/^[\\p{L}'][ \\p{L}'-]*[\\p{L}]$/u";
+	public final static String PASSWORD_REGEX = "^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d]{8,}$";
+	public final static String NAME_REGEX = "/^[\\p{L}'][ \\p{L}'-]*[\\p{L}]$/u";
 	
 	// Validators
 	private StringValidator stringValidator; 

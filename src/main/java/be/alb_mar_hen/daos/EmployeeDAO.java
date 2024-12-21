@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Map;
 
 import be.alb_mar_hen.models.Employee;
-import be.alb_mar_hen.models.Machine;
 
 public class EmployeeDAO extends DAO<Employee> {
 	
