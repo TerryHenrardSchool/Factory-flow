@@ -184,11 +184,10 @@ public abstract class Employee {
 	}
 	
 	public static String authenticateEmployee(String matricule, String password) {
-        EmployeeDAO dao = new EmployeeDAO();
+        EmployeeDAO employeeDAO = new EmployeeDAO();
+        String response = employeeDAO.authenticateEmployee(matricule, password);
         
-        String input = "{\"matricule\": \"" + matricule + "\", \"password\": \"" + password + "\"}";
-
-        return dao.sendPostRequest("login", input);
+        return response;
     }
 	
 	public static Employee createEmployeeFromJson(

@@ -59,6 +59,7 @@ public class AuthenticationServlet extends HttpServlet {
         }
 
         String jsonResponse = Employee.authenticateEmployee(matricule, password);
+        System.out.println("JSON Response: " + jsonResponse);
 
         if (jsonResponse == null || jsonResponse.isEmpty()) {
             request.setAttribute("errorMessage", "Invalid matricule or password.");
@@ -67,45 +68,39 @@ public class AuthenticationServlet extends HttpServlet {
         }
 
         // Parse the JSON response
-        try {
-            JSONObject jsonObject = new JSONObject(jsonResponse); 
-            String role = jsonObject.getString("role");
-            String firstName = jsonObject.getString("firstName");
-            String lastName = jsonObject.getString("lastName");
-            String matriculeFromApi = jsonObject.getString("matricule");
-            Optional<Integer> id = jsonObject.has("id") ? Optional.of(jsonObject.optInt("id")) : Optional.empty();
+        JSONObject jsonObject = new JSONObject(jsonResponse); 
+        String role = jsonObject.getString("role");
+        String firstName = jsonObject.getString("firstName");
+        String lastName = jsonObject.getString("lastName");
+        String matriculeFromApi = jsonObject.getString("matricule");
+        Optional<Integer> id = jsonObject.has("employeeId") ? Optional.of(jsonObject.optInt("employeeId")) : Optional.empty();
 
-            // Create a concrete Employee object
-            Employee concreteEmployee = Employee.createEmployeeFromJson(
-                role,
-                id,
-                matriculeFromApi,
-                password,
-                firstName,
-                lastName,
-                stringValidator,
-                numericValidator,
-                objectValidator,
-                stringFormatter
-            );
+        // Create a concrete Employee object
+        Employee concreteEmployee = Employee.createEmployeeFromJson(
+            role,
+            id,
+            matriculeFromApi,
+            password,
+            firstName,
+            lastName,
+            stringValidator,
+            numericValidator,
+            objectValidator,
+            stringFormatter
+        );
 
-            // Save the object in the session
-            request.getSession().setAttribute("employee", concreteEmployee);
-            
-            // Redirect to the appropriate page based on role
-            if ("Maintenance Responsable".equals(role)) {
-                response.sendRedirect("maintenanceResponsableHome.jsp");
-            } else if ("Maintenance Worker".equals(role)) {
-                response.sendRedirect("maintenanceWorkerHome.jsp");
-            } else if ("Purchasing Agent".equals(role)) {
-                response.sendRedirect("purchasingAgentHome.jsp");
-            } else {
-                response.sendRedirect("defaultHome.jsp");
-            }
-
-        } catch (JSONException e) {
-            request.setAttribute("errorMessage", "Error processing the response from the server.");
-            request.getRequestDispatcher("login.jsp").forward(request, response);
+        // Save the object in the session
+        request.getSession().setAttribute("employee", concreteEmployee);
+        
+        // Redirect to the appropriate page based on role
+        if ("Maintenance Responsable".equals(role)) {
+            response.sendRedirect("maintenanceResponsableHome.jsp");
+        } else if ("Maintenance Worker".equals(role)) {
+            response.sendRedirect("maintenanceWorkerHome.jsp");
+        } else if ("Purchasing Agent".equals(role)) {
+            response.sendRedirect("purchasingAgentHome.jsp");
+        } else {
+            response.sendRedirect("defaultHome.jsp");
         }
     }
 

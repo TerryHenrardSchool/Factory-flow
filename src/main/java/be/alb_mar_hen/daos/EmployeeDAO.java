@@ -51,7 +51,6 @@ public class EmployeeDAO extends DAO<Employee> {
 	
 	public String authenticateEmployee(String matricule, String password) {
         String input = "{\"matricule\": \"" + matricule + "\", \"password\": \"" + password + "\"}";
-        return sendPostRequest("login", input);
+        return sendPostRequest("login/authenticate", input);
     }
-
 }

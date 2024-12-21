@@ -32,10 +32,15 @@ public abstract class DAO<T> {
     }
     
     public String sendPostRequest(String path, String input) {
-        ClientResponse response = resource.path(path)
-                                         .type(MediaType.APPLICATION_JSON)
-                                         .post(ClientResponse.class, input);
+        URI baseURI = getBaseURI();
+        WebResource resource = Client.create().resource(baseURI);
 
+        // Envoie la requête POST avec le corps de la requête
+        ClientResponse response = resource.path(path)
+                                          .type(MediaType.APPLICATION_JSON)
+                                          .post(ClientResponse.class, input);
+
+        // Vérifie le code de statut de la réponse
         if (response.getStatus() == Response.Status.OK.getStatusCode()) {
             return response.getEntity(String.class); 
         } else {
