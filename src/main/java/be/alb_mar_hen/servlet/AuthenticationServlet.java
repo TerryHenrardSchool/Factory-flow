@@ -74,7 +74,7 @@ public class AuthenticationServlet extends HttpServlet {
         String lastName = jsonObject.getString("lastName");
         String matriculeFromApi = jsonObject.getString("matricule");
         Optional<Integer> id = jsonObject.has("employeeId") ? Optional.of(jsonObject.optInt("employeeId")) : Optional.empty();
-
+        
         // Create a concrete Employee object
         Employee concreteEmployee = Employee.createEmployeeFromJson(
             role,

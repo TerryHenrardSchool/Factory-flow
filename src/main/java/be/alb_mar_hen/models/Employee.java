@@ -14,7 +14,8 @@ public abstract class Employee {
 	
 	// Constants
 	public final static String PASSWORD_REGEX = "^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d]{8,}$";
-	public final static String NAME_REGEX = "/^[\\p{L}'][ \\p{L}'-]*[\\p{L}]$/u";
+	public final static String NAME_REGEX = "^[\\p{L}'][ \\p{L}'-]*[\\p{L}]$";
+	
 	
 	// Validators
 	private StringValidator stringValidator; 
