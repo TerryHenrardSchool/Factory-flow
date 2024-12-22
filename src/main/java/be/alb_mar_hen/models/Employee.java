@@ -3,6 +3,8 @@ package be.alb_mar_hen.models;
 import java.util.Objects;
 import java.util.Optional;
 
+import be.alb_mar_hen.daos.DAO;
+import be.alb_mar_hen.daos.EmployeeDAO;
 import be.alb_mar_hen.formatters.StringFormatter;
 import be.alb_mar_hen.validators.NumericValidator;
 import be.alb_mar_hen.validators.ObjectValidator;
@@ -11,8 +13,9 @@ import be.alb_mar_hen.validators.StringValidator;
 public abstract class Employee {
 	
 	// Constants
-	private final static String PASSWORD_REGEX = "^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d]{8,}$";
-	private final static String NAME_REGEX = "/^[\\p{L}'][ \\p{L}'-]*[\\p{L}]$/u";
+	public final static String PASSWORD_REGEX = "^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d]{8,}$";
+	public final static String NAME_REGEX = "^[\\p{L}'][ \\p{L}'-]*[\\p{L}]$";
+	
 	
 	// Validators
 	private StringValidator stringValidator; 
@@ -180,4 +183,65 @@ public abstract class Employee {
 	        && Objects.equals(matricule, other.matricule)
 	        && Objects.equals(password, other.password);
 	}
+	
+	public static String authenticateEmployee(String matricule, String password) {
+        EmployeeDAO employeeDAO = new EmployeeDAO();
+        String response = employeeDAO.authenticateEmployee(matricule, password);
+        
+        return response;
+    }
+	
+	public static Employee createEmployeeFromJson(
+	        String role,
+	        Optional<Integer> id,
+	        String matricule,
+	        String password,
+	        String firstName,
+	        String lastName,
+	        StringValidator stringValidator,
+	        NumericValidator numericValidator,
+	        ObjectValidator objectValidator,
+	        StringFormatter stringFormatter
+	    ) {
+	        switch (role) {
+	            case "Maintenance Responsable":
+	                return new MaintenanceResponsable(
+	                    id,
+	                    matricule,
+	                    password,
+	                    firstName,
+	                    lastName,
+	                    objectValidator,
+	                    stringValidator,
+	                    numericValidator,
+	                    stringFormatter
+	                );
+	            case "Maintenance Worker":
+	                return new MaintenanceWorker(
+	                    id,
+	                    matricule,
+	                    password,
+	                    firstName,
+	                    lastName,
+	                    stringValidator,
+	                    numericValidator,
+	                    stringFormatter,
+	                    objectValidator
+	                );
+	            case "Purchasing Agent":
+	                return new PurchasingAgent(
+	                    id,
+	                    matricule,
+	                    password,
+	                    firstName,
+	                    lastName,
+	                    stringValidator,
+	                    numericValidator,
+	                    objectValidator,
+	                    stringFormatter
+	                );
+	            default:
+	                throw new IllegalArgumentException("Unknown role: " + role);
+	        }
+	    }
 }

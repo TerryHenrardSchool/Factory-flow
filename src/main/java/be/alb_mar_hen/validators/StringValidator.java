@@ -17,6 +17,8 @@ public class StringValidator {
 	}
 	
 	public boolean hasValue(String string) {
-		return string == null || string.isEmpty();
+	    return string != null && !string.isEmpty();
 	}
+
+
 }
