@@ -31,7 +31,7 @@ public class Zone {
 		Optional<Integer> id, 
 		ZoneColor color, 
 		String name,
-		Machine machine,
+		Set<Machine> machines,
 		Optional<Integer> siteId,
 		String siteName,
 		NumericValidator numericValidator, 
@@ -41,8 +41,7 @@ public class Zone {
 		this.numericValidator = numericValidator;
 		this.stringValidator = stringValidator;
 		this.objectValidator = objectValidator;
-		machines = new HashSet<>();
-		addMachine(machine);
+		machines = new HashSet<>(machines);
 		setId(id);
 		setColor(color);
 		setName(name);
