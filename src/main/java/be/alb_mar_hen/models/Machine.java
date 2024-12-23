@@ -1,6 +1,7 @@
 package be.alb_mar_hen.models;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
@@ -61,6 +62,43 @@ public class Machine {
 			objectValidator
 		);
 	}
+	
+	public Machine(
+		    Optional<Integer> id, 
+		    String type,
+		    MachineStatus status, 
+		    String name, 
+		    Zone zone,
+		    Optional<Integer> machineTypeId,
+		    String machineTypeName,
+		    double machineTypePrice,
+		    int machineTypeDaysBeforeMaintenance,
+		    List<Maintenance> maintenances,
+		    List<Zone> zones,
+		    
+		    NumericValidator numericValidator, 
+		    ObjectValidator objectValidator,
+		    StringValidator stringValidator
+		) {
+		    this.numericValidator = numericValidator;
+		    this.objectValidator = objectValidator;
+		    this.stringValidator = stringValidator;
+		    this.maintenances = new HashSet<>(maintenances);  // Initialisation avec les maintenances
+		    this.zones = new HashSet<>(zones);
+		    addZone(zone);
+		    setId(id);
+		    setStatus(status);
+		    setName(name);
+		    this.machineType = new MachineType(
+		        machineTypeId, 
+		        machineTypeName, 
+		        machineTypePrice,
+		        machineTypeDaysBeforeMaintenance, 
+		        numericValidator, 
+		        stringValidator, 
+		        objectValidator
+		    );
+		}
 
 	// Getters
 	public Optional<Integer> getId() {
