@@ -23,7 +23,6 @@ public class Zone {
 	private String name;
 	
 	// Relations
-	private Set<Machine> machines;
 	private Site site;
 	
 	// Constructors
@@ -31,7 +30,6 @@ public class Zone {
 		Optional<Integer> id, 
 		ZoneColor color, 
 		String name,
-		Set<Machine> machines,
 		Optional<Integer> siteId,
 		String siteName,
 		NumericValidator numericValidator, 
@@ -41,7 +39,6 @@ public class Zone {
 		this.numericValidator = numericValidator;
 		this.stringValidator = stringValidator;
 		this.objectValidator = objectValidator;
-		machines = new HashSet<>(machines);
 		setId(id);
 		setColor(color);
 		setName(name);
@@ -59,10 +56,6 @@ public class Zone {
 	
 	public String getName() {
 		return name;
-	}
-	
-	public Set<Machine> getMachines() {
-		return machines;
 	}
 	
 	public Site getSite() {
@@ -98,19 +91,7 @@ public class Zone {
 		this.name = name;
 	}
 	
-	// Methods
-	public boolean addMachine(Machine machine) {
-		if(!objectValidator.hasValue(machine)) {
-			throw new NullPointerException("Machine must have a value.");
-		}
-		
-		boolean added = machines.add(machine);
-		if (added) {
-			machine.addZone(this);
-		}
-		
-		return added;
-	}
+
 
 	// Override methods
 	@Override
@@ -118,7 +99,6 @@ public class Zone {
 		return "Zone [id=" + id.orElse(null) + 
 			", color=" + color + 
 			", name=" + name + 
-			", machines=" + machines + 
 			", site=" + site + "]";
 	}
 
@@ -127,7 +107,6 @@ public class Zone {
 		return Objects.hash(
 			color, 
 			id.orElse(null),
-			machines,
 			name,
 			site
 		);
@@ -149,7 +128,6 @@ public class Zone {
 		Zone other = (Zone) obj;
 		return color == other.color 
 			&& Objects.equals(id.orElse(null), other.id.orElse(null))
-			&& Objects.equals(machines, other.machines)
 			&& Objects.equals(name, other.name) 
 			&& Objects.equals(site, other.site);
 	}
