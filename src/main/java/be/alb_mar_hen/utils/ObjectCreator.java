@@ -1,5 +1,7 @@
 package be.alb_mar_hen.utils;
 
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.Optional;
 import java.util.HashSet;
 import java.util.Set;
@@ -27,54 +29,63 @@ import java.time.LocalDateTime;
 
 public class ObjectCreator {
 
+    private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.S");
+
     public Machine createMachine(JSONObject jsonData) {
-        Zone zone = createZone(jsonData.getJSONObject("zone"));
+        System.out.println("jsonData: " + jsonData);
+        
+        Set<Maintenance> maintenances = new HashSet<>();
+        Site site = createSite(jsonData.optJSONObject("site"));
+        Zone zone = createZone(jsonData.optJSONObject("zone"), site);
+        MachineStatus status = MachineStatus.values()[jsonData.optInt("machineStatus") - 1]; 
+        MachineType machineType = createMachineType(jsonData);
+        Machine machine = new Machine(
+                Optional.of(jsonData.optInt("machineId")),
+                jsonData.optString("machineTypeName"),
+                status,
+                jsonData.optString("machineName"),
+                zone,
+                Optional.of(jsonData.optInt("machineTypeId")),
+                jsonData.optString("machineTypeName"),
+                jsonData.optDouble("machineTypePrice"),
+                jsonData.optInt("machineTypeDaysBeforeMaintenance"),
+                maintenances,
+                new HashSet<>(), // Zones
+                new NumericValidator(),
+                new ObjectValidator(),
+                new StringValidator()
+            );
+        
+        maintenances = createMaintenances(jsonData.optJSONObject("maintenance"), machine, jsonData);
+        machine.setMaintenances(maintenances);
 
-        //Site site = createSite(jsonData.getJSONObject("site"));
-
-        // MachineType machineType = createMachineType(jsonData);
-
-        Set<Maintenance> maintenances = createMaintenances(jsonData.getJSONArray("maintenance"));
-
-        MachineStatus status = MachineStatus.values()[jsonData.getInt("machineStatus") - 1];
-
-        return new Machine(
-            Optional.of(jsonData.getInt("machineId")),
-            jsonData.getString("machineTypeName"),
-            status,
-            jsonData.getString("machineName"),
-            zone,
-            Optional.of(jsonData.getInt("machineTypeId")),
-            jsonData.getString("machineTypeName"),
-            jsonData.getDouble("machineTypePrice"),
-            jsonData.getInt("machineTypeDaysBeforeMaintenance"),
-            maintenances,
-            new HashSet<>(), // Zones
-            new NumericValidator(),
-            new ObjectValidator(),
-            new StringValidator()
-        );
+        return machine;
     }
 
-    private Zone createZone(JSONObject jsonZone) {
-        ZoneColor color = ZoneColor.values()[jsonZone.getInt("zoneColor") - 1]; // Direct mapping
+    private Zone createZone(JSONObject jsonZone, Site site) {
+        if (jsonZone == null) {
+            return null;
+        }
+        ZoneColor color = ZoneColor.values()[jsonZone.optInt("zoneColor") - 1]; // Direct mapping
         return new Zone(
-            Optional.of(jsonZone.getInt("zoneId")),
+            Optional.of(jsonZone.optInt("zoneId")),
             color,
-            jsonZone.getString("zoneName"),
-            Optional.of(jsonZone.getInt("siteId")),
-            jsonZone.getString("siteName"),
+            jsonZone.optString("zoneName"),
+            Optional.of(site.getId().get()),
+            site.getCity(),
             new NumericValidator(),
             new ObjectValidator(),
             new StringValidator()
         );
     }
-
 
     private Site createSite(JSONObject jsonSite) {
+        if (jsonSite == null) {
+            return null;
+        }
         return new Site(
-            Optional.of(jsonSite.getInt("siteId")),
-            jsonSite.getString("siteCity"),
+            Optional.of(jsonSite.optInt("siteId")),
+            jsonSite.optString("siteCity"),
             new StringValidator(),
             new NumericValidator(),
             new ObjectValidator()
@@ -83,47 +94,53 @@ public class ObjectCreator {
 
     private MachineType createMachineType(JSONObject jsonData) {
         return new MachineType(
-            Optional.of(jsonData.getInt("machineTypeId")),
-            jsonData.getString("machineTypeName"),
-            jsonData.getDouble("machineTypePrice"),
-            jsonData.getInt("machineTypeDaysBeforeMaintenance"),
+            Optional.of(jsonData.optInt("machineTypeId")),
+            jsonData.optString("machineTypeName"),
+            jsonData.optDouble("machineTypePrice"),
+            jsonData.optInt("machineTypeDaysBeforeMaintenance"),
             new NumericValidator(),
             new StringValidator(),
             new ObjectValidator()
         );
     }
 
-    private Set<Maintenance> createMaintenances(JSONArray jsonMaintenance) {
+    private Set<Maintenance> createMaintenances(JSONObject jsonMaintenance, Machine machine, JSONObject jsonData) {
         Set<Maintenance> maintenances = new HashSet<>();
-        for (int i = 0; i < jsonMaintenance.length(); i++) {
-            JSONObject jsonM = jsonMaintenance.getJSONObject(i);
-            Maintenance maintenance = new Maintenance(
-                Optional.of(jsonM.getInt("maintenanceId")),
-                LocalDateTime.parse(jsonM.getString("maintenanceStartDate")),
-                Optional.of(LocalDateTime.parse(jsonM.getString("maintenanceEndDate"))),
-                Optional.of(jsonM.getInt("maintenanceDuration")),
-                Optional.of(jsonM.getString("maintenanceReport")),
-                MaintenanceStatus.values()[jsonM.getInt("maintenanceStatus") - 1],
-                null,
-                createMaintenanceWorker(jsonM.getJSONObject("maintenanceWorker")),
-                createMaintenanceResponsable(jsonM.getJSONObject("maintenanceResponsable")),
-                new NumericValidator(),
-                new StringValidator(),
-                new ObjectValidator(),
-                new DateValidator()
-            );
-            maintenances.add(maintenance);
+        if (jsonMaintenance == null) {
+            return maintenances;
         }
+        Maintenance maintenance = new Maintenance(
+            Optional.of(jsonMaintenance.optInt("maintenanceId")),
+            LocalDateTime.parse(jsonMaintenance.optString("maintenanceStartDate"), formatter),
+            Optional.of(LocalDateTime.parse(jsonMaintenance.optString("maintenanceEndDate"), formatter)),
+            Optional.of(jsonMaintenance.optInt("maintenanceDuration")),
+            Optional.of(jsonMaintenance.optString("maintenanceReport")),
+            
+            MaintenanceStatus.values()[jsonMaintenance.optInt("maintenanceStatus") - 1],
+            machine,
+            createMaintenanceWorker(jsonData.optJSONObject("maintenanceWorker")),
+            createMaintenanceResponsable(jsonData.optJSONObject("maintenanceResponsable")),
+            new NumericValidator(),
+            new StringValidator(),
+            new ObjectValidator(),
+            new DateValidator()
+        );
+        maintenances.add(maintenance);
         return maintenances;
     }
 
     private MaintenanceWorker createMaintenanceWorker(JSONObject jsonWorker) {
+        if (jsonWorker == null) {
+        	System.out.println("jsonResponsable is null");
+            return null;
+        }
         return new MaintenanceWorker(
-            Optional.of(jsonWorker.getInt("maintenanceWorkerId")),
-            jsonWorker.getString("maintenanceWorkerMatricule"),
-            jsonWorker.getString("maintenanceWorkerPassword"),
-            jsonWorker.getString("maintenanceWorkerFirstName"),
-            jsonWorker.getString("maintenanceWorkerLastName"),
+            Optional.of(jsonWorker.optInt("maintenanceWorkerId")),
+            jsonWorker.optString("maintenanceWorkerMatricule"),
+            jsonWorker.optString("maintenanceWorkerPassword"),
+            jsonWorker.optString("maintenanceWorkerFirstName"),
+            
+            jsonWorker.optString("maintenanceWorkerLastName"),
             new StringValidator(),
             new NumericValidator(),
             new StringFormatter(),
@@ -132,16 +149,30 @@ public class ObjectCreator {
     }
 
     private MaintenanceResponsable createMaintenanceResponsable(JSONObject jsonResponsable) {
+        if (jsonResponsable == null) {
+        	System.out.println("jsonResponsable is null");
+            return null;
+        }
         return new MaintenanceResponsable(
-            Optional.of(jsonResponsable.getInt("maintenanceResponsableId")),
-            jsonResponsable.getString("maintenanceResponsableMatricule"),
-            jsonResponsable.getString("maintenanceResponsablePassword"),
-            jsonResponsable.getString("maintenanceResponsableFirstName"),
-            jsonResponsable.getString("maintenanceResponsableLastName"),
+            Optional.of(jsonResponsable.optInt("maintenanceResponsableId")),
+            jsonResponsable.optString("maintenanceResponsableMatricule"),
+            jsonResponsable.optString("maintenanceResponsablePassword"),
+            jsonResponsable.optString("maintenanceResponsableFirstName"),
+            jsonResponsable.optString("maintenanceResponsableLastName"),
             new ObjectValidator(),
             new StringValidator(),
             new NumericValidator(),
             new StringFormatter()
         );
+    }
+    
+    private LocalDateTime parseDate(String dateString) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.S");
+        try {
+            return LocalDateTime.parse(dateString, formatter);
+        } catch (DateTimeParseException e) {
+            System.out.println("Erreur lors du parsing de la date : " + e.getMessage());
+            return null; 
+        }
     }
 }

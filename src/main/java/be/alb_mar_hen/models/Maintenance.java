@@ -15,7 +15,7 @@ import be.alb_mar_hen.validators.StringValidator;
 public class Maintenance {
 	
 	// Constants
-	private final static int MIN_LENGTH_REPORT = 150;
+	private final static int MIN_LENGTH_REPORT = 10;
 	
 	// Validators
 	private NumericValidator numericValidator;

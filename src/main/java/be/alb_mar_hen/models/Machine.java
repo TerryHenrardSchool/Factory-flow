@@ -156,6 +156,14 @@ public class Machine {
 		this.name = name;
 	}
 	
+	public void setMaintenances(Set<Maintenance> maintenances) {
+		if (!objectValidator.hasValue(maintenances)) {
+			throw new NullPointerException("Maintenances must have a value.");
+		}
+
+		this.maintenances = maintenances;
+	}
+	
 	// Methods
 	public boolean addMaintenance(Maintenance maintenance) {
 		if(!objectValidator.hasValue(maintenance)) {
