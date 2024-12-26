@@ -82,7 +82,7 @@ public class Machine {
 		    this.numericValidator = numericValidator;
 		    this.objectValidator = objectValidator;
 		    this.stringValidator = stringValidator;
-		    this.maintenances = new HashSet<>(maintenances);  // Initialisation avec les maintenances
+		    this.maintenances = new HashSet<>(maintenances); 
 		    this.zones = new HashSet<>(zones);
 		    addZone(zone);
 		    setId(id);
