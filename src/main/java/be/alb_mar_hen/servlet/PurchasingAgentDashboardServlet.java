@@ -79,7 +79,8 @@ public class PurchasingAgentDashboardServlet extends HttpServlet {
 		        );
 		        machineViewModels.add(machineViewModel);
 		    }
-
+		    System.out.println("Machines: " + machineViewModels);
+		    request.setAttribute("machineViewModels", machineViewModels);
 		    request.getRequestDispatcher("PurchasingAgentDashboard.jsp").forward(request, response);
 		}
 

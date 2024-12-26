@@ -16,7 +16,7 @@
                 <th>Name</th>
                 <th>Type</th>
                 <th>Status</th>
-                <th>Zone Colors</th>
+                <th>Zone Color</th>
                 <th>Site City</th>
                 <th>Action</th>
             </tr>
@@ -24,16 +24,16 @@
         <tbody>
             <c:forEach var="machine" items="${machineViewModels}">
                 <tr>
-                    <td>${machine.id}</td>
-                    <td>${machine.name}</td>
-                    <td>${machine.machineType}</td>
-                    <td>${machine.status}</td>
-                    <td>${machine.zoneColors}</td>
+                    <td>${machine.machineId.orElse(0)}</td> <!-- Utilisation de .orElse(0) pour éviter les NullPointerException -->
+                    <td>${machine.machineName}</td>
+                    <td>${machine.machineTypeName}</td>
+                    <td>${machine.machineStatus}</td>
+                    <td>${machine.zoneColor}</td>
                     <td>${machine.siteCity}</td>
                     <td>
                         <c:if test="${machine.buy}">
                             <form action="buyMachine" method="post">
-                                <input type="hidden" name="machineId" value="${machine.id}" />
+                                <input type="hidden" name="machineId" value="${machine.machineId.orElse(0)}" />
                                 <button type="submit">Buy</button>
                             </form>
                         </c:if>
