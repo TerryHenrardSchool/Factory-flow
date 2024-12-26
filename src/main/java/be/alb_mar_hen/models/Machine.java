@@ -5,6 +5,8 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 
+import be.alb_mar_hen.daos.EmployeeDAO;
+import be.alb_mar_hen.daos.MachineDAO;
 import be.alb_mar_hen.enumerations.MachineStatus;
 import be.alb_mar_hen.validators.NumericValidator;
 import be.alb_mar_hen.validators.ObjectValidator;
@@ -221,5 +223,13 @@ public class Machine {
 			&& status == other.status
 			&& Objects.equals(zones, other.zones);
 	}
+	
+	public static String findAll() {
+        EmployeeDAO employeeDAO = new EmployeeDAO();
+        String response = MachineDAO.findAll();
+        
+        return response;
+    }
+	
 		
 }

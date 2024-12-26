@@ -30,9 +30,9 @@ public class ObjectCreator {
     public Machine createMachine(JSONObject jsonData) {
         Zone zone = createZone(jsonData.getJSONObject("zone"));
 
-        Site site = createSite(jsonData.getJSONObject("site"));
+        //Site site = createSite(jsonData.getJSONObject("site"));
 
-        MachineType machineType = createMachineType(jsonData);
+        // MachineType machineType = createMachineType(jsonData);
 
         Set<Maintenance> maintenances = createMaintenances(jsonData.getJSONArray("maintenance"));
 
