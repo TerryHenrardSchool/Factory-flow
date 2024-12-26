@@ -1,6 +1,7 @@
 package be.alb_mar_hen.models;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
@@ -224,11 +225,11 @@ public class Machine {
 			&& Objects.equals(zones, other.zones);
 	}
 	
-	public static String findAll() {
-        EmployeeDAO employeeDAO = new EmployeeDAO();
-        String response = MachineDAO.findAll();
+	public static List<Machine> findAll() {
+        MachineDAO machineDAO = new MachineDAO();
+        List<Machine> machines = machineDAO.findAll();
         
-        return response;
+        return machines;
     }
 	
 		

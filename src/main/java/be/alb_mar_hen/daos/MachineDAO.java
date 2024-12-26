@@ -13,8 +13,8 @@ import be.alb_mar_hen.utils.ObjectCreator;
 
 public class MachineDAO extends DAO<Machine>{
 
-	public MachineDAO(Connection conn) {
-		super(conn);
+	public MachineDAO() {
+		super();
 	}
 
 	@Override
