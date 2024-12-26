@@ -1,7 +1,9 @@
 package be.alb_mar_hen.ViewModels;
 
+import java.util.Optional;
+
 public class MachinePurchasingAgentDashboardViewModel {
-	private int machineId;
+	private Optional<Integer> machineId;
     private String machineName;
     private String machineTypeName;
     private String machineStatus;
@@ -9,7 +11,7 @@ public class MachinePurchasingAgentDashboardViewModel {
     private String siteCity;
     private boolean buy;
 
-    public MachinePurchasingAgentDashboardViewModel(int machineId, String machineName, String machineTypeName, 
+    public MachinePurchasingAgentDashboardViewModel(Optional<Integer> machineId, String machineName, String machineTypeName, 
                             String machineStatus, String zoneColor, String siteCity, boolean buy) {
         this.machineId = machineId;
         this.machineName = machineName;
@@ -21,11 +23,11 @@ public class MachinePurchasingAgentDashboardViewModel {
     }
 
     // Getters and Setters
-    public int getMachineId() {
+    public Optional<Integer> getMachineId() {
         return machineId;
     }
 
-    public void setMachineId(int machineId) {
+    public void setMachineId(Optional<Integer> machineId) {
         this.machineId = machineId;
     }
 

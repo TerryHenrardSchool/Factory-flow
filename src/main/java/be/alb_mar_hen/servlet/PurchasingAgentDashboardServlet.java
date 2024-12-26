@@ -2,7 +2,9 @@ package be.alb_mar_hen.servlet;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -13,7 +15,9 @@ import javax.servlet.http.HttpServletResponse;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import be.alb_mar_hen.ViewModels.MachinePurchasingAgentDashboardViewModel;
 import be.alb_mar_hen.models.Machine;
+import be.alb_mar_hen.models.Zone;
 import be.alb_mar_hen.utils.ObjectCreator;
 
 /**
@@ -43,42 +47,40 @@ public class PurchasingAgentDashboardServlet extends HttpServlet {
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
 	 @Override
-	    protected void doGet(HttpServletRequest request, HttpServletResponse response) 
-	            throws ServletException, IOException {
-	        // Lire les données JSON depuis la requête
-	        String jsonString = request.getReader().lines().reduce("", (acc, line) -> acc + line);
+	 protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		    // Récupérer la liste des machines via la méthode findAll
+		    List<Machine> machines = Machine.findAll();
+		    
+		    // Créer une liste de ViewModels à partir des machines récupérées
+		    List<MachinePurchasingAgentDashboardViewModel> machineViewModels = new ArrayList<>();
+		    
+		    for (Machine machine : machines) {
+		        // Transformer chaque machine en un MachineViewModel
+		        boolean buy = "TO_BE_REPLACED".equals(machine.getStatus());
 
-	        try {
-	            // Parse le JSON en tableau
-	            JSONArray machinesJsonArray = new JSONArray(jsonString);
+		        // Accumuler les couleurs des zones
+		        Set<String> zoneColors = new HashSet<>();
+		        
+		        for (Zone zone : machine.getZones()) {
+		            zoneColors.add(zone.getColor().toString()); // Assurer que la méthode `getColor` existe et renvoie la couleur
+		        }
 
-	            // Liste pour stocker les objets Machine
-	            List<Machine> machines = new ArrayList<>();
+		        // Combiner les couleurs des zones en une chaîne de caractères pour le ViewModel (ou adapter selon le modèle de ViewModel)
+		        String combinedZoneColors = String.join(", ", zoneColors);
 
-	            // Utilitaire pour créer les objets
-	            ObjectCreator creator = new ObjectCreator();
+		        MachinePurchasingAgentDashboardViewModel machineViewModel = new MachinePurchasingAgentDashboardViewModel(
+		            machine.getId(),
+		            machine.getName(),
+		            machine.getMachineType().toString(),
+		            machine.getStatus().toString(),
+		            combinedZoneColors, // Utiliser la chaîne de couleurs combinées
+		            machine.getZones().iterator().next().getSite().getCity(),  // Assurer que le site contient la ville dans ton modèle
+		            buy
+		        );
+		        machineViewModels.add(machineViewModel);
+		    }
 
-	            // Parcourir le tableau JSON et créer les objets Machine
-	            for (int i = 0; i < machinesJsonArray.length(); i++) {
-	                JSONObject machineJson = machinesJsonArray.getJSONObject(i);
-	                Machine machine = creator.createMachine(machineJson);
-	                machines.add(machine);
-	            }
-
-	            // Log ou traitement des objets créés
-	            for (Machine machine : machines) {
-	                System.out.println(machine);
-	            }
-
-	            // Réponse au client
-	            response.setStatus(HttpServletResponse.SC_OK);
-	            response.getWriter().write("Machines created successfully.");
-
-	        } catch (Exception e) {
-	            e.printStackTrace();
-	            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-	            response.getWriter().write("Error processing machines JSON.");
-	        }
-	 }
+		    request.getRequestDispatcher("PurchasingAgentDashboard.jsp").forward(request, response);
+		}
 
 }
