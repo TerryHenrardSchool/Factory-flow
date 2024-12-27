@@ -71,7 +71,7 @@ public class PurchasingAgentDashboardServlet extends HttpServlet {
 		        MachinePurchasingAgentDashboardViewModel machineViewModel = new MachinePurchasingAgentDashboardViewModel(
 		            machine.getId(),
 		            machine.getName(),
-		            machine.getMachineType().toString(),
+		            machine.getMachineType().getType(),
 		            machine.getStatus().toString(),
 		            combinedZoneColors, // Utiliser la chaîne de couleurs combinées
 		            machine.getZones().iterator().next().getSite().getCity(),  // Assurer que le site contient la ville dans ton modèle
