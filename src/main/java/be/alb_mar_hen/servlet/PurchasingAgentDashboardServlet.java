@@ -17,6 +17,7 @@ import org.json.JSONObject;
 
 import be.alb_mar_hen.ViewModels.MachinePurchasingAgentDashboardViewModel;
 import be.alb_mar_hen.models.Machine;
+import be.alb_mar_hen.models.PurchasingAgent;
 import be.alb_mar_hen.models.Zone;
 import be.alb_mar_hen.utils.ObjectCreator;
 
@@ -48,24 +49,27 @@ public class PurchasingAgentDashboardServlet extends HttpServlet {
 	 */
 	 @Override
 	 protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		    // Récupérer la liste des machines via la méthode findAll
+		 
+		    Object employee = request.getSession().getAttribute("employee");
+
+		    if (employee == null || !(employee instanceof PurchasingAgent)) {
+		    	request.setAttribute("errorMessage", "Access denied. Please log in as a Purchasing Agent to access this page.");
+		    	response.sendRedirect("login.jsp");
+		        return;
+		    }
 		    List<Machine> machines = Machine.findAll();
 		    
-		    // Créer une liste de ViewModels à partir des machines récupérées
 		    List<MachinePurchasingAgentDashboardViewModel> machineViewModels = new ArrayList<>();
 		    
 		    for (Machine machine : machines) {
-		        // Transformer chaque machine en un MachineViewModel
 		        boolean buy = "TO_BE_REPLACED".equals(machine.getStatus());
 
-		        // Accumuler les couleurs des zones
 		        Set<String> zoneColors = new HashSet<>();
 		        
 		        for (Zone zone : machine.getZones()) {
-		            zoneColors.add(zone.getColor().toString()); // Assurer que la méthode `getColor` existe et renvoie la couleur
+		            zoneColors.add(zone.getColor().toString()); 
 		        }
 
-		        // Combiner les couleurs des zones en une chaîne de caractères pour le ViewModel (ou adapter selon le modèle de ViewModel)
 		        String combinedZoneColors = String.join(", ", zoneColors);
 
 		        MachinePurchasingAgentDashboardViewModel machineViewModel = new MachinePurchasingAgentDashboardViewModel(
@@ -73,8 +77,8 @@ public class PurchasingAgentDashboardServlet extends HttpServlet {
 		            machine.getName(),
 		            machine.getMachineType().getType(),
 		            machine.getStatus().toString(),
-		            combinedZoneColors, // Utiliser la chaîne de couleurs combinées
-		            machine.getZones().iterator().next().getSite().getCity(),  // Assurer que le site contient la ville dans ton modèle
+		            combinedZoneColors,
+		            machine.getZones().iterator().next().getSite().getCity(),
 		            buy
 		        );
 		        machineViewModels.add(machineViewModel);
