@@ -5,6 +5,8 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import be.alb_mar_hen.enumerations.ZoneColor;
 import be.alb_mar_hen.validators.NumericValidator;
 import be.alb_mar_hen.validators.ObjectValidator;
@@ -13,6 +15,7 @@ import be.alb_mar_hen.validators.StringValidator;
 public class Zone {
 	
 	// Validators
+	@JsonIgnoreProperties({"numericValidator", "objectValidator", "stringValidator"})
 	private NumericValidator numericValidator;
 	private ObjectValidator objectValidator;
 	private StringValidator stringValidator;
@@ -23,7 +26,6 @@ public class Zone {
 	private String name;
 	
 	// Relations
-	private Set<Machine> machines;
 	private Site site;
 	
 	// Constructors
@@ -31,7 +33,6 @@ public class Zone {
 		Optional<Integer> id, 
 		ZoneColor color, 
 		String name,
-		Machine machine,
 		Optional<Integer> siteId,
 		String siteName,
 		NumericValidator numericValidator, 
@@ -41,12 +42,16 @@ public class Zone {
 		this.numericValidator = numericValidator;
 		this.stringValidator = stringValidator;
 		this.objectValidator = objectValidator;
-		machines = new HashSet<>();
-		addMachine(machine);
 		setId(id);
 		setColor(color);
 		setName(name);
 		this.site = new Site(siteId, siteName, stringValidator, numericValidator, objectValidator);
+	}
+	
+	public Zone() {
+		this.numericValidator = new NumericValidator();  
+	    this.objectValidator = new ObjectValidator();  
+	    this.stringValidator = new StringValidator();
 	}
 
 	// Getters
@@ -60,10 +65,6 @@ public class Zone {
 	
 	public String getName() {
 		return name;
-	}
-	
-	public Set<Machine> getMachines() {
-		return machines;
 	}
 	
 	public Site getSite() {
@@ -99,19 +100,7 @@ public class Zone {
 		this.name = name;
 	}
 	
-	// Methods
-	public boolean addMachine(Machine machine) {
-		if(!objectValidator.hasValue(machine)) {
-			throw new NullPointerException("Machine must have a value.");
-		}
-		
-		boolean added = machines.add(machine);
-		if (added) {
-			machine.addZone(this);
-		}
-		
-		return added;
-	}
+
 
 	// Override methods
 	@Override
@@ -119,7 +108,6 @@ public class Zone {
 		return "Zone [id=" + id.orElse(null) + 
 			", color=" + color + 
 			", name=" + name + 
-			", machines=" + machines + 
 			", site=" + site + "]";
 	}
 
@@ -128,7 +116,6 @@ public class Zone {
 		return Objects.hash(
 			color, 
 			id.orElse(null),
-			machines,
 			name,
 			site
 		);
@@ -150,7 +137,6 @@ public class Zone {
 		Zone other = (Zone) obj;
 		return color == other.color 
 			&& Objects.equals(id.orElse(null), other.id.orElse(null))
-			&& Objects.equals(machines, other.machines)
 			&& Objects.equals(name, other.name) 
 			&& Objects.equals(site, other.site);
 	}

@@ -1,17 +1,22 @@
 package be.alb_mar_hen.models;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+import be.alb_mar_hen.daos.EmployeeDAO;
+import be.alb_mar_hen.daos.MachineDAO;
 import be.alb_mar_hen.enumerations.MachineStatus;
 import be.alb_mar_hen.validators.NumericValidator;
 import be.alb_mar_hen.validators.ObjectValidator;
 import be.alb_mar_hen.validators.StringValidator;
 
 public class Machine {
-	
+	@JsonIgnoreProperties({"numericValidator", "objectValidator", "stringValidator"})
 	// Validators
 	NumericValidator numericValidator;
 	ObjectValidator objectValidator;
@@ -61,6 +66,52 @@ public class Machine {
 			objectValidator
 		);
 	}
+	
+	public Machine(
+		    Optional<Integer> id, 
+		    String type,
+		    MachineStatus status, 
+		    String name, 
+		    Zone zone,
+		    Optional<Integer> machineTypeId,
+		    String machineTypeName,
+		    double machineTypePrice,
+		    int machineTypeDaysBeforeMaintenance,
+		    Set<Maintenance> maintenances,
+		    Set<Zone> zones,
+		    
+		    NumericValidator numericValidator, 
+		    ObjectValidator objectValidator,
+		    StringValidator stringValidator
+		) {
+		    this.numericValidator = numericValidator;
+		    this.objectValidator = objectValidator;
+		    this.stringValidator = stringValidator;
+		    this.maintenances = new HashSet<>(maintenances); 
+		    this.zones = new HashSet<>(zones);
+		    addZone(zone);
+		    setId(id);
+		    setStatus(status);
+		    setName(name);
+		    this.machineType = new MachineType(
+		        machineTypeId, 
+		        machineTypeName, 
+		        machineTypePrice,
+		        machineTypeDaysBeforeMaintenance, 
+		        numericValidator, 
+		        stringValidator, 
+		        objectValidator
+		    );
+		}
+	
+	public Machine() {
+	    this.maintenances = new HashSet<>();
+	    this.zones = new HashSet<>();
+	    this.numericValidator = new NumericValidator();  
+        this.objectValidator = new ObjectValidator();  
+        this.stringValidator = new StringValidator(); 
+	}
+
 
 	// Getters
 	public Optional<Integer> getId() {
@@ -116,6 +167,14 @@ public class Machine {
 		this.name = name;
 	}
 	
+	public void setMaintenances(Set<Maintenance> maintenances) {
+		if (!objectValidator.hasValue(maintenances)) {
+			throw new NullPointerException("Maintenances must have a value.");
+		}
+
+		this.maintenances = maintenances;
+	}
+	
 	// Methods
 	public boolean addMaintenance(Maintenance maintenance) {
 		if(!objectValidator.hasValue(maintenance)) {
@@ -136,9 +195,6 @@ public class Machine {
 		}
 		
 		boolean added = zones.add(zone);
-		if (added) {
-			zone.addMachine(this);
-		}
 		
 		return added;
 	}
@@ -187,5 +243,13 @@ public class Machine {
 			&& status == other.status
 			&& Objects.equals(zones, other.zones);
 	}
+	
+	public static List<Machine> findAll() {
+        MachineDAO machineDAO = new MachineDAO();
+        List<Machine> machines = machineDAO.findAll();
+        
+        return machines;
+    }
+	
 		
 }

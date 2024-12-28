@@ -6,18 +6,24 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+
 import be.alb_mar_hen.enumerations.MaintenanceStatus;
 import be.alb_mar_hen.validators.DateValidator;
 import be.alb_mar_hen.validators.NumericValidator;
 import be.alb_mar_hen.validators.ObjectValidator;
 import be.alb_mar_hen.validators.StringValidator;
+import be.alb_mar_hen.utils.CustomDateDeserializer;
+import be.alb_mar_hen.utils.OptionalLocalDateTimeDeserializer;
 
 public class Maintenance {
 	
 	// Constants
-	private final static int MIN_LENGTH_REPORT = 150;
+	private final static int MIN_LENGTH_REPORT = 10;
 	
 	// Validators
+	@JsonIgnoreProperties({"numericValidator", "objectValidator", "stringValidator"})
 	private NumericValidator numericValidator;
 	private StringValidator stringValidator;
 	private ObjectValidator objectValidator;
@@ -25,7 +31,10 @@ public class Maintenance {
 	
 	// Attributes
 	private Optional<Integer> id;
+	
+	@JsonDeserialize(using = CustomDateDeserializer.class)
 	private LocalDateTime startDateTime;
+	@JsonDeserialize(using = OptionalLocalDateTimeDeserializer.class)
 	private Optional<LocalDateTime> endDateTime;
 	private Optional<Integer> duration;
 	private Optional<String> report;
@@ -66,6 +75,14 @@ public class Maintenance {
 		setMachine(machine);
 		setMaintenanceResponsable(maintenanceResponsable);
 		addMaintenanceWorker(maintenanceWorker);
+	}
+	
+	public Maintenance() {
+		this.numericValidator = new NumericValidator();  
+	    this.objectValidator = new ObjectValidator();  
+	    this.stringValidator = new StringValidator();
+	    this.dateValidator = new DateValidator();
+		maintenanceWorkers = new HashSet<>();
 	}
 
 	// Getters
@@ -194,7 +211,6 @@ public class Maintenance {
 
 	    if (this.maintenanceResponsable != responsable) {
 	        this.maintenanceResponsable = responsable;
-	        responsable.addMaintenance(this);
 	    }
 	}
 	
@@ -205,10 +221,7 @@ public class Maintenance {
 	    }
 
 	    boolean added = maintenanceWorkers.add(worker);
-	    if (added) {
-	        worker.addMaintenance(this);
-	    }
-
+	    
 	    return added;
 	}
 	

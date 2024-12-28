@@ -1,15 +1,24 @@
 package be.alb_mar_hen.daos;
 
 import java.sql.Connection;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
+
 import be.alb_mar_hen.models.Machine;
+import be.alb_mar_hen.utils.ObjectCreator;
 
 public class MachineDAO extends DAO<Machine>{
 
-	public MachineDAO(Connection conn) {
-		super(conn);
+	public MachineDAO() {
+		super();
 	}
 
 	@Override
@@ -38,8 +47,22 @@ public class MachineDAO extends DAO<Machine>{
 
 	@Override
 	public List<Machine> findAll() {
-		// TODO Auto-generated method stub
-		return null;
+	    String response = sendGetRequest("/machines/getAll");
+
+	    if (response.startsWith("Error:")) {
+	        System.out.println("Error fetching data: " + response);
+	        return new ArrayList<>();
+	    }
+
+	    try {
+	        ObjectMapper objectMapper = new ObjectMapper();
+	        objectMapper.registerModule(new Jdk8Module());
+	        List<Machine> machines = objectMapper.readValue(response, new TypeReference<List<Machine>>() {});
+	        return machines;
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        return new ArrayList<>();
+	    }
 	}
 
 	@Override
