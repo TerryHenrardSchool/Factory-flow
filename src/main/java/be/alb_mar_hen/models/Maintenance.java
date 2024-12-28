@@ -194,7 +194,6 @@ public class Maintenance {
 
 	    if (this.maintenanceResponsable != responsable) {
 	        this.maintenanceResponsable = responsable;
-	        responsable.addMaintenance(this);
 	    }
 	}
 	
@@ -205,10 +204,7 @@ public class Maintenance {
 	    }
 
 	    boolean added = maintenanceWorkers.add(worker);
-	    if (added) {
-	        worker.addMaintenance(this);
-	    }
-
+	    
 	    return added;
 	}
 	
