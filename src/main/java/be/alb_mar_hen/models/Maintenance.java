@@ -6,6 +6,8 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import be.alb_mar_hen.enumerations.MaintenanceStatus;
 import be.alb_mar_hen.validators.DateValidator;
 import be.alb_mar_hen.validators.NumericValidator;
@@ -18,6 +20,7 @@ public class Maintenance {
 	private final static int MIN_LENGTH_REPORT = 10;
 	
 	// Validators
+	@JsonIgnoreProperties({"numericValidator", "objectValidator", "stringValidator"})
 	private NumericValidator numericValidator;
 	private StringValidator stringValidator;
 	private ObjectValidator objectValidator;
@@ -66,6 +69,13 @@ public class Maintenance {
 		setMachine(machine);
 		setMaintenanceResponsable(maintenanceResponsable);
 		addMaintenanceWorker(maintenanceWorker);
+	}
+	
+	public Maintenance() {
+		this.numericValidator = new NumericValidator();  
+	    this.objectValidator = new ObjectValidator();  
+	    this.stringValidator = new StringValidator();
+		maintenanceWorkers = new HashSet<>();
 	}
 
 	// Getters

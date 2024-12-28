@@ -4,6 +4,8 @@ import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import be.alb_mar_hen.formatters.StringFormatter;
 import be.alb_mar_hen.validators.NumericValidator;
 import be.alb_mar_hen.validators.ObjectValidator;
@@ -12,6 +14,7 @@ import be.alb_mar_hen.validators.StringValidator;
 public class MaintenanceResponsable extends Employee{
 	
 	// Validators
+	@JsonIgnoreProperties({"numericValidator", "objectValidator", "stringValidator"})
 	private ObjectValidator objectValidator;
 		
 	// Constructors
@@ -28,6 +31,10 @@ public class MaintenanceResponsable extends Employee{
 	) {
 		super(id, matricule, password, firstName, lastName, stringValidator, numericValidator, objectValidator, stringFormatter);
 		this.objectValidator = objectValidator;
+	}
+	
+	public MaintenanceResponsable() {
+		super();
 	}
 	
 	// Override methods

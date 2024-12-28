@@ -10,6 +10,7 @@ import org.json.JSONObject;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 
 import be.alb_mar_hen.models.Machine;
 import be.alb_mar_hen.utils.ObjectCreator;
@@ -55,6 +56,7 @@ public class MachineDAO extends DAO<Machine>{
 
 	    try {
 	        ObjectMapper objectMapper = new ObjectMapper();
+	        objectMapper.registerModule(new Jdk8Module());
 	        List<Machine> machines = objectMapper.readValue(response, new TypeReference<List<Machine>>() {});
 	        return machines;
 	    } catch (Exception e) {

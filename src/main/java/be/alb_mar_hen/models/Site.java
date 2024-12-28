@@ -3,6 +3,8 @@ package be.alb_mar_hen.models;
 import java.util.Objects;
 import java.util.Optional;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import be.alb_mar_hen.validators.NumericValidator;
 import be.alb_mar_hen.validators.ObjectValidator;
 import be.alb_mar_hen.validators.StringValidator;
@@ -10,6 +12,7 @@ import be.alb_mar_hen.validators.StringValidator;
 public class Site {
 	
 	// Validators
+	@JsonIgnoreProperties({"numericValidator", "objectValidator", "stringValidator"})
 	StringValidator stringValidator;
 	NumericValidator numericValidator;
 	ObjectValidator objectValidator;
@@ -33,6 +36,12 @@ public class Site {
 		setCity(city);
 	}
 	
+	public Site() {
+		this.numericValidator = new NumericValidator();  
+	    this.objectValidator = new ObjectValidator();  
+	    this.stringValidator = new StringValidator();
+	}
+
 	// Getters
 	public Optional<Integer> getId() {
 		return id;

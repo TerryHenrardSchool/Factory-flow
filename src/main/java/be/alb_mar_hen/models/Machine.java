@@ -6,6 +6,8 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import be.alb_mar_hen.daos.EmployeeDAO;
 import be.alb_mar_hen.daos.MachineDAO;
 import be.alb_mar_hen.enumerations.MachineStatus;
@@ -14,7 +16,7 @@ import be.alb_mar_hen.validators.ObjectValidator;
 import be.alb_mar_hen.validators.StringValidator;
 
 public class Machine {
-	
+	@JsonIgnoreProperties({"numericValidator", "objectValidator", "stringValidator"})
 	// Validators
 	NumericValidator numericValidator;
 	ObjectValidator objectValidator;
@@ -101,6 +103,15 @@ public class Machine {
 		        objectValidator
 		    );
 		}
+	
+	public Machine() {
+	    this.maintenances = new HashSet<>();
+	    this.zones = new HashSet<>();
+	    this.numericValidator = new NumericValidator();  
+        this.objectValidator = new ObjectValidator();  
+        this.stringValidator = new StringValidator(); 
+	}
+
 
 	// Getters
 	public Optional<Integer> getId() {

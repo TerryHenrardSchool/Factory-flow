@@ -5,6 +5,8 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import be.alb_mar_hen.enumerations.ZoneColor;
 import be.alb_mar_hen.validators.NumericValidator;
 import be.alb_mar_hen.validators.ObjectValidator;
@@ -13,6 +15,7 @@ import be.alb_mar_hen.validators.StringValidator;
 public class Zone {
 	
 	// Validators
+	@JsonIgnoreProperties({"numericValidator", "objectValidator", "stringValidator"})
 	private NumericValidator numericValidator;
 	private ObjectValidator objectValidator;
 	private StringValidator stringValidator;
@@ -43,6 +46,12 @@ public class Zone {
 		setColor(color);
 		setName(name);
 		this.site = new Site(siteId, siteName, stringValidator, numericValidator, objectValidator);
+	}
+	
+	public Zone() {
+		this.numericValidator = new NumericValidator();  
+	    this.objectValidator = new ObjectValidator();  
+	    this.stringValidator = new StringValidator();
 	}
 
 	// Getters

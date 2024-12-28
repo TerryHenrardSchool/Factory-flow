@@ -3,6 +3,8 @@ package be.alb_mar_hen.models;
 import java.util.Objects;
 import java.util.Optional;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import be.alb_mar_hen.daos.DAO;
 import be.alb_mar_hen.daos.EmployeeDAO;
 import be.alb_mar_hen.formatters.StringFormatter;
@@ -18,6 +20,7 @@ public abstract class Employee {
 	
 	
 	// Validators
+	@JsonIgnoreProperties({"numericValidator", "objectValidator", "stringValidator"})
 	private StringValidator stringValidator; 
 	private NumericValidator numericValidator;
 	private ObjectValidator objectValidator;
@@ -53,6 +56,12 @@ public abstract class Employee {
 		setPassword(password);
 		setFirstName(firstName);
 		setLastName(lastName);
+	}
+	
+	public Employee() {
+		this.numericValidator = new NumericValidator();  
+	    this.objectValidator = new ObjectValidator();  
+	    this.stringValidator = new StringValidator();
 	}
 	
 	// Getters
