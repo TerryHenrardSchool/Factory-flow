@@ -8,6 +8,9 @@ import java.util.Map;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import be.alb_mar_hen.models.Machine;
 import be.alb_mar_hen.utils.ObjectCreator;
 
@@ -43,26 +46,22 @@ public class MachineDAO extends DAO<Machine>{
 
 	@Override
 	public List<Machine> findAll() {
-        String response = sendGetRequest("/machines/getAll");
-        
-        if (response.startsWith("Error:")) {
-            System.out.println("Error fetching data: " + response);
-            return new ArrayList<>();
-        }
-        
-        JSONArray jsonArray = new JSONArray(response);
-        
-        List<Machine> machines = new ArrayList<>();
-        
-        for (int i = 0; i < jsonArray.length(); i++) {
-            JSONObject jsonMachine = jsonArray.getJSONObject(i);
-            Object objectCreator = new ObjectCreator();
-			Machine machine = ((ObjectCreator) objectCreator).createMachine(jsonMachine);
-            machines.add(machine);
-        }
-        
-        return machines;
-    }
+	    String response = sendGetRequest("/machines/getAll");
+
+	    if (response.startsWith("Error:")) {
+	        System.out.println("Error fetching data: " + response);
+	        return new ArrayList<>();
+	    }
+
+	    try {
+	        ObjectMapper objectMapper = new ObjectMapper();
+	        List<Machine> machines = objectMapper.readValue(response, new TypeReference<List<Machine>>() {});
+	        return machines;
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        return new ArrayList<>();
+	    }
+	}
 
 	@Override
 	public List<Machine> findAll(Map<String, Object> criteria) {
