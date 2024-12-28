@@ -12,15 +12,14 @@ import be.alb_mar_hen.validators.NumericValidator;
 import be.alb_mar_hen.validators.ObjectValidator;
 import be.alb_mar_hen.validators.StringValidator;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 public abstract class Employee {
 	
 	// Constants
 	public final static String PASSWORD_REGEX = "^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d]{8,}$";
 	public final static String NAME_REGEX = "^[\\p{L}'][ \\p{L}'-]*[\\p{L}]$";
 	
-	
 	// Validators
-	@JsonIgnoreProperties({"numericValidator", "objectValidator", "stringValidator"})
 	private StringValidator stringValidator; 
 	private NumericValidator numericValidator;
 	private ObjectValidator objectValidator;

@@ -4,6 +4,7 @@ import java.util.Objects;
 import java.util.Optional;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import be.alb_mar_hen.validators.NumericValidator;
 import be.alb_mar_hen.validators.ObjectValidator;
@@ -19,6 +20,8 @@ public class MachineType {
 	
 	// Attributes
 	private Optional<Integer> id;
+	
+	@JsonProperty("type")
 	private String typeName;
 	private double price;
 	private int daysBeforeMaintenance;

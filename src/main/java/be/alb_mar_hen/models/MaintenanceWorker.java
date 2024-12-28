@@ -11,10 +11,11 @@ import be.alb_mar_hen.validators.NumericValidator;
 import be.alb_mar_hen.validators.ObjectValidator;
 import be.alb_mar_hen.validators.StringValidator;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class MaintenanceWorker extends Employee{
 	
 	// Validators
-	@JsonIgnoreProperties({"numericValidator", "objectValidator", "stringValidator"})
+	
 	private ObjectValidator objectValidator;
 	
 	// Constructors
