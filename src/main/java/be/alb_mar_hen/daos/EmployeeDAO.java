@@ -2,6 +2,7 @@ package be.alb_mar_hen.daos;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.AbstractMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -60,7 +61,7 @@ public class EmployeeDAO extends DAO<Employee> {
 		return null;
 	}
 	
-	public Employee authenticateEmployee(String matricule, String password) throws SQLException {
+	public AbstractMap.SimpleEntry<Employee, String> authenticateEmployee(String matricule, String password) throws SQLException {
 	    String input = "{\"matricule\": \"" + matricule + "\", \"password\": \"" + password + "\"}";
 	    String jsonResponse = null;
 
@@ -92,7 +93,7 @@ public class EmployeeDAO extends DAO<Employee> {
 	                throw new IllegalArgumentException("Unknown role: " + role);
 	        }
 
-	        return concreteEmployee;
+	        return new AbstractMap.SimpleEntry<>(concreteEmployee, role);
 
 	    } catch (SQLException e) {
 	        throw new SQLException("Error while authenticating user: " + e.getMessage(), e);
