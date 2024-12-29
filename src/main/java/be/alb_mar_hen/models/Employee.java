@@ -1,5 +1,7 @@
 package be.alb_mar_hen.models;
 
+import java.sql.SQLException;
+import java.util.AbstractMap;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -192,12 +194,31 @@ public abstract class Employee {
 	        && Objects.equals(password, other.password);
 	}
 	
-	public static String authenticateEmployee(String matricule, String password) {
-        EmployeeDAO employeeDAO = new EmployeeDAO();
-        String response = employeeDAO.authenticateEmployee(matricule, password);
-        
-        return response;
-    }
+	public static AbstractMap.SimpleEntry<Employee, String> authenticateEmployee(String matricule, String password) {
+	    EmployeeDAO employeeDAO = new EmployeeDAO();
+	    AbstractMap.SimpleEntry<Employee, String> employeeAndRole = null;
+
+	    try {
+	        employeeAndRole = employeeDAO.authenticateEmployee(matricule, password);
+	        
+	        // Vérification si l'objet Employee est null
+	        if (employeeAndRole == null || employeeAndRole.getKey() == null) {
+	            throw new SecurityException("Authentication failed: Employee is null.");
+	        }
+	        
+	        Employee employee = employeeAndRole.getKey();
+	        String role = employeeAndRole.getValue();
+
+	        System.out.println("Role of the employee: " + role);
+
+	        return new AbstractMap.SimpleEntry<>(employee, role);
+
+	    } catch (SQLException e) {
+	        throw new RuntimeException("Error during authentication: " + e.getMessage(), e);
+	    }
+	}
+
+
 	
 	public static Employee createEmployeeFromJson(
 	        String role,
