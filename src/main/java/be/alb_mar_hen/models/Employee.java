@@ -194,27 +194,30 @@ public abstract class Employee {
 	        && Objects.equals(password, other.password);
 	}
 	
-	public static Employee authenticateEmployee(String matricule, String password) {
+	public static AbstractMap.SimpleEntry<Employee, String> authenticateEmployee(String matricule, String password) {
 	    EmployeeDAO employeeDAO = new EmployeeDAO();
 	    AbstractMap.SimpleEntry<Employee, String> employeeAndRole = null;
 
 	    try {
 	        employeeAndRole = employeeDAO.authenticateEmployee(matricule, password);
 	        
+	        // Vérification si l'objet Employee est null
 	        if (employeeAndRole == null || employeeAndRole.getKey() == null) {
 	            throw new SecurityException("Authentication failed: Employee is null.");
 	        }
+	        
 	        Employee employee = employeeAndRole.getKey();
 	        String role = employeeAndRole.getValue();
-	       
+
 	        System.out.println("Role of the employee: " + role);
 
-	        return employee;
+	        return new AbstractMap.SimpleEntry<>(employee, role);
 
 	    } catch (SQLException e) {
 	        throw new RuntimeException("Error during authentication: " + e.getMessage(), e);
 	    }
 	}
+
 
 	
 	public static Employee createEmployeeFromJson(
