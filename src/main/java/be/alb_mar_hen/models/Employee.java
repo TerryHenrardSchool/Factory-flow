@@ -1,7 +1,11 @@
 package be.alb_mar_hen.models;
 
+import java.sql.SQLException;
+import java.util.AbstractMap;
 import java.util.Objects;
 import java.util.Optional;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import be.alb_mar_hen.daos.DAO;
 import be.alb_mar_hen.daos.EmployeeDAO;
@@ -10,12 +14,12 @@ import be.alb_mar_hen.validators.NumericValidator;
 import be.alb_mar_hen.validators.ObjectValidator;
 import be.alb_mar_hen.validators.StringValidator;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 public abstract class Employee {
 	
 	// Constants
 	public final static String PASSWORD_REGEX = "^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d]{8,}$";
 	public final static String NAME_REGEX = "^[\\p{L}'][ \\p{L}'-]*[\\p{L}]$";
-	
 	
 	// Validators
 	private StringValidator stringValidator; 
@@ -53,6 +57,12 @@ public abstract class Employee {
 		setPassword(password);
 		setFirstName(firstName);
 		setLastName(lastName);
+	}
+	
+	public Employee() {
+		this.numericValidator = new NumericValidator();  
+	    this.objectValidator = new ObjectValidator();  
+	    this.stringValidator = new StringValidator();
 	}
 	
 	// Getters
@@ -184,12 +194,31 @@ public abstract class Employee {
 	        && Objects.equals(password, other.password);
 	}
 	
-	public static String authenticateEmployee(String matricule, String password) {
-        EmployeeDAO employeeDAO = new EmployeeDAO();
-        String response = employeeDAO.authenticateEmployee(matricule, password);
-        
-        return response;
-    }
+	public static AbstractMap.SimpleEntry<Employee, String> authenticateEmployee(String matricule, String password) {
+	    EmployeeDAO employeeDAO = new EmployeeDAO();
+	    AbstractMap.SimpleEntry<Employee, String> employeeAndRole = null;
+
+	    try {
+	        employeeAndRole = employeeDAO.authenticateEmployee(matricule, password);
+	        
+	        // Vérification si l'objet Employee est null
+	        if (employeeAndRole == null || employeeAndRole.getKey() == null) {
+	            throw new SecurityException("Authentication failed: Employee is null.");
+	        }
+	        
+	        Employee employee = employeeAndRole.getKey();
+	        String role = employeeAndRole.getValue();
+
+	        System.out.println("Role of the employee: " + role);
+
+	        return new AbstractMap.SimpleEntry<>(employee, role);
+
+	    } catch (SQLException e) {
+	        throw new RuntimeException("Error during authentication: " + e.getMessage(), e);
+	    }
+	}
+
+
 	
 	public static Employee createEmployeeFromJson(
 	        String role,

@@ -51,6 +51,23 @@ public abstract class DAO<T> {
             return "Error: " + response.getStatus();
         }
     }
+    
+    public String sendGetRequest(String path) {
+        URI baseURI = getBaseURI();
+        WebResource resource = Client.create().resource(baseURI);
+
+        // Envoie la requête GET
+        ClientResponse response = resource.path(path)
+                                          .accept(MediaType.APPLICATION_JSON)
+                                          .get(ClientResponse.class);
+
+        if (response.getStatus() == Response.Status.OK.getStatusCode()) {
+            return response.getEntity(String.class); 
+        } else {
+            return "Error: " + response.getStatus();
+        }
+    }
+
 
     public abstract boolean create(T obj);
     public abstract boolean delete(int id);

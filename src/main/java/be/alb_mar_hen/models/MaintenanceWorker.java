@@ -4,18 +4,19 @@ import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import be.alb_mar_hen.formatters.StringFormatter;
 import be.alb_mar_hen.validators.NumericValidator;
 import be.alb_mar_hen.validators.ObjectValidator;
 import be.alb_mar_hen.validators.StringValidator;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class MaintenanceWorker extends Employee{
 	
 	// Validators
-	private ObjectValidator objectValidator;
 	
-	// Relations
-	private Set<Maintenance> maintenances;
+	private ObjectValidator objectValidator;
 	
 	// Constructors
 	public MaintenanceWorker(
@@ -31,32 +32,16 @@ public class MaintenanceWorker extends Employee{
 	) {
 		super(id, matricule, password, firstName, lastName, stringValidator, numericValidator, objectValidator, stringFormatter);
 		this.objectValidator = objectValidator;
-		maintenances = new HashSet<>();
 	}
 	
-	// Getters
-	public Set<Maintenance> getMaintenances() {
-		return maintenances;
+	public MaintenanceWorker() {
+		super();
 	}
-	
-	// Methods
-	public boolean addMaintenance(Maintenance maintenance) {
-		if (!objectValidator.hasValue(maintenance)) {
-			throw new IllegalArgumentException("Maintenance must have a value.");
-		}
-
-		boolean added = maintenances.add(maintenance);
-		if (added) {
-			maintenance.addMaintenanceWorker(this);
-		}
 		
-		return added;
-	}
-	
 	// Override methods
 	@Override
 	public String toString() {
-		return super.toString() + "MaintenanceWorker [maintenances=" + maintenances + "]";
+		return super.toString() + "MaintenanceWorker";
 	}
 	
 	@Override
@@ -65,12 +50,11 @@ public class MaintenanceWorker extends Employee{
     		return false;
     	}
     	
-    	return super.equals((Employee) object) 
-			&& maintenances.equals(((MaintenanceResponsable) object).getMaintenances());
+    	return super.equals((Employee) object);
     }
 	
 	@Override
 	public int hashCode() {
-		return super.hashCode() + maintenances.hashCode();
+		return super.hashCode();
 	}
 }

@@ -3,12 +3,16 @@ package be.alb_mar_hen.models;
 import java.util.Objects;
 import java.util.Optional;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import be.alb_mar_hen.validators.NumericValidator;
 import be.alb_mar_hen.validators.ObjectValidator;
 import be.alb_mar_hen.validators.StringValidator;
 
 public class MachineType {
 	
+	@JsonIgnoreProperties({"numericValidator", "objectValidator", "stringValidator"})
 	// Validators
 	private NumericValidator numericValidator;
 	private StringValidator stringValidator;
@@ -16,6 +20,8 @@ public class MachineType {
 	
 	// Attributes
 	private Optional<Integer> id;
+	
+	@JsonProperty("type")
 	private String typeName;
 	private double price;
 	private int daysBeforeMaintenance;
@@ -38,6 +44,13 @@ public class MachineType {
 		setPrice(price);
 		setDaysBeforeMaintenance(daysBeforeMaintenance);
 	}
+	
+	public MachineType() {
+		 this.numericValidator = new NumericValidator();  
+	     this.objectValidator = new ObjectValidator();  
+	     this.stringValidator = new StringValidator(); 
+	}
+
 
 	// Getters
 	public Optional<Integer> getId() {

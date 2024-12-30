@@ -2,11 +2,14 @@ package be.alb_mar_hen.models;
 
 import java.util.Optional;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import be.alb_mar_hen.formatters.StringFormatter;
 import be.alb_mar_hen.validators.NumericValidator;
 import be.alb_mar_hen.validators.ObjectValidator;
 import be.alb_mar_hen.validators.StringValidator;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class PurchasingAgent extends Employee {
 	
 	// Constructors
@@ -34,6 +37,10 @@ public class PurchasingAgent extends Employee {
 		);
 	}
 	
+	public PurchasingAgent() {
+		super();		
+	}
+
 	// Override methods
 	@Override
 	public String toString() {
