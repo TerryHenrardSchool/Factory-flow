@@ -5,7 +5,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Machine Dashboard</title>
-    <link rel="stylesheet" href="styles.css"> <!-- Assurez-vous d'avoir un fichier CSS pour le style -->
+    <link rel="stylesheet" href="styles.css"> 
 </head>
 <body>
     <h1>Machine Dashboard</h1>
@@ -24,7 +24,7 @@
         <tbody>
             <c:forEach var="machine" items="${machineViewModels}">
                 <tr>
-                    <td>${machine.machineId.orElse(0)}</td> <!-- Utilisation de .orElse(0) pour éviter les NullPointerException -->
+                    <td>${machine.machineId.orElse(0)}</td> 
                     <td>${machine.machineName}</td>
                     <td>${machine.machineTypeName}</td>
                     <td>${machine.machineStatus}</td>

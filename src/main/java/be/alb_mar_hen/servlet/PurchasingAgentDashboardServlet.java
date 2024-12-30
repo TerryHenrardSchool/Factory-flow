@@ -62,8 +62,8 @@ public class PurchasingAgentDashboardServlet extends HttpServlet {
 		    List<MachinePurchasingAgentDashboardViewModel> machineViewModels = new ArrayList<>();
 		    
 		    for (Machine machine : machines) {
-		        boolean buy = "TO_BE_REPLACED".equals(machine.getStatus());
-
+		    	boolean buy = "TO_BE_REPLACED".equals(machine.getStatus().toString());
+		        System.out.println("Buy : " + buy);
 		        Set<String> zoneColors = new HashSet<>();
 		        
 		        for (Zone zone : machine.getZones()) {
