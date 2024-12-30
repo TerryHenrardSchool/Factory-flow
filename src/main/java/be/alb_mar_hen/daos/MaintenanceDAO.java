@@ -1,15 +1,26 @@
 package be.alb_mar_hen.daos;
 
 import java.sql.Connection;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import javax.ws.rs.core.MediaType;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.sun.jersey.api.client.*;
+import com.sun.jersey.api.client.config.*;
 import be.alb_mar_hen.models.Maintenance;
 
 public class MaintenanceDAO extends DAO<Maintenance>{
 
 	public MaintenanceDAO(Connection conn) {
 		super(conn);
+	}
+	
+	@Override
+	public WebResource getResource() {
+        return resource;
 	}
 
 	@Override
@@ -38,8 +49,24 @@ public class MaintenanceDAO extends DAO<Maintenance>{
 
 	@Override
 	public List<Maintenance> findAll() {
-		// TODO Auto-generated method stub
-		return null;
+		List<Maintenance> maintenancesList = new ArrayList<Maintenance>();
+		
+		try {			
+			String response = getResource()
+					.path("maintenance")
+					.accept(MediaType.APPLICATION_JSON)
+					.get(String.class);
+			
+			System.out.println("Response: " + response);
+			
+			ObjectMapper mapper = new ObjectMapper();
+			
+			maintenancesList = mapper.readValue(response, mapper.getTypeFactory().constructCollectionType(List.class, Maintenance.class));
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return maintenancesList;
 	}
 
 	@Override

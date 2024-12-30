@@ -26,6 +26,10 @@ public abstract class DAO<T> {
         Client client = Client.create(config);
         resource = client.resource(getBaseURI());
     }
+    
+	public WebResource getResource() {
+		return resource;
+	}
 
     private static URI getBaseURI() {
         return UriBuilder.fromUri("http://localhost:8080/Factory-flow-api/api").build();
@@ -49,7 +53,6 @@ public abstract class DAO<T> {
     }
 
     public abstract boolean create(T obj);
-
     public abstract boolean delete(int id);
     public abstract boolean update(T obj);
     public abstract T find(int id);

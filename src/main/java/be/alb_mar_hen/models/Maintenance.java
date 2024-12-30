@@ -37,6 +37,8 @@ public class Maintenance {
 	private MaintenanceResponsable maintenanceResponsable;
 		
 	// Constructors
+	public Maintenance() {}
+	
 	public Maintenance(
 		Optional<Integer> id, 
 		LocalDateTime startDateTime, 
