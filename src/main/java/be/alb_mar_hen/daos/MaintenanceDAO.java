@@ -8,6 +8,7 @@ import java.util.Map;
 import javax.ws.rs.core.MediaType;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import com.sun.jersey.api.client.*;
 import com.sun.jersey.api.client.config.*;
 import be.alb_mar_hen.models.Maintenance;
@@ -60,6 +61,7 @@ public class MaintenanceDAO extends DAO<Maintenance>{
 			System.out.println("Response: " + response);
 			
 			ObjectMapper mapper = new ObjectMapper();
+			mapper.registerModule(new Jdk8Module()); 
 			
 			maintenancesList = mapper.readValue(response, mapper.getTypeFactory().constructCollectionType(List.class, Maintenance.class));
 		}catch (Exception e) {
@@ -73,5 +75,27 @@ public class MaintenanceDAO extends DAO<Maintenance>{
 	public List<Maintenance> findAll(Map<String, Object> criteria) {
 		// TODO Auto-generated method stub
 		return null;
+	}
+	
+	public List<Maintenance> findAll(int workerId){
+		List<Maintenance> maintenancesList = new ArrayList<Maintenance>();
+		
+		try {			
+			String response = getResource()
+					.path("maintenance/" + workerId)
+					.accept(MediaType.APPLICATION_JSON)
+					.get(String.class);
+			
+			System.out.println("Response: " + response);
+			
+			ObjectMapper mapper = new ObjectMapper();
+			mapper.registerModule(new Jdk8Module()); 
+			
+			maintenancesList = mapper.readValue(response, mapper.getTypeFactory().constructCollectionType(List.class, Maintenance.class));
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return maintenancesList;
 	}
 }

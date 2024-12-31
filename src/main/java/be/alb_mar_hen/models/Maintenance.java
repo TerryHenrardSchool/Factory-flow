@@ -1,14 +1,19 @@
 package be.alb_mar_hen.models;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
+import be.alb_mar_hen.daos.MaintenanceDAO;
 import be.alb_mar_hen.enumerations.MaintenanceStatus;
 import be.alb_mar_hen.validators.DateValidator;
 import be.alb_mar_hen.validators.NumericValidator;
@@ -17,9 +22,10 @@ import be.alb_mar_hen.validators.StringValidator;
 import be.alb_mar_hen.utils.CustomDateDeserializer;
 import be.alb_mar_hen.utils.OptionalLocalDateTimeDeserializer;
 
-public class Maintenance {
-	
+@JsonIdentityInfo(generator = ObjectIdGenerators.IntSequenceGenerator.class, property = "keyMaintenance")
+public class Maintenance implements Serializable{
 	// Constants
+	private static final long serialVersionUID = 5864181468098788910L;
 	private final static int MIN_LENGTH_REPORT = 10;
 	
 	// Validators
@@ -31,7 +37,6 @@ public class Maintenance {
 	
 	// Attributes
 	private Optional<Integer> id;
-	
 	@JsonDeserialize(using = CustomDateDeserializer.class)
 	private LocalDateTime startDateTime;
 	@JsonDeserialize(using = OptionalLocalDateTimeDeserializer.class)
@@ -46,8 +51,6 @@ public class Maintenance {
 	private MaintenanceResponsable maintenanceResponsable;
 		
 	// Constructors
-	public Maintenance() {}
-	
 	public Maintenance(
 		Optional<Integer> id, 
 		LocalDateTime startDateTime, 
@@ -225,6 +228,14 @@ public class Maintenance {
 	    boolean added = maintenanceWorkers.add(worker);
 	    
 	    return added;
+	}
+	
+	public static List<Maintenance> getMaintenances(MaintenanceDAO dao) {
+		return dao.findAll();
+	}
+	
+	public static List<Maintenance> getMaintenances(MaintenanceDAO dao, int workerId) {
+		return dao.findAll(workerId);
 	}
 	
 	//Override methods
