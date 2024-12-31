@@ -9,4 +9,12 @@
     <welcome-file>default.jsp</welcome-file>
     <welcome-file>default.htm</welcome-file>
   </welcome-file-list>
+  <servlet>
+  	<servlet-name>ViewMaintenancesServlet</servlet-name>
+  	<servlet-class>be.alb_mar_hen.servlet.ViewMaintenancesServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+  	<servlet-name>ViewMaintenancesServlet</servlet-name>
+  	<url-pattern>/ViewMaintenancesServlet</url-pattern>
+  </servlet-mapping>
 </web-app>
