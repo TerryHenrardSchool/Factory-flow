@@ -1,5 +1,6 @@
 package be.alb_mar_hen.models;
 
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
@@ -200,6 +201,13 @@ public class Machine {
 		
 		return added;
 	}
+	
+	public Maintenance getLastMaintenance() {
+	    return maintenances.stream()
+	        .max(Comparator.comparing(Maintenance::getStartDateTime))
+	        .orElse(null);
+	}
+
 
 	// Override methods
 	@Override

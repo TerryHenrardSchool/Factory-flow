@@ -51,7 +51,7 @@ public class AuthenticationServlet extends HttpServlet {
             
             switch (role) {
                 case "Maintenance Responsable":
-                    response.sendRedirect("maintenanceResponsableHome.jsp");
+                    response.sendRedirect("MaintenanceResponsableDashboardServlet");
                     break;
                 case "Maintenance Worker":
                     response.sendRedirect("ViewMaintenancesServlet");
