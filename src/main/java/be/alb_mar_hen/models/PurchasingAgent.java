@@ -69,10 +69,12 @@ public class PurchasingAgent extends Employee {
 	public boolean buyMachine(String machineJson) {
 		ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.registerModule(new Jdk8Module());
+        System.out.println(machineJson);
         boolean success = false;
         try {
 			Machine machine = objectMapper.readValue(machineJson, Machine.class);
 			PurchasingAgentDAO purchasingAgentDAO = new PurchasingAgentDAO();
+			System.out.println(this.getId().get());
 			success = purchasingAgentDAO.buyMachine(machine, this.getId().get());
 		} catch (IOException e) {
 			e.printStackTrace();

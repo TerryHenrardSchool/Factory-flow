@@ -7,6 +7,7 @@ import java.util.Optional;
 import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import be.alb_mar_hen.daos.EmployeeDAO;
 import be.alb_mar_hen.daos.MachineDAO;
@@ -28,6 +29,7 @@ public class Machine {
 	private String name;
 	
 	// Relations
+	@JsonManagedReference
 	private Set<Maintenance> maintenances;
 	private Set<Zone> zones;
 	private MachineType machineType;

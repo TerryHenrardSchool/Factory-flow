@@ -19,6 +19,7 @@ public class MachineType {
 	private ObjectValidator objectValidator;
 	
 	// Attributes
+	@JsonProperty("id")
 	private Optional<Integer> id;
 	
 	@JsonProperty("type")

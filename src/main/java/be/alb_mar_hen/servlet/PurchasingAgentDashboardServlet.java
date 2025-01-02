@@ -118,7 +118,8 @@ public class PurchasingAgentDashboardServlet extends HttpServlet {
 		    } else {
 		        request.setAttribute("errorMessage", "An unexpected error occurred. Please try again.");
 		    }
-		    request.getRequestDispatcher("PurchasingAgentDashboard.jsp").forward(request, response);
-		}
+		    
+		    doGet(request, response);
+	    }
 
 }

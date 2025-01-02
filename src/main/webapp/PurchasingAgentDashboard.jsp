@@ -10,6 +10,19 @@
 </head>
 <body>
     <div class="container mt-5">
+        <!-- Display Success or Error Message -->
+        <c:if test="${not empty successMessage}">
+            <div class="alert alert-success" role="alert">
+                ${successMessage}
+            </div>
+        </c:if>
+
+        <c:if test="${not empty errorMessage}">
+            <div class="alert alert-danger" role="alert">
+                ${errorMessage}
+            </div>
+        </c:if>
+
         <h1>Machines Dashboard</h1>
         <table class="table table-striped">
             <thead>
@@ -61,7 +74,7 @@
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                         <!-- Conditionally show the Buy button in modal if buy = true -->
                         <c:if test="${machine.buy}">
-                            <form action="yourServletURL" method="POST" class="d-inline">
+                            <form action="PurchasingAgentDashboardServlet" method="POST" class="d-inline">
                                 <input type="hidden" name="machineJson" value="${fn:escapeXml(machine.machineJson)}">
                                 <button type="submit" class="btn btn-primary">
                                     Buy
