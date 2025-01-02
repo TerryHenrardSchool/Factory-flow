@@ -1,6 +1,8 @@
 package be.alb_mar_hen.ViewModels;
 
+import java.util.List;
 import java.util.Optional;
+import be.alb_mar_hen.models.Machine;
 
 public class MachinePurchasingAgentDashboardViewModel {
 	private Optional<Integer> machineId;
@@ -10,9 +12,13 @@ public class MachinePurchasingAgentDashboardViewModel {
     private String zoneColor;
     private String siteCity;
     private boolean buy;
+    private String machineJson;
+    private double price;
+    private int numberOfMaintenances;
 
     public MachinePurchasingAgentDashboardViewModel(Optional<Integer> machineId, String machineName, String machineTypeName, 
-                            String machineStatus, String zoneColor, String siteCity, boolean buy) {
+                            String machineStatus, String zoneColor, String siteCity, boolean buy, 
+                            double price, int numberOfMaintenances, String machineJson) {
         this.machineId = machineId;
         this.machineName = machineName;
         this.machineTypeName = machineTypeName;
@@ -20,6 +26,9 @@ public class MachinePurchasingAgentDashboardViewModel {
         this.zoneColor = zoneColor;
         this.siteCity = siteCity;
         this.buy = buy;
+        this.price = price;
+        this.numberOfMaintenances = numberOfMaintenances;
+        this.machineJson = machineJson;
     }
 
     // Getters and Setters
@@ -78,4 +87,28 @@ public class MachinePurchasingAgentDashboardViewModel {
     public void setBuy(boolean buy) {
         this.buy = buy;
     }
+ 
+	public String getMachineJson() {
+		return machineJson;
+	}
+	
+	public  void setMachineJson(String json) {
+		this.machineJson = json;
+	}
+	
+	public void setPrice(double price) {
+		this.price = price;
+	}
+	
+	public double getPrice() {
+		return price;
+	}
+	
+	public void setNumberOfMaintenances(int numberOfMaintenances) {
+		this.numberOfMaintenances = numberOfMaintenances;
+	}
+	
+	public int getNumberOfMaintenances() {
+		return numberOfMaintenances;
+	}
 }

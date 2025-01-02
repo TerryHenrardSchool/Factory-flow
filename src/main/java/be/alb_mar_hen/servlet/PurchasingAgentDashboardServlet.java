@@ -15,6 +15,9 @@ import javax.servlet.http.HttpServletResponse;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
+
 import be.alb_mar_hen.ViewModels.MachinePurchasingAgentDashboardViewModel;
 import be.alb_mar_hen.models.Machine;
 import be.alb_mar_hen.models.PurchasingAgent;
@@ -63,7 +66,6 @@ public class PurchasingAgentDashboardServlet extends HttpServlet {
 		    
 		    for (Machine machine : machines) {
 		    	boolean buy = "TO_BE_REPLACED".equals(machine.getStatus().toString());
-		        System.out.println("Buy : " + buy);
 		        Set<String> zoneColors = new HashSet<>();
 		        
 		        for (Zone zone : machine.getZones()) {
@@ -71,6 +73,9 @@ public class PurchasingAgentDashboardServlet extends HttpServlet {
 		        }
 
 		        String combinedZoneColors = String.join(", ", zoneColors);
+		        ObjectMapper objectMapper = new ObjectMapper();
+		        objectMapper.registerModule(new Jdk8Module());
+		        String machineJson = objectMapper.writeValueAsString(machine);
 
 		        MachinePurchasingAgentDashboardViewModel machineViewModel = new MachinePurchasingAgentDashboardViewModel(
 		            machine.getId(),
@@ -79,11 +84,14 @@ public class PurchasingAgentDashboardServlet extends HttpServlet {
 		            machine.getStatus().toString(),
 		            combinedZoneColors,
 		            machine.getZones().iterator().next().getSite().getCity(),
-		            buy
+		            buy,
+		            machine.getMachineType().getPrice(),
+		            machine.getMaintenances().size(),
+		            machineJson
 		        );
 		        machineViewModels.add(machineViewModel);
 		    }
-		    System.out.println("Machines: " + machineViewModels);
+		    
 		    request.setAttribute("machineViewModels", machineViewModels);
 		    request.getRequestDispatcher("PurchasingAgentDashboard.jsp").forward(request, response);
 		}
