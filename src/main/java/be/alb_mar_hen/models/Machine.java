@@ -250,6 +250,5 @@ public class Machine {
         
         return machines;
     }
-	
 		
 }

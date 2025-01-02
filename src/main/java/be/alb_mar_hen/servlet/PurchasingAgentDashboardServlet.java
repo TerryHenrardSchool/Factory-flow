@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 import javax.servlet.ServletException;
@@ -15,6 +16,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 
@@ -93,6 +95,29 @@ public class PurchasingAgentDashboardServlet extends HttpServlet {
 		    }
 		    
 		    request.setAttribute("machineViewModels", machineViewModels);
+		    request.getRequestDispatcher("PurchasingAgentDashboard.jsp").forward(request, response);
+		}
+	 
+	 @Override
+	 protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		    
+		    String machineJson = request.getParameter("machineJson");
+		    
+		    PurchasingAgent purchasingAgent = (PurchasingAgent) request.getSession().getAttribute("employee");
+		    
+		    if (purchasingAgent == null) {
+		        request.setAttribute("errorMessage", "You must be logged in as a Purchasing Agent to perform this action.");
+		        request.getRequestDispatcher("login.jsp").forward(request, response);  
+		        return;
+		    }
+		    
+		    boolean result = purchasingAgent.buyMachine(machineJson);
+		    
+		    if (result) {
+		        request.setAttribute("successMessage", "Machine purchase successful.");
+		    } else {
+		        request.setAttribute("errorMessage", "An unexpected error occurred. Please try again.");
+		    }
 		    request.getRequestDispatcher("PurchasingAgentDashboard.jsp").forward(request, response);
 		}
 
