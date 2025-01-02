@@ -20,7 +20,6 @@ import be.alb_mar_hen.validators.NumericValidator;
 import be.alb_mar_hen.validators.ObjectValidator;
 import be.alb_mar_hen.validators.StringValidator;
 import be.alb_mar_hen.utils.CustomDateDeserializer;
-import be.alb_mar_hen.utils.OptionalIntegerDeserializer;
 import be.alb_mar_hen.utils.OptionalLocalDateTimeDeserializer;
 
 @JsonIdentityInfo(generator = ObjectIdGenerators.IntSequenceGenerator.class, property = "keyMaintenance")
