@@ -9,6 +9,7 @@ import javax.ws.rs.core.MediaType;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.sun.jersey.api.client.*;
 import com.sun.jersey.api.client.config.*;
 import be.alb_mar_hen.models.Maintenance;
@@ -62,6 +63,7 @@ public class MaintenanceDAO extends DAO<Maintenance>{
 			
 			ObjectMapper mapper = new ObjectMapper();
 			mapper.registerModule(new Jdk8Module()); 
+			mapper.registerModule(new JavaTimeModule());
 			
 			maintenancesList = mapper.readValue(response, mapper.getTypeFactory().constructCollectionType(List.class, Maintenance.class));
 		}catch (Exception e) {

@@ -11,6 +11,7 @@ import org.json.JSONObject;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 import be.alb_mar_hen.models.Machine;
 import be.alb_mar_hen.utils.ObjectCreator;
@@ -48,7 +49,7 @@ public class MachineDAO extends DAO<Machine>{
 	@Override
 	public List<Machine> findAll() {
 	    String response = sendGetRequest("/machines/getAll");
-
+	    
 	    if (response.startsWith("Error:")) {
 	        System.out.println("Error fetching data: " + response);
 	        return new ArrayList<>();
@@ -57,6 +58,7 @@ public class MachineDAO extends DAO<Machine>{
 	    try {
 	        ObjectMapper objectMapper = new ObjectMapper();
 	        objectMapper.registerModule(new Jdk8Module());
+	        
 	        List<Machine> machines = objectMapper.readValue(response, new TypeReference<List<Machine>>() {});
 	        return machines;
 	    } catch (Exception e) {
