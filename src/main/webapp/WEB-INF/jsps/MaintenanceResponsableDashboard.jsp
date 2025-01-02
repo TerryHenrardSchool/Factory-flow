@@ -38,7 +38,7 @@
 	      </div>
 	      <form action="MaintenanceResponsableDashboardServlet" method="POST">
 		      <div class="modal-footer">
-		      	<input type="hidden" id="machineIdHiddenInput" value="-1">
+		      	<input type="hidden" id="machineIdHiddenInput" name="machineId" value="-1">
 		        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
 		        <button type="button" class="btn btn-primary">Validate</button>
 		      </div>
