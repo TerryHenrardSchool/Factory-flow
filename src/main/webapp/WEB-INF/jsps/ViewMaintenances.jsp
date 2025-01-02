@@ -14,8 +14,10 @@
 		<thead>
 			<tr>
 				<th scope="col">Id</th>
-				<th scope="col">Date</th>
+				<th scope="col">Start Date</th>
+				<th scope="col">End Date</th>
 				<th scope="col">Duration (min)</th>
+				<th scope="col">Report</th>
 				<th scope="col">Workers</th>
 				<th scope="col">Responsable</th>
 				<th scope="col">Machine</th>
@@ -24,28 +26,57 @@
 			</tr>
 		</thead>
 		<tbody>
-			<c:forEach var="maintenance" items="${maintenances}">
-				<tr>
-					<td>${maintenance.id.get()}</td>
-					<td>${maintenance.startDateTime}</td>
-					<td>${maintenance.duration.get()}</td>
-					<td>
-						<c:forEach var="worker" items="${maintenance.maintenanceWorkers}">
-                            ${worker.firstName} ${worker.lastName} <br>
-						</c:forEach>
-					</td>
-					<td>
-						${maintenance.maintenanceResponsable.firstName} ${maintenance.maintenanceResponsable.lastName} <br>
-					</td>
-					<td>${maintenance.machine.name}</td>
-					<td>${maintenance.status}</td>
-					<td>
-						<c:if test="${maintenance.status eq 'IN_PROGRESS'}">
-							<button type="button" class="btn btn-success">Finalize</button>
-						</c:if>
-					</td>
-				</tr>
-			</c:forEach>
+			<form action="FinalizeMaintenanceServlet" method="POST">
+				<c:forEach var="maintenance" items="${maintenances}">
+					<tr>
+						<td>${maintenance.id.get()}</td>
+						<td>${maintenance.startDateTime}</td>
+						
+						<c:choose>
+							<c:when test="${maintenance.hasEndDateTime()}">
+								<td>${maintenance.endDateTime.get()}</td>
+							</c:when>
+							<c:otherwise>
+								<td>Pas de date de fin</td>
+							</c:otherwise>
+						</c:choose>
+						
+						<c:choose>
+							<c:when test="${maintenance.hasDuration()}">
+							    <td>${maintenance.duration.get()}</td>
+							</c:when>
+							<c:otherwise>
+                            	<td>Pas de durée</td>
+                        	</c:otherwise>
+						</c:choose>
+						
+						<c:choose>
+							<c:when test="${maintenance.hasReport()}">
+								<td>${maintenance.report.get()}</td>
+							</c:when>
+							<c:otherwise>
+								<td>Pas de rapport</td>
+							</c:otherwise>
+						</c:choose>						
+						<td>
+							<c:forEach var="worker" items="${maintenance.maintenanceWorkers}">
+	                            ${worker.firstName} ${worker.lastName} <br>
+							</c:forEach>
+						</td>
+						<td>
+							${maintenance.maintenanceResponsable.firstName} ${maintenance.maintenanceResponsable.lastName} <br>
+						</td>
+						<td>${maintenance.machine.name}</td>
+						<td>${maintenance.status}</td>
+						<td>
+							<c:if test="${maintenance.status eq 'IN_PROGRESS'}">
+								<input type="hidden" name="maintenanceId" value="${maintenance.id.get()}">
+								<input type="submit" value="Finalize" class="btn btn-primary">
+							</c:if>
+						</td>
+					</tr>
+				</c:forEach>
+			</form>
 		</tbody>
 	</table>
 </body>

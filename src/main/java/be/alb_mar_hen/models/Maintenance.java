@@ -20,6 +20,7 @@ import be.alb_mar_hen.validators.NumericValidator;
 import be.alb_mar_hen.validators.ObjectValidator;
 import be.alb_mar_hen.validators.StringValidator;
 import be.alb_mar_hen.utils.CustomDateDeserializer;
+import be.alb_mar_hen.utils.OptionalIntegerDeserializer;
 import be.alb_mar_hen.utils.OptionalLocalDateTimeDeserializer;
 
 @JsonIdentityInfo(generator = ObjectIdGenerators.IntSequenceGenerator.class, property = "keyMaintenance")
@@ -153,15 +154,15 @@ public class Maintenance implements Serializable{
 	}
 	
 	public void setEndDateTime(Optional<LocalDateTime> endDateTime) {
-		if(!objectValidator.hasValue(endDateTime)) {
-			throw new NullPointerException("Date must have a value.");
+		if(endDateTime == null) {
+			this.endDateTime = Optional.empty();
+		}else {
+			if (endDateTime.get().isBefore(startDateTime)) {
+				throw new IllegalArgumentException("End date must be after start date.");
+			}
+			
+			this.endDateTime = endDateTime;
 		}
-		
-		if(!dateValidator.isInPast(endDateTime)) {
-			throw new IllegalArgumentException("Date must be in the past.");
-		}
-		
-		this.endDateTime = endDateTime;
 	}
 	
 	public void setDuration(Optional<Integer> duration) {
@@ -174,6 +175,8 @@ public class Maintenance implements Serializable{
 		}
 		
 		this.duration = duration;
+		
+		System.out.println("Duration: " + duration);
 	}
 	
 	public void setReport(Optional<String> report) {
@@ -186,6 +189,8 @@ public class Maintenance implements Serializable{
 		}
 		
 		this.report = report;
+		
+		System.out.println("Report: " + report);
 	}
 	
 	public void setStatus(MaintenanceStatus status) {
@@ -228,6 +233,18 @@ public class Maintenance implements Serializable{
 	    boolean added = maintenanceWorkers.add(worker);
 	    
 	    return added;
+	}
+	
+	public boolean hasDuration() {
+		return duration.isPresent();
+	}
+	
+	public boolean hasEndDateTime() {
+		return endDateTime.isPresent();
+	}
+	
+	public boolean hasReport() {
+		return report.isPresent();
 	}
 	
 	public static List<Maintenance> getMaintenances(MaintenanceDAO dao) {
