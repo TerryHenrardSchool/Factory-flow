@@ -80,7 +80,7 @@ public class ViewOrdersServlet extends HttpServlet {
         }
 		
 		request.setAttribute("orders", orderViewModels);
-		request.getRequestDispatcher("/ViewOrders.jsp").forward(request, response);
+		request.getRequestDispatcher("/WEB-INF/jsps/ViewOrders.jsp").forward(request, response);
 	}
 
 	/**
