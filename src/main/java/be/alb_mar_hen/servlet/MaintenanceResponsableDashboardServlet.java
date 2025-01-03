@@ -11,8 +11,13 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import be.alb_mar_hen.daos.MachineDAO;
+import be.alb_mar_hen.daos.MaintenanceDAO;
+import be.alb_mar_hen.enumerations.MachineStatus;
+import be.alb_mar_hen.enumerations.MaintenanceStatus;
 import be.alb_mar_hen.models.Employee;
 import be.alb_mar_hen.models.Machine;
+import be.alb_mar_hen.models.Maintenance;
+import be.alb_mar_hen.validators.NumericValidator;
 import be.alb_mar_hen.validators.ObjectValidator;
 
 /**
@@ -99,6 +104,13 @@ public class MaintenanceResponsableDashboardServlet extends HttpServlet {
             return;
         }
 		
+		NumericValidator numValidator = new NumericValidator();
+		if (!numValidator.isPositive(machineId)) {
+            request.setAttribute("errorMessage", "Machine ID must be a positive number.");
+            doGet(request, response);
+            return;
+        }
+		
 		// Réupérer la machine concernée
 		Machine machineToUpdate = machineDAO.find(machineId);
 		if (!objValidator.hasValue(machineToUpdate)) {
@@ -106,12 +118,40 @@ public class MaintenanceResponsableDashboardServlet extends HttpServlet {
 			doGet(request, response);
 			return;
 		}
-		System.out.println("Machine found: " + machineToUpdate);
+		
+		if (!machineToUpdate.getStatus().equals(MachineStatus.NEED_VALIDATION)) {
+			request.setAttribute("errorMessage", "Machine already validated.");
+			doGet(request, response);
+			return;
+		}
+		
+		Maintenance lastMaintenance = machineToUpdate.getLastMaintenance();
+		if (action.equals(VALIDATE_ACTION)) {
+			// Valider la maintenance de la machine
+					
+			machineToUpdate.setStatus(MachineStatus.OK);
+			lastMaintenance.setStatus(MaintenanceStatus.DONE);
+			
+		} else if (action.equals(RESTART_MAINTENANCE_ACTION)) {
+			// Recommencer la maintenance de la machine 
+
+			machineToUpdate.setStatus(MachineStatus.OK);
+			lastMaintenance.setStatus(MaintenanceStatus.IN_PROGRESS);
+		}
 		
 		// Mise à jour du statut de la machine
 		boolean isUpdated = machineDAO.update(machineToUpdate);
 		if (!isUpdated) {
 			request.setAttribute("errorMessage", "Failed to update machine status.");
+			doGet(request, response);
+			return;
+		}
+		
+		// Mise à jour du statut de la maintenance
+		MaintenanceDAO maintenanceDAO = new MaintenanceDAO();
+		boolean isMaintenanceUpdated = maintenanceDAO.update(lastMaintenance);
+		if (!isMaintenanceUpdated) {
+			request.setAttribute("errorMessage", "Failed to update maintenance status.");
 			doGet(request, response);
 			return;
 		}

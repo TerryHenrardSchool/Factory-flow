@@ -8,18 +8,27 @@ import java.util.Map;
 
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.module.SimpleAbstractTypeResolver;
+import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 import be.alb_mar_hen.models.Machine;
 import be.alb_mar_hen.utils.ObjectCreator;
 import be.alb_mar_hen.validators.ObjectValidator;
+
+import be.alb_mar_hen.serializers.*;
+
+import com.sun.jersey.api.client.*;
+
+
 
 public class MachineDAO extends DAO<Machine>{
 
@@ -41,9 +50,29 @@ public class MachineDAO extends DAO<Machine>{
 
 	@Override
 	public boolean update(Machine obj) {
-		// TODO Auto-generated method stub
-		return false;
+	    try {
+	        ObjectMapper mapper = new ObjectMapper()
+	            .registerModule(new SimpleModule().addSerializer(new CustomLocalDateTimeSerializer()))
+	            .registerModule(new Jdk8Module());
+	        
+	        ClientResponse response = getResource()
+	            .path("/machine")
+	            .type(MediaType.APPLICATION_JSON)
+	            .put(ClientResponse.class, mapper.writeValueAsString(obj));
+	        
+	        if (response.getStatus() != Status.OK.getStatusCode()) {
+	            System.err.println("Error updating machine: " + response.getStatus());
+	            return false;
+	        }
+	        
+	        return true;
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	    }
+	    
+	    return false;
 	}
+
 
 	@Override
 	public Machine find(int id) {

@@ -24,8 +24,8 @@ import be.alb_mar_hen.serializers.*;
 
 public class MaintenanceDAO extends DAO<Maintenance>{
 
-	public MaintenanceDAO(Connection conn) {
-		super(conn);
+	public MaintenanceDAO() {
+		super();
 	}
 	
 	@Override
