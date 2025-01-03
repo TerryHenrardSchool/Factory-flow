@@ -11,11 +11,11 @@ import be.alb_mar_hen.validators.NumericValidator;
 import be.alb_mar_hen.validators.ObjectValidator;
 import be.alb_mar_hen.validators.StringValidator;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 @JsonIdentityInfo(generator = ObjectIdGenerators.IntSequenceGenerator.class, property = "keySupplier")
 public class Supplier {
 	
 	// Validators
-	@JsonIgnoreProperties({"numericValidator", "objectValidator", "stringValidator"})
 	private NumericValidator numericValidator;
 	private StringValidator stringValidator;
 	private ObjectValidator objectValidator;
@@ -42,6 +42,12 @@ public class Supplier {
 		setId(id);
 		setName(name);
 		setMachineType(machineType);
+	}
+	
+	public Supplier() {
+        this.numericValidator = new NumericValidator();
+        this.stringValidator = new StringValidator();
+        this.objectValidator = new ObjectValidator();
 	}
 
 	// Getters
