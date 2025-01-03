@@ -43,7 +43,7 @@ public class MaintenanceResponsableDashboardServlet extends HttpServlet {
 		
 		if (!objValidator.hasValue(employee)) {
 			request.setAttribute("errorMessage", "Access denied. Please log in to access this page.");
-			request.getRequestDispatcher("login.jsp").forward(request, response);
+			request.getRequestDispatcher("/WEB-INF/jsps/Authentication.jsp").forward(request, response);
 			return;
 		}
 				
@@ -51,7 +51,7 @@ public class MaintenanceResponsableDashboardServlet extends HttpServlet {
 		
 		if (machines.isEmpty()) {
 			request.setAttribute("errorMessage", "No machines found.");
-			request.getRequestDispatcher("login.jsp").forward(request, response);
+			request.getRequestDispatcher("/WEB-INF/jsps/Authentication.jsp").forward(request, response);
 			return;
 		}
 				
