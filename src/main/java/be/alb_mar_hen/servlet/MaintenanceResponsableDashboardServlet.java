@@ -21,6 +21,9 @@ import be.alb_mar_hen.validators.ObjectValidator;
 public class MaintenanceResponsableDashboardServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	
+	private static final String VALIDATE_ACTION = "Validate";
+	private static final String RESTART_MAINTENANCE_ACTION = "Restart maintenance";
+	
 	private final MachineDAO machineDAO = new MachineDAO();
        
     /**
@@ -59,9 +62,25 @@ public class MaintenanceResponsableDashboardServlet extends HttpServlet {
 	/**
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
-	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {		
+		String machineIdParam  = request.getParameter("machineId");
+		String action = request.getParameter("action");
+		
 		ObjectValidator objValidator = new ObjectValidator();
-		String machineIdParam  = request.getParameter("machineId");   
+		
+		// Validation de l'action
+		if (!objValidator.hasValue(action)) {
+			request.setAttribute("errorMessage", "Action is required.");
+			doGet(request, response);
+			return;
+		}
+		
+		// Validation de l'action 
+		if (!action.equals(VALIDATE_ACTION) && !action.equals(RESTART_MAINTENANCE_ACTION)) {
+			request.setAttribute("errorMessage", "Invalid action.");
+            doGet(request, response);
+            return;
+		}
 		
         // Validation de l'ID de la machine
 		if (!objValidator.hasValue(machineIdParam)) {

@@ -40,7 +40,8 @@
 		      <div class="modal-footer">
 		      	<input type="hidden" id="machineIdHiddenInput" name="machineId" value="-1">
 		        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-		        <input type="submit" class="btn btn-primary" value="Validate">
+		        <input type="submit" name="action" class="btn btn-danger" value="Restart maintenance">
+		        <input type="submit" name="action" class="btn btn-primary" value="Validate">
 		      </div>
 	      </form>
 	    </div>
