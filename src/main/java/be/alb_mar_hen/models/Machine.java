@@ -32,7 +32,6 @@ public class Machine {
 	private String name;
 	
 	// Relations
-	@JsonManagedReference
 	private Set<Maintenance> maintenances;
 	private Set<Zone> zones;
 	private MachineType machineType;

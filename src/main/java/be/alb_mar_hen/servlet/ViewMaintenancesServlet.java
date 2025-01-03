@@ -18,7 +18,6 @@ import be.alb_mar_hen.models.Maintenance;
 public class ViewMaintenancesServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
     private MaintenanceDAO maintenanceDAO;
-    List<Maintenance> maintenances;
     
     public ViewMaintenancesServlet() {
         super();
@@ -36,7 +35,7 @@ public class ViewMaintenancesServlet extends HttpServlet {
 		
 		Employee employee = (Employee) session.getAttribute("employee");	
 		
-		maintenances = Maintenance.getMaintenances(maintenanceDAO, employee.getId().get());
+		List<Maintenance> maintenances = Maintenance.getMaintenances(maintenanceDAO, employee.getId().get());
 		
 		request.setAttribute("maintenances", maintenances);
 		
@@ -44,9 +43,17 @@ public class ViewMaintenancesServlet extends HttpServlet {
 	}
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		if (request.getParameter("maintenanceId") == null || request.getParameter("report") == null) {
+			doGet(request, response);
+			return;
+		}
+		
 		int idMaintenance = Integer.parseInt(request.getParameter("maintenanceId"));
+		
 		String reportMaintenance = request.getParameter("report");
 
+		List<Maintenance> maintenances = Maintenance.getMaintenances(maintenanceDAO);
+		
 		Maintenance maintenance = maintenances.stream()
 			.filter(curr -> curr.getId().get() == idMaintenance)
 			.findFirst().get();
