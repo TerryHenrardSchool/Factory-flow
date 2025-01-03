@@ -80,9 +80,9 @@ public class MachineDAO extends DAO<Machine>{
 
 	    try {
 	        String responseBody = getResource()
-					        		.path("/machine/" + id)
-					        		.accept(MediaType.APPLICATION_JSON)
-					        		.get(String.class);
+        		.path("/machine/" + id)
+        		.accept(MediaType.APPLICATION_JSON)
+        		.get(String.class);
 	        
 	        if (responseBody == null || responseBody.isEmpty()) {
 	            System.out.println("No machine");
@@ -93,7 +93,9 @@ public class MachineDAO extends DAO<Machine>{
 	        mapper.registerModule(new Jdk8Module());
 	        machine = mapper.readValue(
 	            responseBody,
-	            mapper.getTypeFactory().constructCollectionType(List.class, Machine.class)
+	            mapper
+	            	.getTypeFactory()
+	            	.constructCollectionType(List.class, Machine.class)
 	        );
 	    } catch (Exception e) {
 	        e.printStackTrace();

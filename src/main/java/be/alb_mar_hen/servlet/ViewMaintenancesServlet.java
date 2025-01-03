@@ -60,7 +60,7 @@ public class ViewMaintenancesServlet extends HttpServlet {
 		
 		maintenance.setReport(Optional.of(reportMaintenance));
 		
-		maintenance.update(maintenanceDAO);
+		maintenance.updateInDatabase(maintenanceDAO);
 		
 		doGet(request, response);
 	}

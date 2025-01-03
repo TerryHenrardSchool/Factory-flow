@@ -242,7 +242,7 @@ public class Maintenance implements Serializable{
 		return dao.findAll(workerId);
 	}
 	
-	public boolean update(MaintenanceDAO dao) {
+	public boolean updateInDatabase(MaintenanceDAO dao) {
 		return dao.update(this);
 	}
 	

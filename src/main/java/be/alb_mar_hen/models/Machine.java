@@ -72,41 +72,41 @@ public class Machine {
 	}
 	
 	public Machine(
-		    Optional<Integer> id, 
-		    String type,
-		    MachineStatus status, 
-		    String name, 
-		    Zone zone,
-		    Optional<Integer> machineTypeId,
-		    String machineTypeName,
-		    double machineTypePrice,
-		    int machineTypeDaysBeforeMaintenance,
-		    Set<Maintenance> maintenances,
-		    Set<Zone> zones,
-		    
-		    NumericValidator numericValidator, 
-		    ObjectValidator objectValidator,
-		    StringValidator stringValidator
-		) {
-		    this.numericValidator = numericValidator;
-		    this.objectValidator = objectValidator;
-		    this.stringValidator = stringValidator;
-		    this.maintenances = new HashSet<>(maintenances); 
-		    this.zones = new HashSet<>(zones);
-		    addZone(zone);
-		    setId(id);
-		    setStatus(status);
-		    setName(name);
-		    this.machineType = new MachineType(
-		        machineTypeId, 
-		        machineTypeName, 
-		        machineTypePrice,
-		        machineTypeDaysBeforeMaintenance, 
-		        numericValidator, 
-		        stringValidator, 
-		        objectValidator
-		    );
-		}
+	    Optional<Integer> id, 
+	    String type,
+	    MachineStatus status, 
+	    String name, 
+	    Zone zone,
+	    Optional<Integer> machineTypeId,
+	    String machineTypeName,
+	    double machineTypePrice,
+	    int machineTypeDaysBeforeMaintenance,
+	    Set<Maintenance> maintenances,
+	    Set<Zone> zones,
+	    
+	    NumericValidator numericValidator, 
+	    ObjectValidator objectValidator,
+	    StringValidator stringValidator
+	) {
+	    this.numericValidator = numericValidator;
+	    this.objectValidator = objectValidator;
+	    this.stringValidator = stringValidator;
+	    this.maintenances = new HashSet<>(maintenances); 
+	    this.zones = new HashSet<>(zones);
+	    addZone(zone);
+	    setId(id);
+	    setStatus(status);
+	    setName(name);
+	    this.machineType = new MachineType(
+	        machineTypeId, 
+	        machineTypeName, 
+	        machineTypePrice,
+	        machineTypeDaysBeforeMaintenance, 
+	        numericValidator, 
+	        stringValidator, 
+	        objectValidator
+	    );
+	}
 	
 	public Machine() {
 	    this.maintenances = new HashSet<>();
@@ -209,6 +209,9 @@ public class Machine {
 	        .orElse(null);
 	}
 
+	public boolean updateInDatabase(MachineDAO machineDAO) {
+		return machineDAO.update(this);
+	}
 
 	// Override methods
 	@Override

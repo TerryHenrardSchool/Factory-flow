@@ -67,97 +67,125 @@ public class MaintenanceResponsableDashboardServlet extends HttpServlet {
 	/**
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
-	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {		
-		String machineIdParam  = request.getParameter("machineId");
-		String action = request.getParameter("action");
-		
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		// TODO: Méthode static dans model Machine pour récupérer toutes les machines au lieu d'appeler le DAO Machine
 		ObjectValidator objValidator = new ObjectValidator();
-		
-		// Validation de l'action
-		if (!objValidator.hasValue(action)) {
-			request.setAttribute("errorMessage", "Action is required.");
-			doGet(request, response);
-			return;
-		}
-		
-		// Validation de l'action 
-		if (!action.equals(VALIDATE_ACTION) && !action.equals(RESTART_MAINTENANCE_ACTION)) {
-			request.setAttribute("errorMessage", "Invalid action.");
-            doGet(request, response);
-            return;
-		}
-		
-        // Validation de l'ID de la machine
-		if (!objValidator.hasValue(machineIdParam)) {
-			request.setAttribute("errorMessage", "Machine ID is required.");
-			doGet(request, response);
-			return;
-		}
-		
-		// Conversion de l'ID de la machine en entier
-		int machineId;
-		try {
-            machineId = Integer.parseInt(machineIdParam);
-        } catch (NumberFormatException e) {
-            request.setAttribute("errorMessage", "Machine ID must be a number.");
-            doGet(request, response);
-            return;
-        }
-		
 		NumericValidator numValidator = new NumericValidator();
-		if (!numValidator.isPositive(machineId)) {
-            request.setAttribute("errorMessage", "Machine ID must be a positive number.");
-            doGet(request, response);
-            return;
-        }
 		
-		// Réupérer la machine concernée
-		Machine machineToUpdate = machineDAO.find(machineId);
-		if (!objValidator.hasValue(machineToUpdate)) {
-			request.setAttribute("errorMessage", "Machine not found.");
-			doGet(request, response);
-			return;
-		}
-		
-		if (!machineToUpdate.getStatus().equals(MachineStatus.NEED_VALIDATION)) {
-			request.setAttribute("errorMessage", "Machine already validated.");
-			doGet(request, response);
-			return;
-		}
-		
-		Maintenance lastMaintenance = machineToUpdate.getLastMaintenance();
-		if (action.equals(VALIDATE_ACTION)) {
-			// Valider la maintenance de la machine
-					
-			machineToUpdate.setStatus(MachineStatus.OK);
-			lastMaintenance.setStatus(MaintenanceStatus.DONE);
-			
-		} else if (action.equals(RESTART_MAINTENANCE_ACTION)) {
-			// Recommencer la maintenance de la machine 
+	    String machineIdParam = request.getParameter("machineId");
+	    String actionParam = request.getParameter("action");	    
 
-			machineToUpdate.setStatus(MachineStatus.OK);
+	    // Validation des paramètres
+	    String errorMessage = validateParameters(machineIdParam, actionParam, objValidator);
+	    if (!objValidator.hasValue(errorMessage)) {
+	        forwardWithError(request, response, errorMessage);
+	        return;
+	    }
+
+	    // Conversion et validation de l'ID de la machine
+	    int machineId = parseMachineId(machineIdParam, request, response);
+	    if (!numValidator.isPositive(machineId)) return;
+
+	    // Vérification de l'existence et du statut de la machine
+	    Machine machineToUpdate = machineDAO.find(machineId);
+	    if (
+    		!objValidator.hasValue(objValidator) || 
+    		!machineToUpdate.getStatus().equals(MachineStatus.NEED_VALIDATION)
+	    ) {
+	        forwardWithError(
+        		request, 
+        		response, 
+        		!objValidator.hasValue(machineToUpdate) 
+        			? "Machine not found." 
+    				: "Machine already validated."
+	        );
+	        return;
+	    }
+
+	    // Mise à jour des statuts selon l'action
+	    Maintenance lastMaintenance = machineToUpdate.getLastMaintenance();
+	    if (VALIDATE_ACTION.equals(actionParam)) {
+	    	machineToUpdate.setStatus(MachineStatus.OK);
+	    	lastMaintenance.setStatus(MaintenanceStatus.DONE);
+	    	
+		} else if (RESTART_MAINTENANCE_ACTION.equals(actionParam)) {
 			lastMaintenance.setStatus(MaintenanceStatus.IN_PROGRESS);
+			machineToUpdate.setStatus(MachineStatus.IN_MAINTENANCE);
+			
 		}
-		
-		// Mise à jour du statut de la machine
-		boolean isUpdated = machineDAO.update(machineToUpdate);
-		if (!isUpdated) {
-			request.setAttribute("errorMessage", "Failed to update machine status.");
-			doGet(request, response);
-			return;
-		}
-		
-		// Mise à jour du statut de la maintenance
-		MaintenanceDAO maintenanceDAO = new MaintenanceDAO();
-		boolean isMaintenanceUpdated = maintenanceDAO.update(lastMaintenance);
-		if (!isMaintenanceUpdated) {
-			request.setAttribute("errorMessage", "Failed to update maintenance status.");
-			doGet(request, response);
-			return;
-		}
-		
-        request.setAttribute("successMessage", "Machine " + machineToUpdate.getId().get() + " status updated successfully.");
-		
-		doGet(request, response);
+
+	    // Mise à jour en base de données
+	    if (!updateMachineAndMaintenanceInDatabase(machineToUpdate, lastMaintenance, request, response)) 
+	    	return;
+
+	    request.setAttribute("successMessage", "Machine " + machineToUpdate.getId().get() + " status updated successfully.");
+	    doGet(request, response);
 	}
+
+	private String validateParameters(String machineIdParam, String action, ObjectValidator objValidator) {
+	    if (!objValidator.hasValue(action)) 
+	    	return "Action is required.";
+	    
+	    if (
+    		!VALIDATE_ACTION.equals(action) && 
+    		!RESTART_MAINTENANCE_ACTION.equals(action)
+		) 
+	    	return "Invalid action.";
+	    
+	    if (!objValidator.hasValue(machineIdParam)) 
+	    	return "Machine ID is required.";
+	    
+	    return null;
+	}
+
+	private int parseMachineId(
+		String machineIdParam, 
+		HttpServletRequest request,
+		HttpServletResponse response
+	) throws ServletException, IOException 
+	{
+	    try {
+	        int machineId = Integer.parseInt(machineIdParam);
+	        if (machineId <= 0) 
+	        	throw new NumberFormatException();
+	        return machineId;
+	    } catch (NumberFormatException e) {
+	        forwardWithError(request, response, "Machine ID must be a positive number.");
+	        return -1;
+	    }
+	}
+
+	private boolean updateMachineAndMaintenanceInDatabase(
+		Machine machine,
+		Maintenance maintenance,
+		HttpServletRequest request,
+		HttpServletResponse response
+	) throws ServletException, IOException 
+	{
+		boolean isMachineUpdated = machine.updateInDatabase(machineDAO); 
+		boolean isMaintenanceUpdated = maintenance.updateInDatabase(new MaintenanceDAO());
+	    if (!isMachineUpdated || !isMaintenanceUpdated) {
+	        forwardWithError(
+        		request, 
+        		response, 
+        		"Failed to update " 
+        		+ (isMachineUpdated ? "maintenance" : "machine") 
+        		+ " status."
+    		);
+	        return false;
+	    }
+	    
+	    return true;
+	}
+
+	private void forwardWithError(
+		HttpServletRequest request, 
+		HttpServletResponse response,
+		String errorMessage
+	) throws ServletException, IOException 
+	{
+	    request.setAttribute("errorMessage", errorMessage);
+	    doGet(request, response);
+	}
+
 }
