@@ -106,7 +106,7 @@ public class PurchasingAgentDashboardServlet extends HttpServlet {
 		    }
 		    
 		    request.setAttribute("machineViewModels", machineViewModels);
-		    request.getRequestDispatcher("PurchasingAgentDashboard.jsp").forward(request, response);
+		    request.getRequestDispatcher("/WEB-INF/jsps/PurchasingAgentDashboard.jsp").forward(request, response);
 		}
 	 
 	 @Override
