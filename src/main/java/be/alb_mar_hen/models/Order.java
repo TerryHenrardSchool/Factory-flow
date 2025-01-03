@@ -1,6 +1,7 @@
 package be.alb_mar_hen.models;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -8,6 +9,8 @@ import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
+import be.alb_mar_hen.daos.MachineDAO;
+import be.alb_mar_hen.daos.OrderDAO;
 import be.alb_mar_hen.validators.DateValidator;
 import be.alb_mar_hen.validators.NumericValidator;
 import be.alb_mar_hen.validators.ObjectValidator;
@@ -155,6 +158,13 @@ public class Order {
 			&& Objects.equals(purchasingAgent, other.purchasingAgent) 
 			&& Objects.equals(supplier, other.supplier);
 	}
+	
+	public static List<Order> findAll() {
+        OrderDAO orderDAO = new OrderDAO();
+        List<Order> orders = orderDAO.findAll();
+        
+        return orders;
+    }
 	
 	
 }
