@@ -53,7 +53,7 @@ public class MachineDAO extends DAO<Machine>{
 
 	@Override
 	public List<Machine> findAll() {
-	    String response = sendGetRequest("/machines/getAll");
+	    String response = sendGetRequest("/machine/getAll");
 	    
 	    if (response.startsWith("Error:")) {
 	        System.out.println("Error fetching data: " + response);

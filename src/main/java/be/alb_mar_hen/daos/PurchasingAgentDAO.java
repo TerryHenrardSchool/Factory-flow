@@ -71,7 +71,7 @@ public class PurchasingAgentDAO extends DAO<PurchasingAgent>{
 	        JSONObject jsonObject = new JSONObject(machineJson);
 	        jsonObject.put("purchasingAgentId", employeeid);
 	        
-	        String jsonResponse = sendPostRequest("purchasingAgents/buyMachine", jsonObject.toString());
+	        String jsonResponse = sendPostRequest("purchasingAgent/buyMachine", jsonObject.toString());
 	        System.out.println(jsonResponse);
 	        if (jsonResponse.contains("201")) {
 	            result = true;
