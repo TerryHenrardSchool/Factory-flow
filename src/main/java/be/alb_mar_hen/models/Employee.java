@@ -221,8 +221,6 @@ public abstract class Employee {
 	        throw new RuntimeException("Error during authentication: " + e.getMessage(), e);
 	    }
 	}
-
-
 	
 	public static Employee createEmployeeFromJson(
 	        String role,

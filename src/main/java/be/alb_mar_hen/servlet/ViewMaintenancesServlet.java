@@ -2,6 +2,7 @@ package be.alb_mar_hen.servlet;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -17,7 +18,7 @@ import be.alb_mar_hen.models.Maintenance;
 public class ViewMaintenancesServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
     private MaintenanceDAO maintenanceDAO;
-	
+    
     public ViewMaintenancesServlet() {
         super();
         maintenanceDAO = new MaintenanceDAO(FactoryFlowConnection.getInstance());
@@ -32,10 +33,7 @@ public class ViewMaintenancesServlet extends HttpServlet {
 			return;
 		}
 		
-		Employee employee = (Employee) session.getAttribute("employee");
-		
-		System.out.println("Employee: " + employee.toString());
-		
+		Employee employee = (Employee) session.getAttribute("employee");	
 		
 		List<Maintenance> maintenances = Maintenance.getMaintenances(maintenanceDAO, employee.getId().get());
 		
@@ -45,7 +43,25 @@ public class ViewMaintenancesServlet extends HttpServlet {
 	}
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
+		if (request.getParameter("maintenanceId") == null || request.getParameter("report") == null) {
+			doGet(request, response);
+			return;
+		}
+		
+		int idMaintenance = Integer.parseInt(request.getParameter("maintenanceId"));
+		
+		String reportMaintenance = request.getParameter("report");
+
+		List<Maintenance> maintenances = Maintenance.getMaintenances(maintenanceDAO);
+		
+		Maintenance maintenance = maintenances.stream()
+			.filter(curr -> curr.getId().get() == idMaintenance)
+			.findFirst().get();
+		
+		maintenance.setReport(Optional.of(reportMaintenance));
+		
+		maintenance.update(maintenanceDAO);
+		
 		doGet(request, response);
 	}
 }
