@@ -18,7 +18,6 @@ import be.alb_mar_hen.validators.StringValidator;
 public class MaintenanceWorker extends Employee{
 	
 	// Validators
-	
 	private ObjectValidator objectValidator;
 	
 	// Constructors

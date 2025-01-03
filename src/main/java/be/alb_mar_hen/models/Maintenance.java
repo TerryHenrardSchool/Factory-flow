@@ -234,24 +234,16 @@ public class Maintenance implements Serializable{
 	    return added;
 	}
 	
-	public boolean hasDuration() {
-		return duration.isPresent();
-	}
-	
-	public boolean hasEndDateTime() {
-		return endDateTime.isPresent();
-	}
-	
-	public boolean hasReport() {
-		return report.isPresent();
-	}
-	
 	public static List<Maintenance> getMaintenances(MaintenanceDAO dao) {
 		return dao.findAll();
 	}
 	
 	public static List<Maintenance> getMaintenances(MaintenanceDAO dao, int workerId) {
 		return dao.findAll(workerId);
+	}
+	
+	public boolean update(MaintenanceDAO dao) {
+		return dao.update(this);
 	}
 	
 	//Override methods

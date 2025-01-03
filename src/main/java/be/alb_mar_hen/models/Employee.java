@@ -66,6 +66,7 @@ public abstract class Employee {
 		this.numericValidator = new NumericValidator();  
 	    this.objectValidator = new ObjectValidator();  
 	    this.stringValidator = new StringValidator();
+	    this.stringFormatter = new StringFormatter();
 	}
 	
 	// Getters
@@ -220,8 +221,6 @@ public abstract class Employee {
 	        throw new RuntimeException("Error during authentication: " + e.getMessage(), e);
 	    }
 	}
-
-
 	
 	public static Employee createEmployeeFromJson(
 	        String role,

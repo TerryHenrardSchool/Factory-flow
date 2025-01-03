@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
@@ -39,7 +40,26 @@ public class MaintenanceDAO extends DAO<Maintenance>{
 
 	@Override
 	public boolean update(Maintenance obj) {
-		// TODO Auto-generated method stub
+		try {
+			ObjectMapper mapper = new ObjectMapper();
+			mapper.registerModule(new Jdk8Module());
+			mapper.registerModule(new JavaTimeModule());
+			
+			String json = mapper.writeValueAsString(obj);
+			
+			ClientResponse response = 
+					getResource()
+					.path("maintenance")
+					.type(MediaType.APPLICATION_JSON)
+					.put(ClientResponse.class, json);
+			
+			if (response.getStatus() == 200) {
+				return true;
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
 		return false;
 	}
 
