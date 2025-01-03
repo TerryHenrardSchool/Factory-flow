@@ -1,12 +1,21 @@
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
     pageEncoding="ISO-8859-1"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@page import="be.alb_mar_hen.models.*" %>
+<%@page import="java.util.Collection" %>
+<%@page import="java.util.List" %>
+<%@page import="be.alb_mar_hen.enumerations.MaintenanceStatus" %>
 <!DOCTYPE html>
 <html lang="fr">
 <head>
 	<meta charset="ISO-8859-1">
 	<title>View maintenances</title>
-	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link
+		href="<%= request.getContextPath() %>/webjars/bootstrap/5.3.3/css/bootstrap.min.css"
+		rel="stylesheet"
+	>
+	<script src="<%= request.getContextPath() %>/webjars/bootstrap/5.3.3/js/bootstrap.bundle.min.js" defer></script>
+	<script src="<%= request.getContextPath() %>/scripts/WorkerDashboardScript.js" defer></script>
 </head>
 <body>
 	<h1 class="display-1 text-center">Maintenances</h1>
@@ -26,58 +35,80 @@
 			</tr>
 		</thead>
 		<tbody>
-			<form action="FinalizeMaintenanceServlet" method="POST">
-				<c:forEach var="maintenance" items="${maintenances}">
+				<%
+				Object maintenancesObj = request.getAttribute("maintenances");
+				Collection<Maintenance> maintenances = null;
+				
+				if(maintenancesObj instanceof List) {
+	               	maintenances = (Collection<Maintenance>) maintenancesObj;
+				}      
+	                        
+	              	for(Maintenance maintenance : maintenances){
+	     			%>
+	     			
 					<tr>
-						<td>${maintenance.id.get()}</td>
-						<td>${maintenance.startDateTime}</td>
+						<td><%= maintenance.getId().get()%></td>
+						<td><%= maintenance.getStartDateTime() %></td>
+						<td><%= maintenance.getEndDateTime().orElse(null) %></td>
+						<td><%= maintenance.getDuration().orElse(null) %></td>
+						<td><%= maintenance.getReport().orElse(null) %></td>
 						
-						<c:choose>
-							<c:when test="${maintenance.hasEndDateTime()}">
-								<td>${maintenance.endDateTime.get()}</td>
-							</c:when>
-							<c:otherwise>
-								<td>Pas de date de fin</td>
-							</c:otherwise>
-						</c:choose>
+						<td>
+							<ul>
+							<%
+								for(MaintenanceWorker worker : maintenance.getMaintenanceWorkers()){
+									
+									%>
+									<li><%= worker.getFullNameFormatted() %></li>
+									<%
+								}
+							%>
+							</ul>
+						</td>
 						
-						<c:choose>
-							<c:when test="${maintenance.hasDuration()}">
-							    <td>${maintenance.duration.get()}</td>
-							</c:when>
-							<c:otherwise>
-                            	<td>Pas de durée</td>
-                        	</c:otherwise>
-						</c:choose>
-						
-						<c:choose>
-							<c:when test="${maintenance.hasReport()}">
-								<td>${maintenance.report.get()}</td>
-							</c:when>
-							<c:otherwise>
-								<td>Pas de rapport</td>
-							</c:otherwise>
-						</c:choose>						
+						<td><%= maintenance.getMaintenanceResponsable().getFullNameFormatted() %></td>
+						<td><%= maintenance.getMachine().getName() %></td>
+						<td><%= maintenance.getStatus() %></td>
 						<td>
-							<c:forEach var="worker" items="${maintenance.maintenanceWorkers}">
-	                            ${worker.firstName} ${worker.lastName} <br>
-							</c:forEach>
-						</td>
-						<td>
-							${maintenance.maintenanceResponsable.firstName} ${maintenance.maintenanceResponsable.lastName} <br>
-						</td>
-						<td>${maintenance.machine.name}</td>
-						<td>${maintenance.status}</td>
-						<td>
-							<c:if test="${maintenance.status eq 'IN_PROGRESS'}">
-								<input type="hidden" name="maintenanceId" value="${maintenance.id.get()}">
-								<input type="submit" value="Finalize" class="btn btn-primary">
-							</c:if>
-						</td>
+							<% if (maintenance.getStatus().equals(MaintenanceStatus.IN_PROGRESS)) { %>
+						        <!-- Bouton pour ouvrir le modal -->
+						        <button
+						        	id="<%= maintenance.getId().get() %>"
+						            type="button"
+						            class="btn btn-primary finalize-button"
+						            data-bs-toggle="modal"
+						            data-bs-target="#sharedModal">
+						            Finalize
+						        </button>
+					        <% } %>
+				        </td>
 					</tr>
-				</c:forEach>
-			</form>
+				<%              		
+							}
+				%>
 		</tbody>
 	</table>
+	
+	<div class="modal fade" id="sharedModal" tabindex="-1" aria-labelledby="sharedModalLabel" aria-hidden="true">
+	    <div class="modal-dialog">
+	        <div class="modal-content">
+	            <div class="modal-header">
+	                <h5 class="modal-title" id="sharedModalLabel">Finalize Maintenance</h5>
+	                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+	            </div>
+	            <form action="ViewMaintenancesServlet" method="POST">
+		            <div class="modal-body">		      
+	                    <label for="report">Report:</label>
+	                	<input type="textarea" class="form-control" id="report" name="report">
+		            </div>
+		            <div class="modal-footer">
+	                    <input type="hidden" name="maintenanceId" id="modalMaintenanceId">
+	                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+	                    <button type="submit" class="btn btn-primary">Confirmer</button>
+		            </div>
+	            </form>
+	        </div>
+	    </div>
+	</div>
 </body>
 </html>

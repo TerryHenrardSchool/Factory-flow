@@ -9,9 +9,13 @@ import java.util.Optional;
 import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 
 import be.alb_mar_hen.daos.MaintenanceDAO;
 import be.alb_mar_hen.enumerations.MaintenanceStatus;
@@ -174,8 +178,6 @@ public class Maintenance implements Serializable{
 		}
 		
 		this.duration = duration;
-		
-		System.out.println("Duration: " + duration);
 	}
 	
 	public void setReport(Optional<String> report) {
@@ -188,8 +190,6 @@ public class Maintenance implements Serializable{
 		}
 		
 		this.report = report;
-		
-		System.out.println("Report: " + report);
 	}
 	
 	public void setStatus(MaintenanceStatus status) {
@@ -234,24 +234,16 @@ public class Maintenance implements Serializable{
 	    return added;
 	}
 	
-	public boolean hasDuration() {
-		return duration.isPresent();
-	}
-	
-	public boolean hasEndDateTime() {
-		return endDateTime.isPresent();
-	}
-	
-	public boolean hasReport() {
-		return report.isPresent();
-	}
-	
 	public static List<Maintenance> getMaintenances(MaintenanceDAO dao) {
 		return dao.findAll();
 	}
 	
 	public static List<Maintenance> getMaintenances(MaintenanceDAO dao, int workerId) {
 		return dao.findAll(workerId);
+	}
+	
+	public boolean update(MaintenanceDAO dao) {
+		return dao.update(this);
 	}
 	
 	//Override methods

@@ -52,6 +52,7 @@
 	    <artifactId>jstl</artifactId>
 	    <version>1.2</version>
 	</dependency>
+	
     <dependency>
 	    <groupId>com.fasterxml.jackson.module</groupId>
 	    <artifactId>jackson-module-parameter-names</artifactId>
@@ -70,17 +71,22 @@
 	<dependency>
     <groupId>com.fasterxml.jackson.core</groupId>
     <artifactId>jackson-databind</artifactId>
-    <version>2.13.4</version>
+    <version>2.15.2</version>
 </dependency>
 <dependency>
     <groupId>com.fasterxml.jackson.core</groupId>
     <artifactId>jackson-core</artifactId>
-    <version>2.13.4</version>
+    <version>2.15.2</version>
 </dependency>
 <dependency>
     <groupId>com.fasterxml.jackson.core</groupId>
     <artifactId>jackson-annotations</artifactId>
-    <version>2.13.4</version>
+    <version>2.15.2</version>
+</dependency>
+<dependency>
+    <groupId>org.webjars</groupId>
+    <artifactId>bootstrap</artifactId>
+    <version>5.3.3</version>
 </dependency>
   </dependencies>
 </project>

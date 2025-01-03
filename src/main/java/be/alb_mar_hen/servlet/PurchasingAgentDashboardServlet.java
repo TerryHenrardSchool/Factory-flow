@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 import javax.servlet.ServletException;
@@ -14,6 +15,10 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
+
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 
 import be.alb_mar_hen.ViewModels.MachinePurchasingAgentDashboardViewModel;
 import be.alb_mar_hen.models.Machine;
@@ -62,8 +67,7 @@ public class PurchasingAgentDashboardServlet extends HttpServlet {
 		    List<MachinePurchasingAgentDashboardViewModel> machineViewModels = new ArrayList<>();
 		    
 		    for (Machine machine : machines) {
-		        boolean buy = "TO_BE_REPLACED".equals(machine.getStatus());
-
+		    	boolean buy = "TO_BE_REPLACED".equals(machine.getStatus().toString());
 		        Set<String> zoneColors = new HashSet<>();
 		        
 		        for (Zone zone : machine.getZones()) {
@@ -71,6 +75,9 @@ public class PurchasingAgentDashboardServlet extends HttpServlet {
 		        }
 
 		        String combinedZoneColors = String.join(", ", zoneColors);
+		        ObjectMapper objectMapper = new ObjectMapper();
+		        objectMapper.registerModule(new Jdk8Module());
+		        String machineJson = objectMapper.writeValueAsString(machine);
 
 		        MachinePurchasingAgentDashboardViewModel machineViewModel = new MachinePurchasingAgentDashboardViewModel(
 		            machine.getId(),
@@ -79,13 +86,40 @@ public class PurchasingAgentDashboardServlet extends HttpServlet {
 		            machine.getStatus().toString(),
 		            combinedZoneColors,
 		            machine.getZones().iterator().next().getSite().getCity(),
-		            buy
+		            buy,
+		            machine.getMachineType().getPrice(),
+		            machine.getMaintenances().size(),
+		            machineJson
 		        );
 		        machineViewModels.add(machineViewModel);
 		    }
-		    System.out.println("Machines: " + machineViewModels);
+		    
 		    request.setAttribute("machineViewModels", machineViewModels);
 		    request.getRequestDispatcher("PurchasingAgentDashboard.jsp").forward(request, response);
 		}
+	 
+	 @Override
+	 protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		    
+		    String machineJson = request.getParameter("machineJson");
+		    
+		    PurchasingAgent purchasingAgent = (PurchasingAgent) request.getSession().getAttribute("employee");
+		    
+		    if (purchasingAgent == null) {
+		        request.setAttribute("errorMessage", "You must be logged in as a Purchasing Agent to perform this action.");
+		        request.getRequestDispatcher("login.jsp").forward(request, response);  
+		        return;
+		    }
+		    
+		    boolean result = purchasingAgent.buyMachine(machineJson);
+		    
+		    if (result) {
+		        request.setAttribute("successMessage", "Machine purchase successful.");
+		    } else {
+		        request.setAttribute("errorMessage", "An unexpected error occurred. Please try again.");
+		    }
+		    
+		    doGet(request, response);
+	    }
 
 }

@@ -6,13 +6,21 @@ import java.util.List;
 import java.util.Map;
 
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
+
+import org.glassfish.jersey.internal.inject.Custom;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.json.JsonMapper;
+import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.sun.jersey.api.client.*;
 import com.sun.jersey.api.client.config.*;
 import be.alb_mar_hen.models.Maintenance;
+import be.alb_mar_hen.serializers.*;
 
 public class MaintenanceDAO extends DAO<Maintenance>{
 
@@ -39,7 +47,37 @@ public class MaintenanceDAO extends DAO<Maintenance>{
 
 	@Override
 	public boolean update(Maintenance obj) {
-		// TODO Auto-generated method stub
+		try {
+			ObjectMapper mapper = new ObjectMapper();
+			
+			SimpleModule module = new SimpleModule();
+			module.addSerializer(new CustomLocalDateTimeSerializer());
+			
+			mapper.registerModule(module);
+			mapper.registerModule(new Jdk8Module());
+			
+			String json = mapper.writeValueAsString(obj);
+			
+			System.out.println("JSON SENT TO API : " + json);
+			
+			ClientResponse response = 
+					getResource()
+					.path("maintenance")
+					.type(MediaType.APPLICATION_JSON)
+					.put(ClientResponse.class, json);
+			
+			System.out.println("Response status: " + response.getStatus());
+			
+			if (response.getStatus() == Status.OK.getStatusCode()) {
+				System.out.println("Maintenance updated");
+				return true;
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		System.out.println("Maintenance not updated : ");
+		
 		return false;
 	}
 

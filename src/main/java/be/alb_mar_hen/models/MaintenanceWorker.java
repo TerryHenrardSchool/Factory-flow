@@ -18,7 +18,6 @@ import be.alb_mar_hen.validators.StringValidator;
 public class MaintenanceWorker extends Employee{
 	
 	// Validators
-	
 	private ObjectValidator objectValidator;
 	
 	// Constructors
@@ -39,6 +38,7 @@ public class MaintenanceWorker extends Employee{
 	
 	public MaintenanceWorker() {
 		super();
+		this.objectValidator = new ObjectValidator();
 	}
 		
 	// Override methods
