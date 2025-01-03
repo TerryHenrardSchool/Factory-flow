@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonBackReference;
@@ -232,6 +233,12 @@ public class Maintenance implements Serializable{
 	    boolean added = maintenanceWorkers.add(worker);
 	    
 	    return added;
+	}
+	
+	public String getWorkersNames() {
+	    return maintenanceWorkers.stream()
+	        .map(MaintenanceWorker::getFullNameFormatted)
+	        .collect(Collectors.joining(" "));
 	}
 	
 	public static List<Maintenance> getMaintenances(MaintenanceDAO dao) {
