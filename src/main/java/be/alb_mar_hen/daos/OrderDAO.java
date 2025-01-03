@@ -16,8 +16,8 @@ import be.alb_mar_hen.models.Order;
 
 public class OrderDAO extends DAO<Order>{
 
-	public OrderDAO(Connection conn) {
-		super(conn);
+	public OrderDAO() {
+		super();
 	}
 
 	@Override
