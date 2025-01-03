@@ -10,13 +10,16 @@ import org.json.JSONObject;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 import be.alb_mar_hen.models.Employee;
 import be.alb_mar_hen.models.Machine;
 import be.alb_mar_hen.models.MaintenanceResponsable;
 import be.alb_mar_hen.models.MaintenanceWorker;
 import be.alb_mar_hen.models.PurchasingAgent;
+import be.alb_mar_hen.serializers.CustomLocalDateTimeSerializer;
 
 public class PurchasingAgentDAO extends DAO<PurchasingAgent>{
 
@@ -61,8 +64,12 @@ public class PurchasingAgentDAO extends DAO<PurchasingAgent>{
 	}
 	
 	public boolean buyMachine(Machine machine, int employeeid) throws SQLException {
-	    ObjectMapper objectMapper = new ObjectMapper();
-	    objectMapper.registerModule(new Jdk8Module());
+		ObjectMapper objectMapper = new ObjectMapper();
+		
+		SimpleModule module = new SimpleModule();
+		module.addSerializer(new CustomLocalDateTimeSerializer());
+		objectMapper.registerModule(module);
+	    objectMapper.registerModule(new Jdk8Module());; 
 
 	    boolean result = false;
 	    try {

@@ -10,6 +10,7 @@ import javax.ws.rs.core.MediaType;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 import be.alb_mar_hen.models.Machine;
 import be.alb_mar_hen.models.Order;
@@ -60,6 +61,7 @@ public class OrderDAO extends DAO<Order>{
 	        }
 
 	        ObjectMapper mapper = new ObjectMapper();
+	        mapper.registerModule(new JavaTimeModule()); 
 	        mapper.registerModule(new Jdk8Module());
 	        orders = mapper.readValue(
 	            responseBody,
