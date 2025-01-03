@@ -62,8 +62,8 @@ public class PurchasingAgentDashboardServlet extends HttpServlet {
 
 		    if (employee == null || !(employee instanceof PurchasingAgent)) {
 		    	request.setAttribute("errorMessage", "Access denied. Please log in as a Purchasing Agent to access this page.");
-		    	response.sendRedirect("/WEB-INF/jsps/Authentication.jsp");
-		        return;
+		    	request.getRequestDispatcher("/WEB-INF/jsps/Authentication.jsp").forward(request, response);
+				return;
 		    }
 		    List<Machine> machines = Machine.findAll();
 		    
