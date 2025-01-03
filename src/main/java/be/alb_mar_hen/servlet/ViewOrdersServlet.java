@@ -19,25 +19,15 @@ import be.alb_mar_hen.models.Employee;
 import be.alb_mar_hen.models.Order;
 import be.alb_mar_hen.validators.ObjectValidator;
 
-/**
- * Servlet implementation class ViewOrdersServlet
- */
 @WebServlet("/ViewOrdersServlet")
 public class ViewOrdersServlet extends HttpServlet {
 	private final OrderDAO orderDAO = new OrderDAO();
 	private static final long serialVersionUID = 1L;
        
-    /**
-     * @see HttpServlet#HttpServlet()
-     */
-    public ViewOrdersServlet() {
+	ViewOrdersServlet() {
         super();
-        // TODO Auto-generated constructor stub
     }
 
-	/**
-	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
-	 */
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		HttpSession session = request.getSession();
 		ObjectValidator objValidator = new ObjectValidator();
@@ -83,11 +73,7 @@ public class ViewOrdersServlet extends HttpServlet {
 		request.getRequestDispatcher("/WEB-INF/jsps/ViewOrders.jsp").forward(request, response);
 	}
 
-	/**
-	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
-	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
 		doGet(request, response);
 	}
 
