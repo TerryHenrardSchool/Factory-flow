@@ -51,7 +51,7 @@ public class AuthenticationServlet extends HttpServlet {
             
             switch (role) {
                 case "Maintenance Responsable":
-                    response.sendRedirect("maintenanceResponsableHome.jsp");
+                    response.sendRedirect("MaintenanceResponsableDashboardServlet");
                     break;
                 case "Maintenance Worker":
                     response.sendRedirect("ViewMaintenancesServlet");
@@ -78,8 +78,6 @@ public class AuthenticationServlet extends HttpServlet {
             request.getRequestDispatcher("login.jsp").forward(request, response);
         }
     }
-
-
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         request.getRequestDispatcher("login.jsp").forward(request, response);

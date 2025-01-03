@@ -1,5 +1,6 @@
 package be.alb_mar_hen.models;
 
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
@@ -9,6 +10,7 @@ import java.util.Set;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import be.alb_mar_hen.daos.MachineDAO;
 import be.alb_mar_hen.enumerations.MachineStatus;
@@ -16,9 +18,9 @@ import be.alb_mar_hen.validators.NumericValidator;
 import be.alb_mar_hen.validators.ObjectValidator;
 import be.alb_mar_hen.validators.StringValidator;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 @JsonIdentityInfo(generator = ObjectIdGenerators.IntSequenceGenerator.class, property = "keyMachine")
 public class Machine {
-	@JsonIgnoreProperties({"numericValidator", "objectValidator", "stringValidator"})
 	// Validators
 	NumericValidator numericValidator;
 	ObjectValidator objectValidator;
@@ -30,6 +32,7 @@ public class Machine {
 	private String name;
 	
 	// Relations
+	@JsonManagedReference
 	private Set<Maintenance> maintenances;
 	private Set<Zone> zones;
 	private MachineType machineType;
@@ -200,6 +203,13 @@ public class Machine {
 		
 		return added;
 	}
+	
+	public Maintenance getLastMaintenance() {
+	    return maintenances.stream()
+	        .max(Comparator.comparing(Maintenance::getStartDateTime))
+	        .orElse(null);
+	}
+
 
 	// Override methods
 	@Override

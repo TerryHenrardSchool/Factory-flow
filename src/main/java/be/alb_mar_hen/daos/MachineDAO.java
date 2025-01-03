@@ -2,8 +2,12 @@ package be.alb_mar_hen.daos;
 
 import java.sql.Connection;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -15,6 +19,7 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 import be.alb_mar_hen.models.Machine;
 import be.alb_mar_hen.utils.ObjectCreator;
+import be.alb_mar_hen.validators.ObjectValidator;
 
 public class MachineDAO extends DAO<Machine>{
 
@@ -48,7 +53,7 @@ public class MachineDAO extends DAO<Machine>{
 
 	@Override
 	public List<Machine> findAll() {
-	    String response = sendGetRequest("/machines/getAll");
+	    String response = sendGetRequest("/machine/getAll");
 	    
 	    if (response.startsWith("Error:")) {
 	        System.out.println("Error fetching data: " + response);
@@ -66,6 +71,35 @@ public class MachineDAO extends DAO<Machine>{
 	        return new ArrayList<>();
 	    }
 	}
+	
+	public Collection<Machine> findAll_terry() {
+	    Collection<Machine> machines = new ArrayList<>();
+
+	    try {
+	        String responseBody = getResource()
+					        		.path("/machine")
+					        		.accept(MediaType.APPLICATION_JSON)
+					        		.get(String.class);
+	        
+	        if (responseBody == null || responseBody.isEmpty()) {
+	            System.out.println("No machines");
+	            return machines;
+	        }
+
+	        ObjectMapper mapper = new ObjectMapper();
+	        mapper.registerModule(new Jdk8Module());
+	        machines = mapper.readValue(
+	            responseBody,
+	            mapper.getTypeFactory().constructCollectionType(List.class, Machine.class)
+	        );
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        return machines;
+	    }
+
+	    return machines;
+	}
+
 
 	@Override
 	public List<Machine> findAll(Map<String, Object> criteria) {

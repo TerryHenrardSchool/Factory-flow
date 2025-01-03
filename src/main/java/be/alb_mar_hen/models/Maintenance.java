@@ -9,6 +9,8 @@ import java.util.Optional;
 import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
@@ -47,6 +49,7 @@ public class Maintenance implements Serializable{
 	
 	// Relations
 	private Set<MaintenanceWorker> maintenanceWorkers;
+	@JsonBackReference
 	private Machine machine;
 	private MaintenanceResponsable maintenanceResponsable;
 		
