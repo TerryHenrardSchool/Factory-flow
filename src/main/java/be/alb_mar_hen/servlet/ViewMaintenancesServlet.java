@@ -32,7 +32,7 @@ public class ViewMaintenancesServlet extends HttpServlet {
 			request.getRequestDispatcher("/WEB-INF/jsps/Authentication.jsp").forward(request, response);
 			return;
 		}
-		
+	
 		Employee employee = (Employee) session.getAttribute("employee");	
 		
 		List<Maintenance> maintenances = Maintenance.getMaintenances(maintenanceDAO, employee.getId().get());
