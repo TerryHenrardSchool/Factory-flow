@@ -60,7 +60,7 @@ public class AuthenticationServlet extends HttpServlet {
                     response.sendRedirect("PurchasingAgentDashboardServlet");
                     break;
                 default:
-                    response.sendRedirect("defaultHome.jsp");
+                    response.sendRedirect("AuthenticationServlet");
                     break;
             }
 

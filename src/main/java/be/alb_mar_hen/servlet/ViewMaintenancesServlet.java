@@ -29,7 +29,7 @@ public class ViewMaintenancesServlet extends HttpServlet {
 		
 		if (session.getAttribute("employee") == null) {
 			request.setAttribute("errorMessage", "Access denied. Please log in to access this page.");
-			request.getRequestDispatcher("/login.jsp").forward(request, response);
+			request.getRequestDispatcher("/WEB-INF/jsps/Authentication.jsp").forward(request, response);
 			return;
 		}
 		
