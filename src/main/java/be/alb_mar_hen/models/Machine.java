@@ -258,7 +258,7 @@ public class Machine {
 	
 	public static List<Machine> findAll() {
         MachineDAO machineDAO = new MachineDAO();
-        List<Machine> machines = machineDAO.findAll();
+        List<Machine> machines = (List<Machine>) machineDAO.findAll_terry();
         
         return machines;
     }

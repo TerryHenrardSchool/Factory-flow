@@ -7,24 +7,29 @@ import java.util.Optional;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import be.alb_mar_hen.daos.MachineDAO;
 import be.alb_mar_hen.daos.OrderDAO;
+import be.alb_mar_hen.utils.CustomDateDeserializer;
 import be.alb_mar_hen.validators.DateValidator;
 import be.alb_mar_hen.validators.NumericValidator;
 import be.alb_mar_hen.validators.ObjectValidator;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 @JsonIdentityInfo(generator = ObjectIdGenerators.IntSequenceGenerator.class, property = "keyOrder")
 public class Order {
 	// Validators
-	@JsonIgnoreProperties({"numericValidator", "objectValidator", "stringValidator"})
+
 	private NumericValidator numericValidator;
 	private DateValidator dateValidator;
 	private ObjectValidator objectValidator;
 	
 	// Attributes
-	private Optional<Integer> id;
+	@JsonDeserialize(using = CustomDateDeserializer.class)
+	@JsonProperty("order")
 	private LocalDateTime orderDateTime;
 	
 	// Relations
@@ -33,8 +38,7 @@ public class Order {
 	private Machine machine;
 	
 	// Constructors
-	public Order(
-		Optional<Integer> id, 
+	public Order( 
 		LocalDateTime orderDate, 
 		Supplier supplier,
 		PurchasingAgent purchasingAgent,
@@ -46,17 +50,19 @@ public class Order {
 		this.numericValidator = numericValidator;
 		this.dateValidator = dateValidator;
 		this.objectValidator = objectValidator;
-		setId(id);
 		setOrder(orderDate);
 		setMachine(machine);
 		setPurchasingAgent(purchasingAgent);
 		setSupplier(supplier);
 	}
 	
-	// Getters
-	public Optional<Integer> getId() {
-		return id;
+	public Order() {
+		this.numericValidator = new NumericValidator();
+		this.dateValidator = new DateValidator();
+		this.objectValidator = new ObjectValidator();
 	}
+	
+	// Getters
 	
 	public LocalDateTime getOrder() {
 		return orderDateTime;
@@ -75,17 +81,6 @@ public class Order {
 	}
 	
 	// Setters
-	public void setId(Optional<Integer> id) {
-		if (!objectValidator.hasValue(id)) {
-			throw new NullPointerException("Id must have a value.");
-		}
-		
-	    if (!numericValidator.isPositiveOrEqualToZero(id)) {
-	        throw new IllegalArgumentException("Id must be greater than or equal to 0");
-	    }
-	    
-	    this.id = id;
-	}
 	
 	public void setOrder(LocalDateTime orderDate) {
 		if(!objectValidator.hasValue(orderDate)) {
@@ -116,7 +111,7 @@ public class Order {
 	}
 	
 	public void setSupplier(Supplier supplier) {
-		if(objectValidator.hasValue(supplier)) {
+		if(!objectValidator.hasValue(supplier)) {
 			throw new NullPointerException("Supplier must have a value.");
 		}
 		
@@ -126,8 +121,8 @@ public class Order {
 	// Override methods
 	@Override
 	public String toString() {
-		return "Order [id=" + id.orElse(null) + 
-			", orderDateTime=" + orderDateTime + 
+		return 
+			"orderDateTime=" + orderDateTime + 
 			", supplier=" + supplier + 
 			", purchasingAgent=" + purchasingAgent + 
 			", machine=" + machine + "]";
@@ -135,7 +130,7 @@ public class Order {
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(id.orElse(0), machine, orderDateTime, purchasingAgent, supplier);
+		return Objects.hash(machine, orderDateTime, purchasingAgent, supplier);
 	}
 
 	@Override
@@ -152,8 +147,7 @@ public class Order {
 		}
 		
 		Order other = (Order) obj;
-		return Objects.equals(id.orElse(0), other.id.orElse(0))
-			&& Objects.equals(machine, other.machine)
+		return Objects.equals(machine, other.machine)
 			&& Objects.equals(orderDateTime, other.orderDateTime)
 			&& Objects.equals(purchasingAgent, other.purchasingAgent) 
 			&& Objects.equals(supplier, other.supplier);

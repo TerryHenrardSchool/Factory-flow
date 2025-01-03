@@ -63,7 +63,7 @@ public class OrderDAO extends DAO<Order>{
 	        mapper.registerModule(new Jdk8Module());
 	        orders = mapper.readValue(
 	            responseBody,
-	            mapper.getTypeFactory().constructCollectionType(List.class, Order.class)
+					mapper.getTypeFactory().constructCollectionType(List.class, Order.class)
 	        );
 	    } catch (Exception e) {
 	        e.printStackTrace();
