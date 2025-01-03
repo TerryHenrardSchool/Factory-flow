@@ -22,7 +22,6 @@ public class MaintenanceResponsableDashboardServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	
 	private final MachineDAO machineDAO = new MachineDAO();
-	private Collection<Machine> machines;
        
     /**
      * @see HttpServlet#HttpServlet()
@@ -47,12 +46,10 @@ public class MaintenanceResponsableDashboardServlet extends HttpServlet {
 			return;
 		}
 				
-		machines = machineDAO.findAll_terry();
+		Collection<Machine> machines = machineDAO.findAll_terry();
 		
 		if (machines.isEmpty()) {
 			request.setAttribute("errorMessage", "No machines found.");
-			request.getRequestDispatcher("login.jsp").forward(request, response);
-			return;
 		}
 				
 		request.setAttribute("machines", machines);
@@ -63,16 +60,44 @@ public class MaintenanceResponsableDashboardServlet extends HttpServlet {
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		int machineId = Integer.parseInt(request.getParameter("machineId"));
-        Machine machineToUpdate = machines.stream().filter(m -> m.getId().get() == machineId).findFirst().orElse(null);
-        ObjectValidator objValidator = new ObjectValidator();
-		if (!objValidator.hasValue(machineToUpdate)) {
-			request.setAttribute("errorMessage", "Machine not found.");
-			request.getRequestDispatcher("/WEB-INF/jsps/MaintenanceResponsableDashboard.jsp").forward(request,response);
+		ObjectValidator objValidator = new ObjectValidator();
+		String machineIdParam  = request.getParameter("machineId");   
+		
+        // Validation de l'ID de la machine
+		if (!objValidator.hasValue(machineIdParam)) {
+			request.setAttribute("errorMessage", "Machine ID is required.");
+			doGet(request, response);
 			return;
 		}
-        
-		// TODO: Update machine status through API
+		
+		// Conversion de l'ID de la machine en entier
+		int machineId;
+		try {
+            machineId = Integer.parseInt(machineIdParam);
+        } catch (NumberFormatException e) {
+            request.setAttribute("errorMessage", "Machine ID must be a number.");
+            doGet(request, response);
+            return;
+        }
+		
+		// Réupérer la machine concernée
+		Machine machineToUpdate = machineDAO.find(machineId);
+		if (!objValidator.hasValue(machineToUpdate)) {
+			request.setAttribute("errorMessage", "Machine not found.");
+			doGet(request, response);
+			return;
+		}
+		System.out.println("Machine found: " + machineToUpdate);
+		
+		// Mise à jour du statut de la machine
+		boolean isUpdated = machineDAO.update(machineToUpdate);
+		if (!isUpdated) {
+			request.setAttribute("errorMessage", "Failed to update machine status.");
+			doGet(request, response);
+			return;
+		}
+		
+        request.setAttribute("successMessage", "Machine " + machineToUpdate.getId().get() + " status updated successfully.");
 		
 		doGet(request, response);
 	}

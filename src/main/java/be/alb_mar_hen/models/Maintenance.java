@@ -177,8 +177,6 @@ public class Maintenance implements Serializable{
 		}
 		
 		this.duration = duration;
-		
-		System.out.println("Duration: " + duration);
 	}
 	
 	public void setReport(Optional<String> report) {
@@ -191,8 +189,6 @@ public class Maintenance implements Serializable{
 		}
 		
 		this.report = report;
-		
-		System.out.println("Report: " + report);
 	}
 	
 	public void setStatus(MaintenanceStatus status) {

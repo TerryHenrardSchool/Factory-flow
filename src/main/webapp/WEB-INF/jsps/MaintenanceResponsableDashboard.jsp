@@ -10,7 +10,7 @@
 <html>
 <head>
 	<meta charset="ISO-8859-1">
-	<title>Machine Dashboard</title>
+	<title>Maintenance responsable dashboard</title>
 	<link
 		href="<%= request.getContextPath() %>/webjars/bootstrap/5.3.3/css/bootstrap.min.css"
 		rel="stylesheet"
@@ -40,7 +40,7 @@
 		      <div class="modal-footer">
 		      	<input type="hidden" id="machineIdHiddenInput" name="machineId" value="-1">
 		        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-		        <button type="button" class="btn btn-primary">Validate</button>
+		        <input type="submit" class="btn btn-primary" value="Validate">
 		      </div>
 	      </form>
 	    </div>
@@ -57,6 +57,7 @@
 			<table class="table table-hover">
 				<thead>
 					<tr>
+						<th>#</th>
 						<th>ID</th>
 						<th>Name</th>
 						<th>Type</th>
@@ -67,14 +68,16 @@
 				</thead>
 				<tbody>
 					<%
+					int i = 1;
 					for (Machine machine : machines) { 
-						String statusBadgeClass = "badge text-uppercase px-3 py-2 w-100 ";
+						String statusBadgeClass = "badge text-uppercase px-3 py-2 ";
 						String trClass = "";
 						String actionButton = "";
 						String reportText = "";
 						switch (machine.getStatus()) {
 							case TO_BE_REPLACED:
 								statusBadgeClass += "bg-danger";
+								trClass = "table-danger";
 								break;
 							case OK:
 								statusBadgeClass += "bg-success";
@@ -101,6 +104,7 @@
 						}
 						%>
 						<tr class="<%= trClass%>">
+						    <td><%= i++ %></td>
 							<td><%= machine.getId().get() %></td>
 							<td><%= machine.getName() %></td>
 							<td><%= machine.getMachineType().getType() %></td>
@@ -109,7 +113,7 @@
 								<div class="d-flex flex-wrap gap-2">
 									<%
 									for (Zone zone : machine.getZones()) { 
-										String zoneColorClass = "badge text-uppercase px-3 py-2 w-100 ";
+										String zoneColorClass = "badge text-uppercase px-3 py-2 ";
 										switch (zone.getColor()) {
 											case ORANGE:
 												zoneColorClass += "bg-warning";
@@ -131,7 +135,7 @@
 									<% } %>
 								</div>
 							</td>
-							<td class="text-center">
+							<td>
 								<%= actionButton %>
 								<p id="reportTextMachine<%= machine.getId().orElse(-1) %>" style="display: none;"><%= reportText %></p>
 							</td>

@@ -47,8 +47,31 @@ public class MachineDAO extends DAO<Machine>{
 
 	@Override
 	public Machine find(int id) {
-		// TODO Auto-generated method stub
-		return null;
+		Machine machine = null;
+
+	    try {
+	        String responseBody = getResource()
+					        		.path("/machine/" + id)
+					        		.accept(MediaType.APPLICATION_JSON)
+					        		.get(String.class);
+	        
+	        if (responseBody == null || responseBody.isEmpty()) {
+	            System.out.println("No machine");
+	            return machine;
+	        }
+
+	        ObjectMapper mapper = new ObjectMapper();
+	        mapper.registerModule(new Jdk8Module());
+	        machine = mapper.readValue(
+	            responseBody,
+	            mapper.getTypeFactory().constructCollectionType(List.class, Machine.class)
+	        );
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        return machine;
+	    }
+
+	    return machine;
 	}
 
 	@Override
