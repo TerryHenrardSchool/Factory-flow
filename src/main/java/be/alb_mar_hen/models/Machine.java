@@ -10,6 +10,7 @@ import java.util.Set;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import be.alb_mar_hen.daos.MachineDAO;
 import be.alb_mar_hen.enumerations.MachineStatus;
@@ -31,6 +32,7 @@ public class Machine {
 	private String name;
 	
 	// Relations
+	@JsonManagedReference
 	private Set<Maintenance> maintenances;
 	private Set<Zone> zones;
 	private MachineType machineType;

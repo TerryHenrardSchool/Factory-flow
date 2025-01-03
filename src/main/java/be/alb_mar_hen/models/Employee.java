@@ -66,6 +66,7 @@ public abstract class Employee {
 		this.numericValidator = new NumericValidator();  
 	    this.objectValidator = new ObjectValidator();  
 	    this.stringValidator = new StringValidator();
+	    this.stringFormatter = new StringFormatter();
 	}
 	
 	// Getters

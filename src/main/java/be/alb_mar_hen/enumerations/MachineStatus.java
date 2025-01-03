@@ -7,4 +7,5 @@ public enum MachineStatus {
 	TO_BE_REPLACED,
 	REPLACED,
 	NEED_VALIDATION;
+
 }

@@ -38,6 +38,7 @@ public class MaintenanceResponsable extends Employee{
 	
 	public MaintenanceResponsable() {
 		super();
+		this.objectValidator = new ObjectValidator();
 	}
 	
 	// Override methods
