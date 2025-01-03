@@ -13,15 +13,15 @@
 		<welcome-file>default.htm</welcome-file>
 	</welcome-file-list>
 
-	<!-- ViewMaintenancesServlet -->
+	<!-- MaintenanceWorkerDashboardServlet -->
 	<servlet>
-		<servlet-name>ViewMaintenancesServlet</servlet-name>
-		<servlet-class>be.alb_mar_hen.servlet.ViewMaintenancesServlet</servlet-class>
+		<servlet-name>MaintenanceWorkerDashboardServlet</servlet-name>
+		<servlet-class>be.alb_mar_hen.servlet.MaintenanceWorkerDashboardServlet</servlet-class>
 	</servlet>
 
 	<servlet-mapping>
-		<servlet-name>ViewMaintenancesServlet</servlet-name>
-		<url-pattern>/ViewMaintenancesServlet</url-pattern>
+		<servlet-name>MaintenanceWorkerDashboardServlet</servlet-name>
+		<url-pattern>/MaintenanceWorkerDashboardServlet</url-pattern>
 	</servlet-mapping>
 
 

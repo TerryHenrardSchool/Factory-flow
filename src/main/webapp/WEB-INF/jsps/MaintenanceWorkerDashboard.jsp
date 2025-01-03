@@ -96,7 +96,7 @@
 	                <h5 class="modal-title" id="sharedModalLabel">Finalize Maintenance</h5>
 	                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 	            </div>
-	            <form action="ViewMaintenancesServlet" method="POST">
+	            <form action="MaintenanceWorkerDashboardServlet" method="POST">
 		            <div class="modal-body">		      
 	                    <label for="report">Report:</label>
 	                	<input type="textarea" class="form-control" id="report" name="report">
