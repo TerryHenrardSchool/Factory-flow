@@ -24,7 +24,7 @@ public class ViewOrdersServlet extends HttpServlet {
 	private final OrderDAO orderDAO = new OrderDAO();
 	private static final long serialVersionUID = 1L;
        
-	ViewOrdersServlet() {
+	public ViewOrdersServlet() {
         super();
     }
 

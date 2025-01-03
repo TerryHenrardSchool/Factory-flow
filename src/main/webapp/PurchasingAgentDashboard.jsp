@@ -11,18 +11,21 @@
 </head>
 <body>
     <div class="container mt-5">
-        <!-- Display Success or Error Message -->
         <c:if test="${not empty successMessage}">
             <div class="alert alert-success" role="alert">
                 ${successMessage}
             </div>
         </c:if>
-
+	
         <c:if test="${not empty errorMessage}">
             <div class="alert alert-danger" role="alert">
                 ${errorMessage}
             </div>
         </c:if>
+        
+        <div class="mb-3">
+            <a href="ViewOrdersServlet" class="btn btn-primary">View Orders</a>
+        </div>
 
         <h1>Machines Dashboard</h1>
         <table class="table table-striped">
