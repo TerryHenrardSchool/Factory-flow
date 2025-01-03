@@ -18,9 +18,9 @@ import be.alb_mar_hen.validators.NumericValidator;
 import be.alb_mar_hen.validators.ObjectValidator;
 import be.alb_mar_hen.validators.StringValidator;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 @JsonIdentityInfo(generator = ObjectIdGenerators.IntSequenceGenerator.class, property = "keyMachine")
 public class Machine {
-	@JsonIgnoreProperties({"numericValidator", "objectValidator", "stringValidator"})
 	// Validators
 	NumericValidator numericValidator;
 	ObjectValidator objectValidator;
