@@ -66,7 +66,7 @@ public class EmployeeDAO extends DAO<Employee> {
 	    String jsonResponse = null;
 
 	    try {
-	        jsonResponse = sendPostRequest("employee/authenticate", input);
+	        jsonResponse = sendPostRequest("employee", input);
 
 	        if (jsonResponse == null || jsonResponse.isEmpty()) {
 	            throw new SQLException("Authentication failed: No response from authentication service.");
