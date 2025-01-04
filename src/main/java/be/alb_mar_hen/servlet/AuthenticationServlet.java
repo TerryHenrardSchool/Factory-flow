@@ -54,7 +54,7 @@ public class AuthenticationServlet extends HttpServlet {
                     response.sendRedirect("MaintenanceResponsableDashboardServlet");
                     break;
                 case "Maintenance Worker":
-                    response.sendRedirect("ViewMaintenancesServlet");
+                    response.sendRedirect("MaintenanceWorkerDashboardServlet");
                     break;
                 case "Purchasing Agent":
                     response.sendRedirect("PurchasingAgentDashboardServlet");

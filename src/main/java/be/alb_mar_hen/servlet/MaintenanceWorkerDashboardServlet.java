@@ -15,13 +15,13 @@ import be.alb_mar_hen.daos.MaintenanceDAO;
 import be.alb_mar_hen.models.Employee;
 import be.alb_mar_hen.models.Maintenance;
 
-public class ViewMaintenancesServlet extends HttpServlet {
+public class MaintenanceWorkerDashboardServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
     private MaintenanceDAO maintenanceDAO;
     
-    public ViewMaintenancesServlet() {
+    public MaintenanceWorkerDashboardServlet() {
         super();
-        maintenanceDAO = new MaintenanceDAO(FactoryFlowConnection.getInstance());
+        maintenanceDAO = new MaintenanceDAO();
     }
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -39,7 +39,7 @@ public class ViewMaintenancesServlet extends HttpServlet {
 		
 		request.setAttribute("maintenances", maintenances);
 		
-		request.getRequestDispatcher("/WEB-INF/jsps/ViewMaintenances.jsp").forward(request, response);
+		request.getRequestDispatcher("/WEB-INF/jsps/MaintenanceWorkerDashboard.jsp").forward(request, response);
 	}
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {

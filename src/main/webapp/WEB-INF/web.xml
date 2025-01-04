@@ -14,17 +14,16 @@
 	<servlet-class>be.alb_mar_hen.servlet.AuthenticationServlet</servlet-class>
 	</servlet>
 
-	<!-- ViewMaintenancesServlet -->
+	<!-- MaintenanceWorkerDashboardServlet -->
 	<servlet>
-		<servlet-name>ViewMaintenancesServlet</servlet-name>
-		<servlet-class>be.alb_mar_hen.servlet.ViewMaintenancesServlet</servlet-class>
+		<servlet-name>MaintenanceWorkerDashboardServlet</servlet-name>
+		<servlet-class>be.alb_mar_hen.servlet.MaintenanceWorkerDashboardServlet</servlet-class>
 	</servlet>
 
 	<servlet-mapping>
-		<servlet-name>ViewMaintenancesServlet</servlet-name>
-		<url-pattern>/ViewMaintenancesServlet</url-pattern>
+		<servlet-name>MaintenanceWorkerDashboardServlet</servlet-name>
+		<url-pattern>/MaintenanceWorkerDashboardServlet</url-pattern>
 	</servlet-mapping>
-
 
 	<!-- MaintenanceResponsableDashboardServlet -->
 	<servlet>
@@ -34,5 +33,25 @@
 	<servlet-mapping>
 		<servlet-name>MaintenanceResponsableDashboardServlet</servlet-name>
 		<url-pattern>/MaintenanceResponsableDashboardServlet</url-pattern>
+	</servlet-mapping>
+	
+	<!-- MaintenanceHistoryServlet -->
+	<servlet>
+		<servlet-name>MaintenanceHistoryServlet</servlet-name>
+		<servlet-class>be.alb_mar_hen.servlet.MaintenanceHistoryServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>MaintenanceHistoryServlet</servlet-name>
+		<url-pattern>/MaintenanceHistoryServlet</url-pattern>
+	</servlet-mapping>
+	
+	<!-- LogoutServlet -->
+	<servlet>
+		<servlet-name>LogoutServlet</servlet-name>
+		<servlet-class>be.alb_mar_hen.servlet.LogoutServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>LogoutServlet</servlet-name>
+		<url-pattern>/LogoutServlet</url-pattern>
 	</servlet-mapping>
 </web-app>
