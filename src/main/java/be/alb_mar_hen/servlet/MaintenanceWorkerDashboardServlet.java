@@ -21,7 +21,7 @@ public class MaintenanceWorkerDashboardServlet extends HttpServlet {
     
     public MaintenanceWorkerDashboardServlet() {
         super();
-        maintenanceDAO = new MaintenanceDAO(FactoryFlowConnection.getInstance());
+        maintenanceDAO = new MaintenanceDAO();
     }
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {

@@ -24,7 +24,6 @@
 		<url-pattern>/MaintenanceWorkerDashboardServlet</url-pattern>
 	</servlet-mapping>
 
-
 	<!-- MaintenanceResponsableDashboardServlet -->
 	<servlet>
 		<servlet-name>MaintenanceResponsableDashboardServlet</servlet-name>
@@ -33,5 +32,15 @@
 	<servlet-mapping>
 		<servlet-name>MaintenanceResponsableDashboardServlet</servlet-name>
 		<url-pattern>/MaintenanceResponsableDashboardServlet</url-pattern>
+	</servlet-mapping>
+	
+	<!-- MaintenanceHistoryServlet -->
+	<servlet>
+		<servlet-name>MaintenanceHistoryServlet</servlet-name>
+		<servlet-class>be.alb_mar_hen.servlet.MaintenanceHistoryServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>MaintenanceHistoryServlet</servlet-name>
+		<url-pattern>/MaintenanceHistoryServlet</url-pattern>
 	</servlet-mapping>
 </web-app>

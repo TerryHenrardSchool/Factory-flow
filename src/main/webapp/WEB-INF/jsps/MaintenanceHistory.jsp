@@ -16,7 +16,6 @@
 		rel="stylesheet"
 	>
 	<script src="<%= request.getContextPath() %>/webjars/bootstrap/5.3.3/js/bootstrap.bundle.min.js" defer></script>
-	<script src="<%= request.getContextPath() %>/scripts/WorkerDashboardScript.js" defer></script>
 </head>
 <body class="bg-light">
 	<div class="container mt-5">
@@ -33,7 +32,6 @@
 					<th scope="col">Responsable</th>
 					<th scope="col">Machine</th>
 					<th scope="col">Status</th>
-					<th scope="col">Action</th>
 				</tr>
 			</thead>
 			<tbody>
@@ -72,19 +70,6 @@
 							<span class="badge bg-<%= maintenance.getStatus().equals(MaintenanceStatus.IN_PROGRESS) ? "warning" : "success" %>">
 								<%= maintenance.getStatus() %>
 							</span>
-						</td>
-						<td>
-							<% if (maintenance.getStatus().equals(MaintenanceStatus.IN_PROGRESS)) { %>
-								<!-- Bouton pour ouvrir le modal -->
-								<button
-									id="<%= maintenance.getId().get() %>"
-									type="button"
-									class="btn btn-primary btn-sm finalize-button"
-									data-bs-toggle="modal"
-									data-bs-target="#sharedModal">
-									Finalize
-								</button>
-							<% } %>
 						</td>
 					</tr>
 				<% } %>
