@@ -8,10 +8,13 @@ import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 import be.alb_mar_hen.daos.PurchasingAgentDAO;
 import be.alb_mar_hen.formatters.StringFormatter;
+import be.alb_mar_hen.serializers.CustomLocalDateTimeSerializer;
 import be.alb_mar_hen.validators.NumericValidator;
 import be.alb_mar_hen.validators.ObjectValidator;
 import be.alb_mar_hen.validators.StringValidator;
@@ -71,7 +74,13 @@ public class PurchasingAgent extends Employee {
 	
 	public boolean buyMachine(String machineJson) {
 		ObjectMapper objectMapper = new ObjectMapper();
-        objectMapper.registerModule(new Jdk8Module());
+		
+		SimpleModule module = new SimpleModule();
+		module.addSerializer(new CustomLocalDateTimeSerializer());
+	    
+	    objectMapper.registerModule(new Jdk8Module());
+	    objectMapper.registerModule(new JavaTimeModule());
+        
         System.out.println(machineJson);
         boolean success = false;
         try {

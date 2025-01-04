@@ -15,12 +15,12 @@ import org.json.JSONObject;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.module.SimpleAbstractTypeResolver;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 import be.alb_mar_hen.models.Machine;
+import be.alb_mar_hen.serializers.CustomLocalDateTimeSerializer;
 import be.alb_mar_hen.utils.ObjectCreator;
 import be.alb_mar_hen.validators.ObjectValidator;
 
@@ -141,7 +141,8 @@ public class MachineDAO extends DAO<Machine>{
 	        }
 
 	        ObjectMapper mapper = new ObjectMapper();
-	        mapper.registerModule(new Jdk8Module());
+		    mapper.registerModule(new Jdk8Module());
+		    
 	        machines = mapper.readValue(
 	            responseBody,
 	            mapper.getTypeFactory().constructCollectionType(List.class, Machine.class)

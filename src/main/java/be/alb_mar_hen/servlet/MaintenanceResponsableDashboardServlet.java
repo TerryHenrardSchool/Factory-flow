@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.util.Collection;
 
 import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -50,7 +49,7 @@ public class MaintenanceResponsableDashboardServlet extends HttpServlet {
 		
 		if (!objValidator.hasValue(employee)) {
 			request.setAttribute("errorMessage", "Access denied. Please log in to access this page.");
-			request.getRequestDispatcher("login.jsp").forward(request, response);
+			request.getRequestDispatcher("/WEB-INF/jsps/Authentication.jsp").forward(request, response);
 			return;
 		}
 				
@@ -58,6 +57,8 @@ public class MaintenanceResponsableDashboardServlet extends HttpServlet {
 		
 		if (machines.isEmpty()) {
 			request.setAttribute("errorMessage", "No machines found.");
+			request.getRequestDispatcher("/WEB-INF/jsps/Authentication.jsp").forward(request, response);
+			return;
 		}
 				
 		request.setAttribute("machines", machines);

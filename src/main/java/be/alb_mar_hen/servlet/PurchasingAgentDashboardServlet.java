@@ -18,12 +18,15 @@ import org.json.JSONObject;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 import be.alb_mar_hen.ViewModels.MachinePurchasingAgentDashboardViewModel;
 import be.alb_mar_hen.models.Machine;
 import be.alb_mar_hen.models.PurchasingAgent;
 import be.alb_mar_hen.models.Zone;
+import be.alb_mar_hen.serializers.CustomLocalDateTimeSerializer;
 import be.alb_mar_hen.utils.ObjectCreator;
 
 /**
@@ -59,12 +62,20 @@ public class PurchasingAgentDashboardServlet extends HttpServlet {
 
 		    if (employee == null || !(employee instanceof PurchasingAgent)) {
 		    	request.setAttribute("errorMessage", "Access denied. Please log in as a Purchasing Agent to access this page.");
-		    	response.sendRedirect("login.jsp");
-		        return;
+		    	request.getRequestDispatcher("/WEB-INF/jsps/Authentication.jsp").forward(request, response);
+				return;
 		    }
 		    List<Machine> machines = Machine.findAll();
 		    
 		    List<MachinePurchasingAgentDashboardViewModel> machineViewModels = new ArrayList<>();
+		    
+		    ObjectMapper objectMapper = new ObjectMapper();
+			
+			SimpleModule module = new SimpleModule();
+			module.addSerializer(new CustomLocalDateTimeSerializer());
+		    
+			objectMapper.registerModule(module);
+		    objectMapper.registerModule(new Jdk8Module());
 		    
 		    for (Machine machine : machines) {
 		    	boolean buy = "TO_BE_REPLACED".equals(machine.getStatus().toString());
@@ -75,8 +86,8 @@ public class PurchasingAgentDashboardServlet extends HttpServlet {
 		        }
 
 		        String combinedZoneColors = String.join(", ", zoneColors);
-		        ObjectMapper objectMapper = new ObjectMapper();
-		        objectMapper.registerModule(new Jdk8Module());
+		        
+		        
 		        String machineJson = objectMapper.writeValueAsString(machine);
 
 		        MachinePurchasingAgentDashboardViewModel machineViewModel = new MachinePurchasingAgentDashboardViewModel(
@@ -95,7 +106,7 @@ public class PurchasingAgentDashboardServlet extends HttpServlet {
 		    }
 		    
 		    request.setAttribute("machineViewModels", machineViewModels);
-		    request.getRequestDispatcher("PurchasingAgentDashboard.jsp").forward(request, response);
+		    request.getRequestDispatcher("/WEB-INF/jsps/PurchasingAgentDashboard.jsp").forward(request, response);
 		}
 	 
 	 @Override
@@ -107,7 +118,7 @@ public class PurchasingAgentDashboardServlet extends HttpServlet {
 		    
 		    if (purchasingAgent == null) {
 		        request.setAttribute("errorMessage", "You must be logged in as a Purchasing Agent to perform this action.");
-		        request.getRequestDispatcher("login.jsp").forward(request, response);  
+		        request.getRequestDispatcher("/WEB-INF/jsps/Authentication.jsp").forward(request, response);  
 		        return;
 		    }
 		    
