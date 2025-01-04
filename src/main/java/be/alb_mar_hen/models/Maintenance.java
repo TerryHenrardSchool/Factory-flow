@@ -7,8 +7,10 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -234,6 +236,13 @@ public class Maintenance implements Serializable{
 	    return added;
 	}
 	
+	@JsonIgnore
+	public String getWorkersNames() {
+	    return maintenanceWorkers.stream()
+	        .map(MaintenanceWorker::getFullNameFormatted)
+	        .collect(Collectors.joining(" "));
+	}
+	
 	public static List<Maintenance> getMaintenances(MaintenanceDAO dao) {
 		return dao.findAll();
 	}
@@ -242,7 +251,7 @@ public class Maintenance implements Serializable{
 		return dao.findAll(workerId);
 	}
 	
-	public boolean update(MaintenanceDAO dao) {
+	public boolean updateInDatabase(MaintenanceDAO dao) {
 		return dao.update(this);
 	}
 	

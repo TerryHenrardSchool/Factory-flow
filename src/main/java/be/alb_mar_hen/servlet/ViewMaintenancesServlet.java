@@ -21,7 +21,7 @@ public class ViewMaintenancesServlet extends HttpServlet {
     
     public ViewMaintenancesServlet() {
         super();
-        maintenanceDAO = new MaintenanceDAO(FactoryFlowConnection.getInstance());
+        maintenanceDAO = new MaintenanceDAO();
     }
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -60,7 +60,7 @@ public class ViewMaintenancesServlet extends HttpServlet {
 		
 		maintenance.setReport(Optional.of(reportMaintenance));
 		
-		maintenance.update(maintenanceDAO);
+		maintenance.updateInDatabase(maintenanceDAO);
 		
 		doGet(request, response);
 	}
