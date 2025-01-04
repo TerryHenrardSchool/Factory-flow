@@ -30,5 +30,4 @@ public class MaintenanceHistoryServlet extends HttpServlet {
 		
 		request.getRequestDispatcher("/WEB-INF/jsps/MaintenanceHistory.jsp").forward(request, response);
 	}
-
 }
