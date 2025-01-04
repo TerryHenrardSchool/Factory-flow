@@ -10,7 +10,7 @@
 <html>
 <head>
 	<meta charset="ISO-8859-1">
-	<title>Machine Dashboard</title>
+	<title>Maintenance responsable dashboard</title>
 	<link
 		href="<%= request.getContextPath() %>/webjars/bootstrap/5.3.3/css/bootstrap.min.css"
 		rel="stylesheet"
@@ -40,7 +40,7 @@
 	  <div class="modal-dialog">
 	    <div class="modal-content">
 	      <div class="modal-header">
-	        <h1 class="modal-title fs-5" id="staticBackdropLabel">Modal title</h1>
+	        <h1 class="modal-title fs-5" id="reportTitle">Modal title</h1>
 	        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 	      </div>
 	      <div class="modal-body">
@@ -50,7 +50,8 @@
 		      <div class="modal-footer">
 		      	<input type="hidden" id="machineIdHiddenInput" name="machineId" value="-1">
 		        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-		        <button type="button" class="btn btn-primary">Validate</button>
+		        <input type="submit" name="action" class="btn btn-danger" value="Restart maintenance">
+		        <input type="submit" name="action" class="btn btn-primary" value="Validate">
 		      </div>
 	      </form>
 	    </div>
@@ -67,6 +68,7 @@
 			<table class="table table-hover">
 				<thead>
 					<tr>
+						<th>#</th>
 						<th>ID</th>
 						<th>Name</th>
 						<th>Type</th>
@@ -77,40 +79,54 @@
 				</thead>
 				<tbody>
 					<%
+					int i = 1;
 					for (Machine machine : machines) { 
-						String statusBadgeClass = "badge text-uppercase px-3 py-2 w-100 ";
+						String statusBadgeClass = "badge text-uppercase px-3 py-2 ";
 						String trClass = "";
 						String actionButton = "";
 						String reportText = "";
+						String reportAuthors = "";
+						
 						switch (machine.getStatus()) {
 							case TO_BE_REPLACED:
 								statusBadgeClass += "bg-danger";
+								trClass = "table-danger";
 								break;
+								
 							case OK:
 								statusBadgeClass += "bg-success";
 								break;
+								
 							case IN_MAINTENANCE:
 								statusBadgeClass += "bg-info";
 								break;
+								
 							case NEED_MAINTENANCE:
 								statusBadgeClass += "bg-warning";
 								actionButton = "<button class='btn btn-warning btn-sm w-75'>Send to maintenance</button>";
 								trClass = "table-warning";
 								break;
+								
 							case REPLACED:
                                 statusBadgeClass += "bg-secondary";
                                 break;
+                                
 							case NEED_VALIDATION:
 								statusBadgeClass += "bg-primary";
 								actionButton = "<button id=" + machine.getId().orElse(-1) + " class='btn btn-primary btn-sm w-75 validate-maintenance-btn' data-bs-toggle='modal' data-bs-target='#modal'>Validate maintenance</button>";
 								trClass = "table-primary";
-								reportText = machine.getLastMaintenance().getReport().orElse("No report available");
+								
+								Maintenance lastMaintenance = machine.getLastMaintenance();
+								reportText = lastMaintenance.getReport().orElse("No report available");
+								reportAuthors = lastMaintenance.getWorkersNames();;
 								break;
+								
 							default:
 								statusBadgeClass += "bg-secondary";
 						}
 						%>
 						<tr class="<%= trClass%>">
+						    <td><%= i++ %></td>
 							<td><%= machine.getId().get() %></td>
 							<td><%= machine.getName() %></td>
 							<td><%= machine.getMachineType().getType() %></td>
@@ -119,7 +135,7 @@
 								<div class="d-flex flex-wrap gap-2">
 									<%
 									for (Zone zone : machine.getZones()) { 
-										String zoneColorClass = "badge text-uppercase px-3 py-2 w-100 ";
+										String zoneColorClass = "badge text-uppercase px-3 py-2 ";
 										switch (zone.getColor()) {
 											case ORANGE:
 												zoneColorClass += "bg-warning";
@@ -141,9 +157,10 @@
 									<% } %>
 								</div>
 							</td>
-							<td class="text-center">
+							<td>
 								<%= actionButton %>
 								<p id="reportTextMachine<%= machine.getId().orElse(-1) %>" style="display: none;"><%= reportText %></p>
+								<p id="reportAuthorMachine<%= machine.getId().orElse(-1) %>" style="display: none;"><%= reportAuthors %></p>
 							</td>
 						</tr>
 					<% } %>

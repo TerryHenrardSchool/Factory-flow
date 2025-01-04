@@ -60,7 +60,7 @@ public class MaintenanceWorkerDashboardServlet extends HttpServlet {
 		
 		maintenance.setReport(Optional.of(reportMaintenance));
 		
-		maintenance.update(maintenanceDAO);
+		maintenance.updateInDatabase(maintenanceDAO);
 		
 		doGet(request, response);
 	}
