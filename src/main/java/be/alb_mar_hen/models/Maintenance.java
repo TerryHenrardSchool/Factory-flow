@@ -10,6 +10,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -235,6 +236,7 @@ public class Maintenance implements Serializable{
 	    return added;
 	}
 	
+	@JsonIgnore
 	public String getWorkersNames() {
 	    return maintenanceWorkers.stream()
 	        .map(MaintenanceWorker::getFullNameFormatted)

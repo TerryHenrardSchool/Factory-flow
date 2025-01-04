@@ -91,12 +91,8 @@ public class MachineDAO extends DAO<Machine>{
 
 	        ObjectMapper mapper = new ObjectMapper();
 	        mapper.registerModule(new Jdk8Module());
-	        machine = mapper.readValue(
-	            responseBody,
-	            mapper
-	            	.getTypeFactory()
-	            	.constructCollectionType(List.class, Machine.class)
-	        );
+	        machine = mapper.readValue(responseBody, Machine.class);
+
 	    } catch (Exception e) {
 	        e.printStackTrace();
 	        return machine;

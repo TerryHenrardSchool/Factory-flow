@@ -1,7 +1,9 @@
 package be.alb_mar_hen.servlet;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.Collection;
+import java.util.Optional;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -78,17 +80,22 @@ public class MaintenanceResponsableDashboardServlet extends HttpServlet {
 
 	    // Validation des paramètres
 	    String errorMessage = validateParameters(machineIdParam, actionParam, objValidator);
-	    if (!objValidator.hasValue(errorMessage)) {
+	    if (objValidator.hasValue(errorMessage)) {
+	    	System.out.println("errorMessage doPost: " + errorMessage);
 	        forwardWithError(request, response, errorMessage);
 	        return;
 	    }
 
 	    // Conversion et validation de l'ID de la machine
 	    int machineId = parseMachineId(machineIdParam, request, response);
-	    if (!numValidator.isPositive(machineId)) return;
+	    if (!numValidator.isPositive(machineId)) {
+			System.out.println("machineId: " + machineId);
+	    	return;
+	    }
 
 	    // Vérification de l'existence et du statut de la machine
 	    Machine machineToUpdate = machineDAO.find(machineId);
+	    System.out.println("machineToUpdate: " + machineToUpdate);	    
 	    if (
     		!objValidator.hasValue(objValidator) || 
     		!machineToUpdate.getStatus().equals(MachineStatus.NEED_VALIDATION)
@@ -103,22 +110,28 @@ public class MaintenanceResponsableDashboardServlet extends HttpServlet {
 	        return;
 	    }
 
+	    System.out.println("ici");
 	    // Mise à jour des statuts selon l'action
-	    Maintenance lastMaintenance = machineToUpdate.getLastMaintenance();
+	    Maintenance maintenanceToUpdate = machineToUpdate.getLastMaintenance();
 	    if (VALIDATE_ACTION.equals(actionParam)) {
 	    	machineToUpdate.setStatus(MachineStatus.OK);
-	    	lastMaintenance.setStatus(MaintenanceStatus.DONE);
+	    	
+	    	maintenanceToUpdate.setStatus(MaintenanceStatus.DONE);
 	    	
 		} else if (RESTART_MAINTENANCE_ACTION.equals(actionParam)) {
-			lastMaintenance.setStatus(MaintenanceStatus.IN_PROGRESS);
-			machineToUpdate.setStatus(MachineStatus.IN_MAINTENANCE);
+			maintenanceToUpdate.setStatus(MaintenanceStatus.IN_PROGRESS);
+			maintenanceToUpdate.setEndDateTime(Optional.of(LocalDateTime.now()));
 			
+			machineToUpdate.setStatus(MachineStatus.IN_MAINTENANCE);
 		}
+	    System.out.println("machineToUpdate: " + machineToUpdate);
+	    System.out.println("maintenanceToUpdate: " + maintenanceToUpdate);
 
 	    // Mise à jour en base de données
-	    if (!updateMachineAndMaintenanceInDatabase(machineToUpdate, lastMaintenance, request, response)) 
+	    if (!updateMachineAndMaintenanceInDatabase(machineToUpdate, maintenanceToUpdate, request, response)) 
 	    	return;
 
+	    System.out.println("Machine " + machineToUpdate + " status updated successfully.");
 	    request.setAttribute("successMessage", "Machine " + machineToUpdate.getId().get() + " status updated successfully.");
 	    doGet(request, response);
 	}
@@ -173,9 +186,11 @@ public class MaintenanceResponsableDashboardServlet extends HttpServlet {
         		+ (isMachineUpdated ? "maintenance" : "machine") 
         		+ " status."
     		);
+	        System.out.println("Failed to update " + (isMachineUpdated ? "maintenance" : "machine") + " status.");
 	        return false;
 	    }
 	    
+	    System.out.println("Machine " + machine + " updated successfully.");
 	    return true;
 	}
 
