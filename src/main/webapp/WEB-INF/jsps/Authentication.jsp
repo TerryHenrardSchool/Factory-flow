@@ -16,7 +16,7 @@
 			</div>
 		</c:if>
 
-		<form action="login" method="post">
+		<form action="AuthenticationServlet" method="post">
 			<div class="form-group">
 				<label for="matricule">Matricule:</label> <input type="text"
 					id="matricule" name="matricule" placeholder="Enter your matricule"

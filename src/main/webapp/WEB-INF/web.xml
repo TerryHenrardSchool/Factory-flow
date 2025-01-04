@@ -5,13 +5,14 @@
 	id="WebApp_ID" version="4.0">
 	<display-name>Factory-flow</display-name>
 	<welcome-file-list>
-		<welcome-file>index.html</welcome-file>
-		<welcome-file>index.jsp</welcome-file>
-		<welcome-file>index.htm</welcome-file>
-		<welcome-file>default.html</welcome-file>
-		<welcome-file>default.jsp</welcome-file>
-		<welcome-file>default.htm</welcome-file>
+		<welcome-file>AuthenticationServlet</welcome-file>
 	</welcome-file-list>
+	
+	<!-- AuthenticationServlet -->
+	<servlet>
+	<servlet-name>AuthenticationServlet</servlet-name>
+	<servlet-class>be.alb_mar_hen.servlet.AuthenticationServlet</servlet-class>
+	</servlet>
 
 	<!-- MaintenanceWorkerDashboardServlet -->
 	<servlet>

@@ -11,7 +11,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import be.alb_mar_hen.models.Employee;
 
-@WebServlet("/login")
+@WebServlet("/AuthenticationServlet")
 public class AuthenticationServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
 
@@ -60,26 +60,26 @@ public class AuthenticationServlet extends HttpServlet {
                     response.sendRedirect("PurchasingAgentDashboardServlet");
                     break;
                 default:
-                    response.sendRedirect("defaultHome.jsp");
+                    response.sendRedirect("AuthenticationServlet");
                     break;
             }
 
         } catch (IllegalArgumentException e) {
             request.setAttribute("errorMessage", e.getMessage());
-            request.getRequestDispatcher("login.jsp").forward(request, response);
+            request.getRequestDispatcher("/WEB-INF/jsps/Authentication.jsp").forward(request, response);
 
         } catch (SecurityException e) {
             request.setAttribute("errorMessage", "Authentication failed: " + e.getMessage());
-            request.getRequestDispatcher("login.jsp").forward(request, response);
+            request.getRequestDispatcher("/WEB-INF/jsps/Authentication.jsp").forward(request, response);
 
         } catch (Exception e) {
             e.printStackTrace(); // Logs
             request.setAttribute("errorMessage", "An unexpected error occurred. Please try again.");
-            request.getRequestDispatcher("login.jsp").forward(request, response);
+            request.getRequestDispatcher("/WEB-INF/jsps/Authentication.jsp").forward(request, response);
         }
     }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        request.getRequestDispatcher("login.jsp").forward(request, response);
+        request.getRequestDispatcher("/WEB-INF/jsps/Authentication.jsp").forward(request, response);
     }
 }
