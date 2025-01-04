@@ -11,33 +11,36 @@
     <div class="container">
         <div class="d-flex justify-content-between align-items-center my-4">
             <h1>Order List</h1>
-            <a href="PurchasingAgentDashboardServlet" class="btn btn-primary">Go back</a>
-        </div>
-        <table class="table table-bordered table-hover">
-            <thead class="table-light">
+            <div class="d-flex gap-2">
+            	<a href="PurchasingAgentDashboardServlet" class="btn btn-primary">Go back</a>
+            	<a href="LogoutServlet" class="btn btn-danger">Logout</a>
+            </div>
+	    </div>
+	</div>
+    <table class="table table-bordered table-hover">
+        <thead class="table-light">
+            <tr>
+                <th>Purchasing Agent</th>
+                <th>Order Date</th>
+                <th>Price</th>
+                <th>Supplier</th>
+                <th>Machine Name</th>
+                <th>Machine Type</th>
+            </tr>
+        </thead>
+        <tbody>
+            <c:forEach var="order" items="${orders}">
                 <tr>
-                    <th>Purchasing Agent</th>
-                    <th>Order Date</th>
-                    <th>Price</th>
-                    <th>Supplier</th>
-                    <th>Machine Name</th>
-                    <th>Machine Type</th>
+                    <td>${order.purchasingAgentName}</td>
+                    <td>${order.orderDate}</td>
+                    <td>${order.price}</td>
+                    <td>${order.supplierName}</td>
+                    <td>${order.machineName}</td>
+                    <td>${order.machineType}</td>
                 </tr>
-            </thead>
-            <tbody>
-                <c:forEach var="order" items="${orders}">
-                    <tr>
-                        <td>${order.purchasingAgentName}</td>
-                        <td>${order.orderDate}</td>
-                        <td>${order.price}</td>
-                        <td>${order.supplierName}</td>
-                        <td>${order.machineName}</td>
-                        <td>${order.machineType}</td>
-                    </tr>
-                </c:forEach>
-            </tbody>
-        </table>
-    </div>
+            </c:forEach>
+        </tbody>
+    </table>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
