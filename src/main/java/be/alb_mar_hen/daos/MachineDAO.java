@@ -55,23 +55,8 @@ public class MachineDAO extends DAO<Machine>{
 
 	@Override
 	public List<Machine> findAll() {
-	    String response = sendGetRequest("/machine/getAll");
-	    
-	    if (response.startsWith("Error:")) {
-	        System.out.println("Error fetching data: " + response);
-	        return new ArrayList<>();
-	    }
-
-	    try {
-	        ObjectMapper objectMapper = new ObjectMapper();
-	        objectMapper.registerModule(new Jdk8Module());
-	        
-	        List<Machine> machines = objectMapper.readValue(response, new TypeReference<List<Machine>>() {});
-	        return machines;
-	    } catch (Exception e) {
-	        e.printStackTrace();
-	        return new ArrayList<>();
-	    }
+		// TODO Auto-generated method stub
+		return null;
 	}
 	
 	public Collection<Machine> findAll_terry() {
