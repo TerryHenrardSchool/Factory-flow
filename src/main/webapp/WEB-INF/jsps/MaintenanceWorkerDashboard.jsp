@@ -19,6 +19,14 @@
 	<script src="<%= request.getContextPath() %>/scripts/WorkerDashboardScript.js" defer></script>
 </head>
 <body class="bg-light">
+	<nav class="navbar navbar-light bg-light">
+	    <div class="container-fluid">
+	        <div class="d-flex justify-content-end w-100">
+	            <a href="LogoutServlet" class="btn btn-danger">Logout</a>
+	        </div>
+	    </div>
+	</nav>
+
 	<div class="container mt-5">
 		<h1 class="display-4 text-center mb-4">Maintenances</h1>
 		<table class="table table-hover table-striped">

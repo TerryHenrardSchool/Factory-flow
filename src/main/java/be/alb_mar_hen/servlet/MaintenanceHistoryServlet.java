@@ -15,6 +15,7 @@ import be.alb_mar_hen.models.Maintenance;
 public class MaintenanceHistoryServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	private static final MaintenanceDAO maintenanceDAO = new MaintenanceDAO();
+	
     public MaintenanceHistoryServlet() {
         super();
     }
@@ -24,6 +25,11 @@ public class MaintenanceHistoryServlet extends HttpServlet {
 	}
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		if (request.getSession().getAttribute("employee") == null) {
+			response.sendRedirect("AuthenticationServlet");
+			return;
+		}
+		
 		List<Maintenance> maintenances = maintenanceDAO.findAll();
 		
 		request.setAttribute("maintenances", maintenances);

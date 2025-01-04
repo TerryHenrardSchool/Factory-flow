@@ -16,10 +16,22 @@
 		rel="stylesheet"
 	>
 	<script src="<%= request.getContextPath() %>/webjars/bootstrap/5.3.3/js/bootstrap.bundle.min.js" defer></script>
+	<script src="<%= request.getContextPath() %>/scripts/MaintenanceHistoryScript.js" defer></script>
 </head>
 <body class="bg-light">
+	<nav class="navbar navbar-light bg-light">
+	    <div class="container-fluid">
+	        <div class="d-flex justify-content-end w-100">
+	            <a href="LogoutServlet" class="btn btn-danger">Logout</a>
+	        </div>
+	    </div>
+	</nav>
+
 	<div class="container mt-5">
-		<h1 class="display-4 text-center mb-4">Maintenances</h1>
+		<div class="mb-3">
+           	<a href="PurchasingAgentDashboardServlet" class="btn btn-primary">Go back</a>
+ 		</div>
+		<h1 class="display-4 text-center mb-4">Maintenance History</h1>
 		<table class="table table-hover table-striped">
 			<thead class="table-dark">
 				<tr>
@@ -50,7 +62,10 @@
 						<td><%= LocalDateTimeFormatter.format(maintenance.getStartDateTime()) %></td>
 						<td><%= LocalDateTimeFormatter.format(maintenance.getEndDateTime().orElse(null)) %></td>
 						<td><%= maintenance.getDuration().orElse(null) %></td>
-						<td><%= maintenance.getReport().orElse("N/A") %></td>
+						<td >
+							<p style="display:none" id="<%= maintenance.getId().get() %>" class="p-report"><%= maintenance.getReport().orElse("N/A") %></p>
+							<button type="button" id="<%= maintenance.getId().get() %>" class="btn btn-info button-report" data-bs-toggle="modal" data-bs-target="#sharedModal">View Report</button>
+						</td>
 						
 						<td>
 							<ul class="list-unstyled">
@@ -85,19 +100,14 @@
 					<h5 class="modal-title" id="sharedModalLabel">Finalize Maintenance</h5>
 					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 				</div>
-				<form action="MaintenanceWorkerDashboardServlet" method="POST">
 					<div class="modal-body">
 						<div class="mb-3">
-							<label for="report" class="form-label">Report:</label>
-							<textarea class="form-control" id="report" name="report" rows="3"></textarea>
+							<p id="displayReport"></p>
 						</div>
 					</div>
 					<div class="modal-footer">
-						<input type="hidden" name="maintenanceId" id="modalMaintenanceId">
-						<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
-						<button type="submit" class="btn btn-primary">Confirmer</button>
+						<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">OK</button>
 					</div>
-				</form>
 			</div>
 		</div>
 	</div>

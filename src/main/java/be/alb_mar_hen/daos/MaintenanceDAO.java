@@ -58,25 +58,18 @@ public class MaintenanceDAO extends DAO<Maintenance>{
 			
 			String json = mapper.writeValueAsString(obj);
 			
-			System.out.println("JSON SENT TO API : " + json);
-			
 			ClientResponse response = 
 					getResource()
 					.path("maintenance")
 					.type(MediaType.APPLICATION_JSON)
 					.put(ClientResponse.class, json);
 			
-			System.out.println("Response status: " + response.getStatus());
-			
 			if (response.getStatus() == Status.OK.getStatusCode()) {
-				System.out.println("Maintenance updated");
 				return true;
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		
-		System.out.println("Maintenance not updated : ");
 		
 		return false;
 	}
@@ -97,7 +90,6 @@ public class MaintenanceDAO extends DAO<Maintenance>{
 					.accept(MediaType.APPLICATION_JSON)
 					.get(String.class);
 			
-			System.out.println("Response: " + response);
 			
 			ObjectMapper mapper = new ObjectMapper();
 			mapper.registerModule(new Jdk8Module()); 
@@ -125,8 +117,6 @@ public class MaintenanceDAO extends DAO<Maintenance>{
 					.path("maintenance/" + workerId)
 					.accept(MediaType.APPLICATION_JSON)
 					.get(String.class);
-			
-			System.out.println("Response: " + response);
 			
 			ObjectMapper mapper = new ObjectMapper();
 			mapper.registerModule(new Jdk8Module()); 

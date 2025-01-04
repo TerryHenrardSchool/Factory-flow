@@ -44,4 +44,14 @@
 		<servlet-name>MaintenanceHistoryServlet</servlet-name>
 		<url-pattern>/MaintenanceHistoryServlet</url-pattern>
 	</servlet-mapping>
+	
+	<!-- LogoutServlet -->
+	<servlet>
+		<servlet-name>LogoutServlet</servlet-name>
+		<servlet-class>be.alb_mar_hen.servlet.LogoutServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>LogoutServlet</servlet-name>
+		<url-pattern>/LogoutServlet</url-pattern>
+	</servlet-mapping>
 </web-app>
