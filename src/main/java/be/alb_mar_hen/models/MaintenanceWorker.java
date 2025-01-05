@@ -1,6 +1,7 @@
 package be.alb_mar_hen.models;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
@@ -8,6 +9,7 @@ import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
+import be.alb_mar_hen.daos.MaintenanceWorkerDAO;
 import be.alb_mar_hen.formatters.StringFormatter;
 import be.alb_mar_hen.validators.NumericValidator;
 import be.alb_mar_hen.validators.ObjectValidator;
@@ -19,6 +21,9 @@ public class MaintenanceWorker extends Employee{
 	
 	// Validators
 	private ObjectValidator objectValidator;
+	
+	// Attributs
+	private Set<Maintenance> maintenances;
 	
 	// Constructors
 	public MaintenanceWorker(
@@ -34,11 +39,35 @@ public class MaintenanceWorker extends Employee{
 	) {
 		super(id, matricule, password, firstName, lastName, stringValidator, numericValidator, objectValidator, stringFormatter);
 		this.objectValidator = objectValidator;
+		this.maintenances = new HashSet<Maintenance>();
 	}
 	
 	public MaintenanceWorker() {
 		super();
 		this.objectValidator = new ObjectValidator();
+		this.maintenances = new HashSet<Maintenance>();
+	}
+	
+	// Getters
+	public Set<Maintenance> getMaintenances() {
+		return maintenances;
+	}
+	
+	// Methods
+	public boolean addMaintenance(Maintenance maintenance) {
+		if (!objectValidator.hasValue(maintenance)) {
+			throw new IllegalArgumentException("maintenance must have value.");
+		}
+		
+		if (!maintenance.addMaintenanceWorker(this)) {
+			return false;
+		}
+		
+		return maintenances.add(maintenance);
+	}
+	
+	public static List<MaintenanceWorker> getMaintenanceWorkersFromDatabase(MaintenanceWorkerDAO maintenanceWorkerDAO) {
+        return maintenanceWorkerDAO.findAll();
 	}
 		
 	// Override methods
