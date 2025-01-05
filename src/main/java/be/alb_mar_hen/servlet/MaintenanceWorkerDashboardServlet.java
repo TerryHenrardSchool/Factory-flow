@@ -12,11 +12,13 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import be.alb_mar_hen.daos.FactoryFlowConnection;
+import be.alb_mar_hen.daos.MachineDAO;
 import be.alb_mar_hen.daos.MaintenanceDAO;
 import be.alb_mar_hen.daos.MaintenanceWorkerDAO;
 import be.alb_mar_hen.enumerations.MachineStatus;
 import be.alb_mar_hen.enumerations.MaintenanceStatus;
 import be.alb_mar_hen.models.Employee;
+import be.alb_mar_hen.models.Machine;
 import be.alb_mar_hen.models.Maintenance;
 import be.alb_mar_hen.models.MaintenanceWorker;
 import be.alb_mar_hen.validators.ObjectValidator;
@@ -65,10 +67,16 @@ public class MaintenanceWorkerDashboardServlet extends HttpServlet {
 		
 		Maintenance maintenance = Maintenance.find(idMaintenance, maintenanceDAO);
 		
+		Machine machine = maintenance.getMachine();
+		
 		if (!maintenance.getStatus().equals(MaintenanceStatus.IN_PROGRESS)) {
 			doGet(request, response);
 			return;
 		}
+		
+		machine.setStatus(MachineStatus.NEED_VALIDATION);
+		
+		machine.updateInDatabase(new MachineDAO());
 		
 		maintenance.setReport(Optional.of(reportMaintenance));
 		
