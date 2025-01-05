@@ -3,6 +3,7 @@ package be.alb_mar_hen.servlet;
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -12,12 +13,19 @@ import javax.servlet.http.HttpSession;
 
 import be.alb_mar_hen.daos.FactoryFlowConnection;
 import be.alb_mar_hen.daos.MaintenanceDAO;
+import be.alb_mar_hen.daos.MaintenanceWorkerDAO;
+import be.alb_mar_hen.enumerations.MachineStatus;
+import be.alb_mar_hen.enumerations.MaintenanceStatus;
 import be.alb_mar_hen.models.Employee;
 import be.alb_mar_hen.models.Maintenance;
+import be.alb_mar_hen.models.MaintenanceWorker;
+import be.alb_mar_hen.validators.ObjectValidator;
 
 public class MaintenanceWorkerDashboardServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-    private MaintenanceDAO maintenanceDAO;
+    private final MaintenanceDAO maintenanceDAO;
+    private final MaintenanceWorkerDAO maintenanceWorkerDAO = new MaintenanceWorkerDAO(FactoryFlowConnection.getInstance());
+    private final ObjectValidator objectValidator = new ObjectValidator();
     
     public MaintenanceWorkerDashboardServlet() {
         super();
@@ -35,7 +43,10 @@ public class MaintenanceWorkerDashboardServlet extends HttpServlet {
 	
 		Employee employee = (Employee) session.getAttribute("employee");	
 		
-		List<Maintenance> maintenances = Maintenance.getMaintenances(maintenanceDAO, employee.getId().get());
+		MaintenanceWorker maintenanceWorker = MaintenanceWorker.find(maintenanceWorkerDAO, employee.getId().get().intValue());
+		
+		//TODO get maintenances from a specific worker
+		Set<Maintenance> maintenances = maintenanceWorker.getMaintenances();
 		
 		request.setAttribute("maintenances", maintenances);
 		
@@ -43,7 +54,7 @@ public class MaintenanceWorkerDashboardServlet extends HttpServlet {
 	}
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		if (request.getParameter("maintenanceId") == null || request.getParameter("report") == null) {
+		if (!objectValidator.hasValue(request.getParameter("maintenanceId")) || !objectValidator.hasValue(request.getParameter("report"))) {
 			doGet(request, response);
 			return;
 		}
@@ -51,14 +62,17 @@ public class MaintenanceWorkerDashboardServlet extends HttpServlet {
 		int idMaintenance = Integer.parseInt(request.getParameter("maintenanceId"));
 		
 		String reportMaintenance = request.getParameter("report");
-
-		List<Maintenance> maintenances = Maintenance.getMaintenances(maintenanceDAO);
 		
-		Maintenance maintenance = maintenances.stream()
-			.filter(curr -> curr.getId().get() == idMaintenance)
-			.findFirst().get();
+		Maintenance maintenance = Maintenance.find(idMaintenance, maintenanceDAO);
+		
+		if (!maintenance.getStatus().equals(MaintenanceStatus.IN_PROGRESS)) {
+			doGet(request, response);
+			return;
+		}
 		
 		maintenance.setReport(Optional.of(reportMaintenance));
+		
+		maintenance.setStatus(MaintenanceStatus.PENDING_VALIDATION);
 		
 		maintenance.updateInDatabase(maintenanceDAO);
 		
