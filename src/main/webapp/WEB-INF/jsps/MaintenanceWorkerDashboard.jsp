@@ -3,7 +3,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@page import="be.alb_mar_hen.models.*" %>
 <%@page import="java.util.Collection" %>
-<%@page import="java.util.List" %>
+<%@page import="java.util.Set" %>
 <%@page import="be.alb_mar_hen.enumerations.MaintenanceStatus" %>
 <%@page import="be.alb_mar_hen.formatters.LocalDateTimeFormatter"%>
 <!DOCTYPE html>
@@ -49,7 +49,7 @@
 				Object maintenancesObj = request.getAttribute("maintenances");
 				Collection<Maintenance> maintenances = null;
 				
-				if (maintenancesObj instanceof List) {
+				if (maintenancesObj instanceof Set) {
 	               	maintenances = (Collection<Maintenance>) maintenancesObj;
 				}      
 	                        

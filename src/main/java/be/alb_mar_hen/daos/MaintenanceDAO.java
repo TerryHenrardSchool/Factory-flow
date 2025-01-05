@@ -76,8 +76,24 @@ public class MaintenanceDAO extends DAO<Maintenance>{
 
 	@Override
 	public Maintenance find(int id) {
-		// TODO Auto-generated method stub
-		return null;
+		Maintenance maintenance = null;
+		
+		try {
+			String response = getResource()
+					.path("maintenance/" + id)
+					.accept(MediaType.APPLICATION_JSON)
+					.get(String.class);
+
+			ObjectMapper mapper = new ObjectMapper();
+			mapper.registerModule(new Jdk8Module());
+			mapper.registerModule(new JavaTimeModule());
+
+			maintenance = mapper.readValue(response, Maintenance.class);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return maintenance;
 	}
 
 	@Override
