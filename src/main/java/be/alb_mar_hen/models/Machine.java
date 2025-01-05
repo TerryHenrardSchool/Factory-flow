@@ -1,5 +1,6 @@
 package be.alb_mar_hen.models;
 
+import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
@@ -211,6 +212,20 @@ public class Machine {
 
 	public boolean updateInDatabase(MachineDAO machineDAO) {
 		return machineDAO.update(this);
+	}
+	
+	public int calculateDaysBeforeNextMaintenance() {
+		Maintenance lastMaintenance = getLastMaintenance();
+		if (!objectValidator.hasValue(lastMaintenance)) {
+			return machineType.getDaysBeforeMaintenance();
+		}
+		
+		LocalDateTime lastMaintenanceDate = lastMaintenance.getEndDateTime().orElse(null);
+		if (!objectValidator.hasValue(lastMaintenanceDate)) {
+			return machineType.getDaysBeforeMaintenance();
+		}
+
+		return machineType.getDaysBeforeMaintenance() - LocalDateTime.now().getDayOfYear() + lastMaintenanceDate.getDayOfYear();
 	}
 
 	// Override methods

@@ -109,6 +109,7 @@
 					<th>ID</th>
 					<th>Name</th>
 					<th>Type</th>
+					<th>Next in</th>
 					<th>Machine Status</th>
 					<th>Zone Colors</th>
 					<th>Actions</th>
@@ -163,10 +164,15 @@
 					}
 					%>
 					<tr class="<%= trClass%>">
-					    <td><%= i++ %></td>
+					    <td class="fw-bold fst-italic"><%= i++ %></td>
 						<td><%= machine.getId().get() %></td>
 						<td><%= machine.getName() %></td>
 						<td><%= machine.getMachineType().getType() %></td>
+						<% if (machine.getStatus().equals(MachineStatus.OK)) { %>
+						<td><%= machine.calculateDaysBeforeNextMaintenance() %> days</td>
+						<% } else { %>
+						<td>-</td>
+						<% } %>	
 						<td><span class="<%= statusBadgeClass %>"><%= machine.getStatus() %></span></td>
 						<td>
 							<div class="d-flex flex-wrap gap-2">
