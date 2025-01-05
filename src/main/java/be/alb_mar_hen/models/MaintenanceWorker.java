@@ -18,57 +18,51 @@ import be.alb_mar_hen.validators.StringValidator;
 @JsonIdentityInfo(generator = ObjectIdGenerators.IntSequenceGenerator.class, property = "keyMaintenanceWorker")
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class MaintenanceWorker extends Employee{
+	private Set<Maintenance> maintenances;
 	
 	// Validators
 	private ObjectValidator objectValidator;
 	
-	// Attributs
-	private Set<Maintenance> maintenances;
 	
 	// Constructors
-	public MaintenanceWorker(
-		Optional<Integer> id, 
-		String matricule, 
-		String password,
-		String firstName,
-		String lastName,
-		StringValidator stringValidator, 
-		NumericValidator numericValidator,
-		StringFormatter stringFormatter,
-		ObjectValidator objectValidator
-	) {
-		super(id, matricule, password, firstName, lastName, stringValidator, numericValidator, objectValidator, stringFormatter);
-		this.objectValidator = objectValidator;
-		this.maintenances = new HashSet<Maintenance>();
-	}
-	
-	public MaintenanceWorker() {
-		super();
-		this.objectValidator = new ObjectValidator();
-		this.maintenances = new HashSet<Maintenance>();
-	}
-	
-	// Getters
-	public Set<Maintenance> getMaintenances() {
-		return maintenances;
-	}
+    public MaintenanceWorker(
+        Optional<Integer> id, 
+        String matricule, 
+        String password,
+        String firstName,
+        String lastName,
+        StringValidator stringValidator, 
+        NumericValidator numericValidator,
+        StringFormatter stringFormatter,
+        ObjectValidator objectValidator
+    ) {
+        super(id, matricule, password, firstName, lastName, stringValidator, numericValidator, objectValidator, stringFormatter);
+        this.objectValidator = objectValidator;
+        this.maintenances = new HashSet<Maintenance>();
+    }
+
+    public MaintenanceWorker() {
+        super();
+        this.objectValidator = new ObjectValidator();
+        this.maintenances = new HashSet<Maintenance>();
+    }
 	
 	// Methods
-	public boolean addMaintenance(Maintenance maintenance) {
-		if (!objectValidator.hasValue(maintenance)) {
-			throw new IllegalArgumentException("maintenance must have value.");
-		}
-		
-		if (!maintenance.addMaintenanceWorker(this)) {
-			return false;
-		}
-		
-		return maintenances.add(maintenance);
-	}
-	
-	public static List<MaintenanceWorker> getMaintenanceWorkersFromDatabase(MaintenanceWorkerDAO maintenanceWorkerDAO) {
-        return maintenanceWorkerDAO.findAll();
-	}
+    public boolean addMaintenance(Maintenance maintenance) {
+        if (!objectValidator.hasValue(maintenance)) {
+            throw new IllegalArgumentException("maintenance must have value.");
+        }
+
+        if (!maintenance.addMaintenanceWorker(this)) {
+            return false;
+        }
+
+        return maintenances.add(maintenance);
+    }
+    
+    public static MaintenanceWorker find(MaintenanceWorkerDAO dao, int id) {
+    	return dao.find(id);
+    }
 		
 	// Override methods
 	@Override
@@ -89,4 +83,9 @@ public class MaintenanceWorker extends Employee{
 	public int hashCode() {
 		return super.hashCode();
 	}
+	
+	//Getters
+	 public Set<Maintenance> getMaintenances() {
+	        return maintenances;
+	 }
 }

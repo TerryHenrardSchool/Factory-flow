@@ -255,6 +255,10 @@ public class Maintenance implements Serializable{
 		return dao.update(this);
 	}
 	
+	public static Maintenance find(int id, MaintenanceDAO dao) {
+		return dao.find(id);
+	}
+	
 	//Override methods
 	@Override
 	public String toString() {
