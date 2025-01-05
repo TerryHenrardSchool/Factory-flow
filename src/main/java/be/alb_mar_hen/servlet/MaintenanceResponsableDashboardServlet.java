@@ -110,28 +110,22 @@ public class MaintenanceResponsableDashboardServlet extends HttpServlet {
 	        return;
 	    }
 
-	    System.out.println("ici");
 	    // Mise à jour des statuts selon l'action
 	    Maintenance maintenanceToUpdate = machineToUpdate.getLastMaintenance();
 	    if (VALIDATE_ACTION.equals(actionParam)) {
 	    	machineToUpdate.setStatus(MachineStatus.OK);
-	    	
 	    	maintenanceToUpdate.setStatus(MaintenanceStatus.DONE);
 	    	
 		} else if (RESTART_MAINTENANCE_ACTION.equals(actionParam)) {
 			maintenanceToUpdate.setStatus(MaintenanceStatus.IN_PROGRESS);
 			maintenanceToUpdate.setEndDateTime(Optional.of(LocalDateTime.now()));
-			
 			machineToUpdate.setStatus(MachineStatus.IN_MAINTENANCE);
 		}
-	    System.out.println("machineToUpdate: " + machineToUpdate);
-	    System.out.println("maintenanceToUpdate: " + maintenanceToUpdate);
 
 	    // Mise à jour en base de données
 	    if (!updateMachineAndMaintenanceInDatabase(machineToUpdate, maintenanceToUpdate, request, response)) 
 	    	return;
 
-	    System.out.println("Machine " + machineToUpdate + " status updated successfully.");
 	    request.setAttribute("successMessage", "Machine " + machineToUpdate.getId().get() + " status updated successfully.");
 	    doGet(request, response);
 	}
