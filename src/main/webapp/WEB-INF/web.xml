@@ -1,12 +1,61 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://xmlns.jcp.org/xml/ns/javaee" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_4_0.xsd" id="WebApp_ID" version="4.0">
-  <display-name>Factory-flow</display-name>
-  <welcome-file-list>
-    <welcome-file>index.html</welcome-file>
-    <welcome-file>index.jsp</welcome-file>
-    <welcome-file>index.htm</welcome-file>
-    <welcome-file>default.html</welcome-file>
-    <welcome-file>default.jsp</welcome-file>
-    <welcome-file>default.htm</welcome-file>
-  </welcome-file-list>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns="http://xmlns.jcp.org/xml/ns/javaee"
+	xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_4_0.xsd"
+	id="WebApp_ID" version="4.0">
+	<display-name>Factory-flow</display-name>
+	<welcome-file-list>
+		<welcome-file>AuthenticationServlet</welcome-file>
+	</welcome-file-list>
+	
+	<session-config>
+        <session-timeout>60</session-timeout>
+    </session-config>
+	
+	<!-- AuthenticationServlet -->
+	<servlet>
+	<servlet-name>AuthenticationServlet</servlet-name>
+	<servlet-class>be.alb_mar_hen.servlet.AuthenticationServlet</servlet-class>
+	</servlet>
+
+	<!-- MaintenanceWorkerDashboardServlet -->
+	<servlet>
+		<servlet-name>MaintenanceWorkerDashboardServlet</servlet-name>
+		<servlet-class>be.alb_mar_hen.servlet.MaintenanceWorkerDashboardServlet</servlet-class>
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>MaintenanceWorkerDashboardServlet</servlet-name>
+		<url-pattern>/MaintenanceWorkerDashboardServlet</url-pattern>
+	</servlet-mapping>
+
+	<!-- MaintenanceResponsableDashboardServlet -->
+	<servlet>
+		<servlet-name>MaintenanceResponsableDashboardServlet</servlet-name>
+		<servlet-class>be.alb_mar_hen.servlet.MaintenanceResponsableDashboardServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>MaintenanceResponsableDashboardServlet</servlet-name>
+		<url-pattern>/MaintenanceResponsableDashboardServlet</url-pattern>
+	</servlet-mapping>
+	
+	<!-- MaintenanceHistoryServlet -->
+	<servlet>
+		<servlet-name>MaintenanceHistoryServlet</servlet-name>
+		<servlet-class>be.alb_mar_hen.servlet.MaintenanceHistoryServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>MaintenanceHistoryServlet</servlet-name>
+		<url-pattern>/MaintenanceHistoryServlet</url-pattern>
+	</servlet-mapping>
+	
+	<!-- LogoutServlet -->
+	<servlet>
+		<servlet-name>LogoutServlet</servlet-name>
+		<servlet-class>be.alb_mar_hen.servlet.LogoutServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>LogoutServlet</servlet-name>
+		<url-pattern>/LogoutServlet</url-pattern>
+	</servlet-mapping>
 </web-app>
