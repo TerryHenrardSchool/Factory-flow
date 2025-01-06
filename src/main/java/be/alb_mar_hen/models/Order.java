@@ -21,8 +21,8 @@ import be.alb_mar_hen.validators.ObjectValidator;
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonIdentityInfo(generator = ObjectIdGenerators.IntSequenceGenerator.class, property = "keyOrder")
 public class Order {
+	
 	// Validators
-
 	private NumericValidator numericValidator;
 	private DateValidator dateValidator;
 	private ObjectValidator objectValidator;
@@ -63,7 +63,6 @@ public class Order {
 	}
 	
 	// Getters
-	
 	public LocalDateTime getOrder() {
 		return orderDateTime;
 	}
@@ -81,7 +80,6 @@ public class Order {
 	}
 	
 	// Setters
-	
 	public void setOrder(LocalDateTime orderDate) {
 		if(!objectValidator.hasValue(orderDate)) {
 			throw new NullPointerException("The orderDate must have a value.");
@@ -117,6 +115,14 @@ public class Order {
 		
 		this.supplier = supplier;
 	}
+	
+	// Methods
+	public static List<Order> findAll() {
+        OrderDAO orderDAO = new OrderDAO();
+        List<Order> orders = orderDAO.findAll();
+        
+        return orders;
+    }
 
 	// Override methods
 	@Override
@@ -152,13 +158,4 @@ public class Order {
 			&& Objects.equals(purchasingAgent, other.purchasingAgent) 
 			&& Objects.equals(supplier, other.supplier);
 	}
-	
-	public static List<Order> findAll() {
-        OrderDAO orderDAO = new OrderDAO();
-        List<Order> orders = orderDAO.findAll();
-        
-        return orders;
-    }
-	
-	
 }

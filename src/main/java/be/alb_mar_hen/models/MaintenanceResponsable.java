@@ -19,6 +19,9 @@ public class MaintenanceResponsable extends Employee{
 	
 	// Validators
 	private ObjectValidator objectValidator;
+	
+	// Attributes
+	private Set<Maintenance> maintenances = new HashSet<Maintenance>();
 		
 	// Constructors
 	public MaintenanceResponsable(
@@ -39,6 +42,33 @@ public class MaintenanceResponsable extends Employee{
 	public MaintenanceResponsable() {
 		super();
 		this.objectValidator = new ObjectValidator();
+	}
+	
+	// Getters
+	public Set<Maintenance> getMaintenances() {
+		return maintenances;
+	}
+	
+	// Setters
+	public void setMaintenances(Set<Maintenance> maintenances) {
+		if (!objectValidator.hasValue(maintenances)) {
+			throw new IllegalArgumentException("MaintenanceResponsable setMaintenances error");
+		}
+		
+		if (maintenances.isEmpty()) {
+			throw new IllegalArgumentException("MaintenanceResponsable setMaintenances error");
+		}
+		
+		this.maintenances = maintenances;
+	}
+	
+	// Methods
+	public boolean addMaintenance(Maintenance maintenance) {
+		if (!objectValidator.hasValue(maintenance)) {
+			throw new IllegalArgumentException("MaintenanceResponsable addMaintenance error");
+		}
+
+		return maintenances.add(maintenance);
 	}
 	
 	// Override methods

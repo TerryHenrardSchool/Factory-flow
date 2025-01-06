@@ -51,27 +51,8 @@ public class PurchasingAgent extends Employee {
 	public PurchasingAgent() {
 		super();		
 	}
-
-	// Override methods
-	@Override
-	public String toString() {
-		return super.toString();
-	}
 	
-	@Override
-    public boolean equals(Object object) {
-    	if(!(object instanceof Employee)) {
-    		return false;
-    	}
-
-    	return super.equals((Employee) object);
-    }
-	
-	@Override
-	public int hashCode() {
-		return super.hashCode();
-	}
-	
+	// Methods
 	public boolean buyMachine(String machineJson) {
 		ObjectMapper objectMapper = new ObjectMapper();
 		
@@ -97,4 +78,24 @@ public class PurchasingAgent extends Employee {
         
         return success;
     }
+
+	// Override methods
+	@Override
+	public String toString() {
+		return super.toString();
+	}
+	
+	@Override
+    public boolean equals(Object object) {
+    	if(!(object instanceof Employee)) {
+    		return false;
+    	}
+
+    	return super.equals((Employee) object);
+    }
+	
+	@Override
+	public int hashCode() {
+		return super.hashCode();
+	}
 }

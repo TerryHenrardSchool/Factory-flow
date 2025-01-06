@@ -14,7 +14,7 @@ public class OptionalIntegerDeserializer extends JsonDeserializer<Optional<Integ
         if (p.getCurrentToken().isNumeric()) {
             return Optional.of(p.getIntValue());
         } else if (p.getCurrentToken() == null) {
-            return Optional.of(0);
+            return Optional.empty();
         } else {
         	throw ctxt.instantiationException(getClass(), "Expected integer or null for Optional<Integer>");
         }

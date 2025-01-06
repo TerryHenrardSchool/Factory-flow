@@ -34,8 +34,31 @@ public class MaintenanceDAO extends DAO<Maintenance>{
 	}
 
 	@Override
-	public boolean create(Maintenance obj) {
-		// TODO Auto-generated method stub
+	public boolean create(Maintenance maintenance) {
+		try {
+			ObjectMapper mapper = new ObjectMapper();
+			
+			SimpleModule module = new SimpleModule();
+			module.addSerializer(new CustomLocalDateTimeSerializer());
+			
+			mapper.registerModule(module);
+			mapper.registerModule(new Jdk8Module());
+			
+			String json = mapper.writeValueAsString(maintenance);
+			
+			ClientResponse response = 
+				getResource()
+					.path("/maintenance")
+					.type(MediaType.APPLICATION_JSON)
+					.post(ClientResponse.class, json);
+			
+			if (response.getStatus() == Status.OK.getStatusCode()) {
+				return true;
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
 		return false;
 	}
 
@@ -60,7 +83,7 @@ public class MaintenanceDAO extends DAO<Maintenance>{
 			
 			ClientResponse response = 
 					getResource()
-					.path("maintenance")
+					.path("/maintenance")
 					.type(MediaType.APPLICATION_JSON)
 					.put(ClientResponse.class, json);
 			

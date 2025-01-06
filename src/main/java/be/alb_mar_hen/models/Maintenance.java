@@ -14,6 +14,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
@@ -42,12 +43,15 @@ public class Maintenance implements Serializable{
 	private DateValidator dateValidator;
 	
 	// Attributes
+	@JsonDeserialize(using = be.alb_mar_hen.utils.OptionalIntegerDeserializer.class)
 	private Optional<Integer> id;
 	@JsonDeserialize(using = CustomDateDeserializer.class)
 	private LocalDateTime startDateTime;
 	@JsonDeserialize(using = OptionalLocalDateTimeDeserializer.class)
 	private Optional<LocalDateTime> endDateTime;
+	@JsonDeserialize(using = be.alb_mar_hen.utils.OptionalIntegerDeserializer.class)
 	private Optional<Integer> duration;
+	@JsonDeserialize(using = be.alb_mar_hen.utils.OptionalStringDeserializer.class)
 	private Optional<String> report;
 	private MaintenanceStatus status;
 	
@@ -88,12 +92,43 @@ public class Maintenance implements Serializable{
 		addMaintenanceWorker(maintenanceWorker);
 	}
 	
+	public Maintenance(
+		Optional<Integer> id, 
+		LocalDateTime startDateTime, 
+		Optional<LocalDateTime> endDateTime,
+		Optional<Integer> duration, 
+		Optional<String> report, 
+		MaintenanceStatus status,
+		Machine machine, 
+		Set<MaintenanceWorker> maintenanceWorkers,
+		MaintenanceResponsable maintenanceResponsable,
+		NumericValidator numericValidator,
+		StringValidator stringValidator,
+		ObjectValidator objectValidator,
+		DateValidator dateValidator
+	) {
+		this.numericValidator = numericValidator;
+		this.stringValidator = stringValidator;
+		this.objectValidator = objectValidator;
+		this.dateValidator = dateValidator;
+		this.maintenanceWorkers = new HashSet<>();
+		setId(id);
+		setStartDateTime(startDateTime);
+		setEndDateTime(endDateTime);
+		setDuration(duration);
+		setReport(report);
+		setStatus(status);
+		setMachine(machine);
+		setMaintenanceResponsable(maintenanceResponsable);
+		setMaintenanceWorkers(maintenanceWorkers);
+	}
+	
 	public Maintenance() {
 		this.numericValidator = new NumericValidator();  
 	    this.objectValidator = new ObjectValidator();  
 	    this.stringValidator = new StringValidator();
 	    this.dateValidator = new DateValidator();
-		maintenanceWorkers = new HashSet<>();
+		this.maintenanceWorkers = new HashSet<>();
 	}
 
 	// Getters
@@ -136,14 +171,14 @@ public class Maintenance implements Serializable{
 	// Setters
 	public void setId(Optional<Integer> id) {
 		if (!objectValidator.hasValue(id)) {
-			throw new NullPointerException("Id must have a value.");
+			this.id = Optional.empty();
+		} else {
+			if (!numericValidator.isPositiveOrEqualToZero(id)) {
+				throw new IllegalArgumentException("Id must be greater than 0");
+			}
+			
+			this.id = id;			
 		}
-		
-		if (!numericValidator.isPositiveOrEqualToZero(id)) {
-			throw new IllegalArgumentException("Id must be greater than 0");
-		}
-		
-		this.id = id;
 	}
 	
 	public void setStartDateTime(LocalDateTime startDateTime) {
@@ -151,7 +186,7 @@ public class Maintenance implements Serializable{
 			throw new NullPointerException("Date must have a value.");
 		}
 		
-		if(!dateValidator.isInPast(startDateTime)) {
+		if(dateValidator.isInFuture(startDateTime)) {
 			throw new IllegalArgumentException("Date must be in the past.");
 		}
 		
@@ -159,9 +194,9 @@ public class Maintenance implements Serializable{
 	}
 	
 	public void setEndDateTime(Optional<LocalDateTime> endDateTime) {
-		if(endDateTime == null) {
+		if(!objectValidator.hasValue(endDateTime) || endDateTime.isEmpty()) {
 			this.endDateTime = Optional.empty();
-		}else {
+		} else {
 			if (endDateTime.get().isBefore(startDateTime)) {
 				throw new IllegalArgumentException("End date must be after start date.");
 			}
@@ -172,26 +207,22 @@ public class Maintenance implements Serializable{
 	
 	public void setDuration(Optional<Integer> duration) {
 		if (!objectValidator.hasValue(duration)) {
-			throw new NullPointerException("Duration must have a value.");
+			this.duration = Optional.empty();
+		} else {			
+			this.duration = duration;
 		}
-		
-		if(!numericValidator.isPositive(duration)) {
-			throw new IllegalArgumentException("Duration must be positive.");
-		}
-		
-		this.duration = duration;
 	}
 	
 	public void setReport(Optional<String> report) {
 		if(!objectValidator.hasValue(report)) {
-			throw new NullPointerException("Report must have a value.");
+			this.report = Optional.empty();
+		} else {			
+			if(!stringValidator.isLongerOrEqualsThan(report, MIN_LENGTH_REPORT)) {
+				throw new IllegalArgumentException("Report must be at least " + MIN_LENGTH_REPORT + " long.");
+			}
+			
+			this.report = report;
 		}
-		
-		if(!stringValidator.isLongerOrEqualsThan(report, MIN_LENGTH_REPORT)) {
-			throw new IllegalArgumentException("Report must be at least " + MIN_LENGTH_REPORT + " long.");
-		}
-		
-		this.report = report;
 	}
 	
 	public void setStatus(MaintenanceStatus status) {
@@ -213,6 +244,14 @@ public class Maintenance implements Serializable{
 		}
 		
 		this.machine = machine;
+	}
+	
+	public void setMaintenanceWorkers(Set<MaintenanceWorker> maintenanceWorkers) {
+		if (!objectValidator.hasValue(maintenanceWorkers) || maintenanceWorkers.isEmpty()) {
+			throw new NullPointerException("Maintenance workers must have a value.");
+		}
+
+		this.maintenanceWorkers = maintenanceWorkers;
 	}
 	
 	public void setMaintenanceResponsable(MaintenanceResponsable responsable) {
@@ -245,11 +284,7 @@ public class Maintenance implements Serializable{
 	
 	public static List<Maintenance> getMaintenances(MaintenanceDAO dao) {
 		return dao.findAll();
-	}
-	
-	public static List<Maintenance> getMaintenances(MaintenanceDAO dao, int workerId) {
-		return dao.findAll(workerId);
-	}
+	}	
 	
 	public boolean updateInDatabase(MaintenanceDAO dao) {
 		return dao.update(this);
@@ -259,6 +294,10 @@ public class Maintenance implements Serializable{
 		return dao.find(id);
 	}
 	
+	public boolean insertInDatabase(MaintenanceDAO dao) {
+		return dao.create(this);
+	}
+	
 	//Override methods
 	@Override
 	public String toString() {
@@ -266,7 +305,7 @@ public class Maintenance implements Serializable{
 			+ ", startDateTime=" 
 			+ startDateTime + ", endDateTime=" 
 			+ endDateTime.orElse(null) + ", duration="
-			+ duration.orElse(0) + ", reportString=" 
+			+ duration.orElse(null) + ", reportString=" 
 			+ report.orElse(null) + ", status=" 
 			+ status + "]";
 	}
@@ -276,8 +315,8 @@ public class Maintenance implements Serializable{
 		return Objects.hash(
 			startDateTime,
 			endDateTime.orElse(null),
-			duration.orElse(0),
-			id.orElse(0),
+			duration.orElse(null),
+			id.orElse(null),
 			report.orElse(null), 
 			status
 		);
@@ -299,8 +338,8 @@ public class Maintenance implements Serializable{
 		Maintenance other = (Maintenance) obj;
 		return Objects.equals(startDateTime, other.startDateTime) 
 			&& Objects.equals(endDateTime.orElse(null), other.endDateTime.orElse(null))
-			&& Objects.equals(duration.orElse(0), other.duration.orElse(0))
-			&& Objects.equals(id.orElse(0), other.id.orElse(0))
+			&& Objects.equals(duration.orElse(null), other.duration.orElse(null))
+			&& Objects.equals(id.orElse(null), other.id.orElse(null))
 			&& Objects.equals(report.orElse(null), other.report.orElse(null))
 			&& Objects.equals(status, other.status);
 	}

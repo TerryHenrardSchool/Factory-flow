@@ -16,8 +16,8 @@ import be.alb_mar_hen.validators.ObjectValidator;
 
 public class MaintenanceWorkerDAO extends DAO<MaintenanceWorker>{
 
-	public MaintenanceWorkerDAO(Connection conn) {
-		super(conn);
+	public MaintenanceWorkerDAO() {
+		super();
 	}
 
 	@Override

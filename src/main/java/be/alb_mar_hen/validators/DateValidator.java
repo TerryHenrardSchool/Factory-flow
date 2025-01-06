@@ -17,4 +17,15 @@ public class DateValidator {
 	    return  date.isEmpty() || (date.isPresent() && isInPast(date.get()));
 	}
 
+	public boolean isInFuture(LocalDate date) {
+		return date.isAfter(LocalDate.now());
+	}
+	
+	public boolean isInFuture(LocalDateTime date) {
+		return date.isAfter(LocalDateTime.now());
+	}
+	
+	public boolean isInFuture(Optional<LocalDateTime> date) {	    
+	    return  date.isEmpty() || (date.isPresent() && isInFuture(date.get()));
+	}
 }	
