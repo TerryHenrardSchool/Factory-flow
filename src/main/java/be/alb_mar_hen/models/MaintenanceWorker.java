@@ -1,15 +1,18 @@
 package be.alb_mar_hen.models;
 
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 import be.alb_mar_hen.daos.MaintenanceWorkerDAO;
+import be.alb_mar_hen.enumerations.MaintenanceStatus;
 import be.alb_mar_hen.formatters.StringFormatter;
 import be.alb_mar_hen.validators.NumericValidator;
 import be.alb_mar_hen.validators.ObjectValidator;
@@ -18,11 +21,11 @@ import be.alb_mar_hen.validators.StringValidator;
 @JsonIdentityInfo(generator = ObjectIdGenerators.IntSequenceGenerator.class, property = "keyMaintenanceWorker")
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class MaintenanceWorker extends Employee{
-	private Set<Maintenance> maintenances;
-	
 	// Validators
 	private ObjectValidator objectValidator;
 	
+	// Attributes
+	private Set<Maintenance> maintenances;
 	
 	// Constructors
     public MaintenanceWorker(
@@ -59,6 +62,19 @@ public class MaintenanceWorker extends Employee{
 
         return maintenances.add(maintenance);
     }
+    
+    @JsonIgnore
+    public boolean isFree() {
+    	return !maintenances
+			.stream()
+			.anyMatch(
+				maintenance -> maintenance.getStatus().equals(MaintenanceStatus.IN_PROGRESS)
+			);
+    }
+    
+	public static Collection<MaintenanceWorker> getAllFromDatabase(MaintenanceWorkerDAO dao) {
+		return dao.findAll();
+	}
     
     public static MaintenanceWorker find(MaintenanceWorkerDAO dao, int id) {
     	return dao.find(id);

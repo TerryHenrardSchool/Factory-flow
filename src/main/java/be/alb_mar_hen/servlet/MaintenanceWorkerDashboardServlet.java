@@ -26,7 +26,7 @@ import be.alb_mar_hen.validators.ObjectValidator;
 public class MaintenanceWorkerDashboardServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
     private final MaintenanceDAO maintenanceDAO;
-    private final MaintenanceWorkerDAO maintenanceWorkerDAO = new MaintenanceWorkerDAO(FactoryFlowConnection.getInstance());
+    private final MaintenanceWorkerDAO maintenanceWorkerDAO = new MaintenanceWorkerDAO();
     private final ObjectValidator objectValidator = new ObjectValidator();
     
     public MaintenanceWorkerDashboardServlet() {
@@ -74,15 +74,19 @@ public class MaintenanceWorkerDashboardServlet extends HttpServlet {
 			return;
 		}
 		
-		machine.setStatus(MachineStatus.NEED_VALIDATION);
-		
-		machine.updateInDatabase(new MachineDAO());
-		
-		maintenance.setReport(Optional.of(reportMaintenance));
-		
-		maintenance.setStatus(MaintenanceStatus.PENDING_VALIDATION);
-		
-		maintenance.updateInDatabase(maintenanceDAO);
+		try {
+			machine.setStatus(MachineStatus.NEED_VALIDATION);
+			machine.updateInDatabase(new MachineDAO());
+			
+			maintenance.setReport(Optional.of(reportMaintenance));
+			maintenance.setStatus(MaintenanceStatus.PENDING_VALIDATION);
+			maintenance.updateInDatabase(maintenanceDAO);	
+		} catch (Exception e) {
+			e.printStackTrace();
+			request.setAttribute("errorMessage",e.getMessage());
+			doGet(request, response);
+			return;
+		}
 		
 		doGet(request, response);
 	}

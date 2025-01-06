@@ -1,3 +1,4 @@
+<%@page import="be.alb_mar_hen.validators.ObjectValidator"%>
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
     pageEncoding="ISO-8859-1"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
@@ -18,6 +19,10 @@
 	<script src="<%= request.getContextPath() %>/webjars/bootstrap/5.3.3/js/bootstrap.bundle.min.js" defer></script>
 	<script src="<%= request.getContextPath() %>/scripts/WorkerDashboardScript.js" defer></script>
 </head>
+<%
+	String errorMessage = (String) request.getAttribute("errorMessage");
+	ObjectValidator objectValidator = new ObjectValidator();
+%>
 <body class="bg-light">
 	<nav class="navbar navbar-light bg-light">
 	    <div class="container-fluid">
@@ -29,13 +34,18 @@
 
 	<div class="container mt-5">
 		<h1 class="display-4 text-center mb-4">Maintenances</h1>
+
+		<% if (objectValidator.hasValue(errorMessage)) { %>
+		<div class="alert alert-danger" role="alert">
+			<%= errorMessage %>
+		</div>
+	    <% } %>	
 		<table class="table table-hover table-striped">
 			<thead class="table-dark">
 				<tr>
 					<th scope="col">Id</th>
 					<th scope="col">Start Date</th>
 					<th scope="col">End Date</th>
-					<th scope="col">Duration (min)</th>
 					<th scope="col">Report</th>
 					<th scope="col">Workers</th>
 					<th scope="col">Responsable</th>
@@ -47,6 +57,7 @@
 			<tbody>
 				<%
 				Object maintenancesObj = request.getAttribute("maintenances");
+				
 				Collection<Maintenance> maintenances = null;
 				
 				if (maintenancesObj instanceof Set) {
@@ -59,7 +70,6 @@
 						<td><%= maintenance.getId().get() %></td>
 						<td><%= LocalDateTimeFormatter.format(maintenance.getStartDateTime()) %></td>
 						<td><%= LocalDateTimeFormatter.format(maintenance.getEndDateTime().orElse(null)) %></td>
-						<td><%= maintenance.getDuration().orElse(null) %></td>
 						<td><%= maintenance.getReport().orElse("N/A") %></td>
 						
 						<td>

@@ -21,15 +21,29 @@
 </head>
 <body>
 	<%
-		ObjectValidator objectValidator = new ObjectValidator();
-	
-		Object machinesObj = request.getAttribute("machines");
-		String errorMessage = request.getParameter("errorMessage");
+	ObjectValidator objectValidator = new ObjectValidator();
 		
-		Collection<Machine> machines = null;
-		if (machinesObj instanceof Collection) {
-			machines = (Collection<Machine>) machinesObj;
-		}
+			Object machinesObj = request.getAttribute("machines");
+			Object maintenanceWorkersObj = request.getAttribute("maintenanceWorkers");
+			Object errorMessagesObj = request.getAttribute("errorMessages");
+			
+			Collection<Machine> machines = null;
+			Collection<MaintenanceWorker> maintenanceWorkers = null;
+			Collection<String> errorMessages = null;
+						
+			if (machinesObj instanceof Collection) {
+				machines = (Collection<Machine>) machinesObj;				
+			}
+			
+			if (maintenanceWorkersObj instanceof Collection) {
+				maintenanceWorkers = (Collection<MaintenanceWorker>) maintenanceWorkersObj;				
+			}
+			
+			if (errorMessagesObj instanceof Collection) {
+                errorMessages = (Collection<String>) errorMessagesObj;				
+			}
+			
+			System.out.println("errorMessages: " + errorMessages);
 	%>
 	
 	<nav class="navbar navbar-light bg-light">
@@ -53,7 +67,7 @@
 	      </div>
 	      <form action="MaintenanceResponsableDashboardServlet" method="POST">
 		      <div class="modal-footer">
-		      	<input type="hidden" id="machineIdHiddenInput" name="machineId" value="-1">
+		      	<input type="hidden" id="machineIdHiddenInputValidateMaintenance" name="machineId" value="-1">
 		        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
 		        <input type="submit" name="action" class="btn btn-danger" value="Restart maintenance">
 		        <input type="submit" name="action" class="btn btn-primary" value="Validate">
@@ -64,30 +78,70 @@
 	</div>
 	
 	<div class="modal fade" tabindex="-1" id="sendToMaintenanceModal">
-	  <div class="modal-dialog modal-fullscreen">
+	  <div class="modal-dialog modal-lg">
 	    <div class="modal-content">
 	      <div class="modal-header">
-	        <h5 class="modal-title">Modal title</h5>
+	        <h5 class="modal-title">Maintenance workers</h5>
 	        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 	      </div>
-	      <div class="modal-body">
-	        <p>Modal body text goes here.</p>
-	      </div>
-	      <div class="modal-footer">
-	        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-	        <button type="button" class="btn btn-primary">Save changes</button>
-	      </div>
+	      <form action="MaintenanceResponsableDashboardServlet" method="POST">
+		      <div class="modal-body">
+		        <% if (!objectValidator.hasValue(maintenanceWorkers) || maintenanceWorkers.isEmpty()) { %>
+		          <p class="text-center text-muted">No maintenance workers available</p>
+		        <% } else { %>
+		          <table class="table table-hover">
+		            <thead>
+		              <tr>
+		                <th>#</th>
+		                <th>ID</th>
+		                <th>Worker</th>
+		                <th>Matricule</th>
+		                <th>Status</th>
+		                <th>Add to maintenance</th>
+		              </tr>
+		            </thead>
+		            <tbody>
+		              <% int i = 1; %>
+		              <% for (MaintenanceWorker maintenanceWorker : maintenanceWorkers) { 
+		                String statusBadgeClass = "badge text-uppercase px-3 py-2 ";
+		                String actionButton = "";
+		                String statusBadgeText = "";
+		
+		                if (maintenanceWorker.isFree()) {
+		                  statusBadgeClass += "bg-success";
+		                  statusBadgeText = "Free";
+		                  actionButton = 
+	                		  "<input type='checkbox' name='workerIds' value='" + maintenanceWorker.getId().orElse(-1) + "' class='btn-check' id='btncheck" + i + "' autocomplete='off'>" +
+	                          "<label class='btn btn-outline-primary' for='btncheck" + i + "'>Select</label>";
+
+		                } else {
+		                  statusBadgeClass += "bg-danger";
+		                  statusBadgeText = "Unavailable";
+		                }
+		              %>
+		              <tr>
+		                <td class="fw-bold fst-italic"><%= i++ %></td>
+		                <td><%= maintenanceWorker.getId().orElse(-1) %></td>
+		                <td><%= maintenanceWorker.getFullNameFormatted() %></td>
+		                <td><%= maintenanceWorker.getMatricule() %></td>
+		                <td><span class="<%= statusBadgeClass %>"><%= statusBadgeText %></span></td>
+		                <td><%= actionButton %></td>
+		              </tr>
+		              <% } %>
+		            </tbody>
+		          </table>
+		        <% } %>
+		      </div>
+		      <div class="modal-footer">
+		        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+   		      	<input type="hidden" id="machineIdHiddenInputSendToMaintenance" name="machineId" value="-1">		        
+		        <input type="submit" name="action" class="btn btn-primary" value="Send to maintenance">
+		      </div>
+	      </form>
 	    </div>
 	  </div>
 	</div>
-	
-	<button 
-	  class="btn btn-primary btn-sm" 
-	  data-bs-toggle="modal" 
-	  data-bs-target="#sendToMaintenanceModal"
-	> 
-	  Test 
-	</button>
+
 	
 	<div class="text-center py-4 bg-light shadow-sm">
 		<h1 class="display-4 fw-bold text-primary">Dashboard</h1>
@@ -95,13 +149,15 @@
 	</div>
 	
 	<div class="container mt-4">
-	<% if (objectValidator.hasValue(errorMessage)) { %>
-		<div class="alert alert-danger" role="alert">
-		  <%= errorMessage %>
-		</div>
+	<% if (objectValidator.hasValue(errorMessages)) { %>
+		<% for (String errorMessage: errorMessages) { %>
+			<div class="alert alert-danger" role="alert">
+			  <%= errorMessage %>
+			</div>
+		<% } %>
 	<% } %>
 		
-	<% if (!objectValidator.hasValue(machines) || !machines.isEmpty()) { %>
+	<% if (objectValidator.hasValue(machines)) { %>
 		<table class="table table-hover">
 			<thead>
 				<tr>
@@ -133,7 +189,7 @@
 							
 						case OK:
 							statusBadgeClass += "bg-success";
-							actionButton = "<button class='btn btn-warning btn-sm w-75'>Send to maintenance</button>";
+							actionButton = "<button id=" + machine.getId().orElse(-1) + " class='btn btn-warning btn-sm w-75 send-to-maintenance-btn' data-bs-toggle='modal' data-bs-target='#sendToMaintenanceModal'>Send to maintenance</button>";
 							break;
 							
 						case IN_MAINTENANCE:

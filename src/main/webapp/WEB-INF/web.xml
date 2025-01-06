@@ -8,6 +8,10 @@
 		<welcome-file>AuthenticationServlet</welcome-file>
 	</welcome-file-list>
 	
+	<session-config>
+        <session-timeout>60</session-timeout>
+    </session-config>
+	
 	<!-- AuthenticationServlet -->
 	<servlet>
 	<servlet-name>AuthenticationServlet</servlet-name>

@@ -38,7 +38,6 @@
 					<th scope="col">Id</th>
 					<th scope="col">Start Date</th>
 					<th scope="col">End Date</th>
-					<th scope="col">Duration (min)</th>
 					<th scope="col">Report</th>
 					<th scope="col">Workers</th>
 					<th scope="col">Responsable</th>
@@ -61,7 +60,6 @@
 						<td><%= maintenance.getId().get() %></td>
 						<td><%= LocalDateTimeFormatter.format(maintenance.getStartDateTime()) %></td>
 						<td><%= LocalDateTimeFormatter.format(maintenance.getEndDateTime().orElse(null)) %></td>
-						<td><%= maintenance.getDuration().orElse(null) %></td>
 						<td >
 							<p style="display:none" id="<%= maintenance.getId().get() %>" class="p-report"><%= maintenance.getReport().orElse("N/A") %></p>
 							<button type="button" id="<%= maintenance.getId().get() %>" class="btn btn-info button-report" data-bs-toggle="modal" data-bs-target="#sharedModal">View Report</button>

@@ -227,6 +227,13 @@ public class Machine {
 
 		return machineType.getDaysBeforeMaintenance() - LocalDateTime.now().getDayOfYear() + lastMaintenanceDate.getDayOfYear();
 	}
+	
+	public static List<Machine> findAll() {
+        MachineDAO machineDAO = new MachineDAO();
+        List<Machine> machines = (List<Machine>) machineDAO.findAll_terry();
+        
+        return machines;
+    }
 
 	// Override methods
 	@Override
@@ -272,11 +279,4 @@ public class Machine {
 			&& status == other.status
 			&& Objects.equals(zones, other.zones);
 	}
-	
-	public static List<Machine> findAll() {
-        MachineDAO machineDAO = new MachineDAO();
-        List<Machine> machines = (List<Machine>) machineDAO.findAll_terry();
-        
-        return machines;
-    }
 }
